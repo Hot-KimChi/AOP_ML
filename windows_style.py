@@ -1,5 +1,6 @@
-###############################################
-## Treeview style study and accept for project.
+##################################################
+## Treeview style study and accept for project. ##
+##################################################
 
 import pymssql
 import numpy as np
@@ -28,75 +29,68 @@ def func_show_table(selected_DBtable, df, extra):
     n_root.title(f"{database}  //  {selected_DBtable}")
     n_root.geometry("1000x800")
 
-
+    # Add some style
     style = ttk.Style()
-    style.theme_use('default')
+    # Pick a theme
+    style.theme_use("default")
+    # Configure our treeview colors
+
     style.configure("Treeview",
                     background="#D3D3D3",
                     foreground="black",
                     rowheight=25,
-                    fieldbackground="#D3D3D3")
-
+                    fieldbackground="#D3D3D3"
+                    )
+    # Change selected color
     style.map('Treeview',
-              background=[('selected', "#347083")])
+              background=[('selected', 'blue')])
 
-    frame1 = Frame(n_root, relief="solid", bd=2)
-    frame1.pack(side="top", fill="both", expand=True, pady=10)
+    frame1 = Frame(n_root)
+    frame1.pack(pady=10)
 
-    tree_scroll = Scrollbar(frame1)
-    tree_scroll.pack(side=RIGHT, fill=Y)
+    tree_scroll_y = Scrollbar(frame1)
+    tree_scroll_y.pack(side=RIGHT, fill=Y)
+    tree_scroll_x = Scrollbar(frame1)
+    tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-    my_tree = ttk.Treeview(frame1, yscrollcommand=tree_scroll.set, selectmode="extended")
+    my_tree = ttk.Treeview(frame1, yscrollcommand=tree_scroll_y.set, selectmode="extended")
+    # Pack to the screen
     my_tree.pack()
-
-    tree_scroll.config(command=my_tree.yview())
-
-    my_tree.tag_configure('odd', background="#E8E8E8")
-    my_tree.tag_configure('even', background="#DFDFDF")
 
     my_tree["column"] = list(df.columns)
     my_tree["show"] = "headings"
 
     # Loop thru column list for headers
     for column in my_tree["column"]:
-        my_tree.column(column, width=80, minwidth=80)
+        my_tree.column(column, width=100, minwidth=100)
         my_tree.heading(column, text=column)
 
     # Put data in treeview
     df_rows = df.to_numpy().tolist()
+
+    my_tree.tag_configure('oddrow', background="white")
+    my_tree.tag_configure('evenrow', background="lightblue")
+
     global count
     count = 0
     for row in df_rows:
         if count % 2 == 0:
-            my_tree.insert(parent='', index='end', iid=count, text='', values=row, tag='even')
+            my_tree.insert(parent='', index='end', iid=count, text="", values=row,
+                           tags=('evenrow',))
         else:
-            my_tree.insert(parent='', index='end', iid=count, text='', values=row, tag='odd')
+            my_tree.insert(parent='', index='end', iid=count, text="", values=row,
+                           tags=('oddrow',))
+
         count += 1
 
 
 
 
-    if extra != NONE:
-        frame2 = Frame(n_root, relief="solid", bd=2)
-        frame2.pack(side="bottom", fill="both", expand=True, pady=10)
+    tree_scroll_y.config(command=my_tree.yview())
+    tree_scroll_x.config(command=my_tree.xview())
 
-        my_tree_extra = ttk.Treeview(frame2)
-        my_tree_extra["column"] = list(extra.columns)
-        my_tree_extra["show"] = "headings"
 
-        # Loop thru column list for headers
-        for column in my_tree_extra["column"]:
-            my_tree_extra.column(column, width=150, minwidth=100)
-            my_tree_extra.heading(column, text=column)
-
-        # Put data in treeview
-        df_rows = extra.to_numpy().tolist()
-        for row in df_rows:
-            my_tree_extra.insert("", "end", values=row)
-
-        my_tree_extra.pack()
-
-    # n_root.mainloop()
+    n_root.mainloop()
     return ()
 
 
@@ -431,19 +425,19 @@ def func_sql_get(server_address, ID, password, database, command):
                 if len(sel_SSId) > 0 and len(sel_probesn) > 0:
                     query = f'''
                     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId} and probeSn = {sel_probesn}
-                    ORDER BY 1
+                    ORDER BY probeSn, measSSId, 1
                     '''
 
                 elif len(sel_SSId) > 0 and len(sel_probesn) == 0:
                     query = f'''
                     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId}
-                    ORDER BY 1
+                    ORDER BY measSSId, 1
                     '''
 
                 elif len(sel_SSId) == 0 and len(sel_probesn) > 0:
                     query = f'''
                     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and probeSn = {sel_probesn}
-                    ORDER BY 1
+                    ORDER BY probeSn, 1
                     '''
 
                 else:
@@ -485,12 +479,12 @@ def func_viewer_database():
 
                     label_SSId = Label(frame2, text='SSId')
                     label_SSId.place(x=5, y=5)
-                    combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0, state='readonly')
+                    combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0)#, state='readonly')
                     combo_SSId.place(x=115, y=5)
 
                     label_probesn = Label(frame2, text='probeSN')
                     label_probesn.place(x=5, y=25)
-                    combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0, state='readonly')
+                    combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0)#, state='readonly')
                     combo_probesn.place(x=115, y=25)
                 else:
                     NONE
@@ -602,16 +596,15 @@ def func_measset_gen():
                 from tkinter import filedialog
                 filename = filedialog.askopenfilename(initialdir='.txt')
                 df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
-                df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12,
-                                              13]]  ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
+                df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]]                                        ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
 
-                ########################
+
                 ## B & M mode process ##
                 df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first[
-                                                                                  'BeamStyleIndex'] == 1)]  # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
+                                                                                  'BeamStyleIndex'] == 1)]              # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
                 # B_num = df_sort_B['TxFocusLocCm'].nunique()
                 df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first[
-                                                                                   'BeamStyleIndex'] == 20)]  # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
+                                                                                   'BeamStyleIndex'] == 20)]            # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
 
                 df = pd.concat([df_B_mode, df_M_mode])  ## 2개 데이터프레임 합치기
                 df = df.reset_index(drop=True)  ## 데이터프레임 index reset

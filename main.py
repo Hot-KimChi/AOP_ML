@@ -28,23 +28,26 @@ def func_show_table(selected_DBtable, df, extra):
     frame1 = Frame(n_root, relief="solid", bd=2)
     frame1.pack(side="top", fill="both", expand=True, pady=10)
 
+    my_tree = ttk.Treeview(frame1, selectmode="extended")
+    my_tree.pack(pady=10)
 
-    my_tree = ttk.Treeview(frame1)
 
     # scrollbars
-    vsb = Scrollbar(n_root, orient="vertical", command=my_tree.yview)
-    vsb.place(relx=0.978, rely=0.175, relheight=0.713, relwidth=0.020)
-    hsb = Scrollbar(n_root, orient="horizontal", command=my_tree.xview)
-    hsb.place(relx=0.014, rely=0.875, relheight=0.020, relwidth=0.965)
-
+    vsb = Scrollbar(frame1, orient="vertical", command=my_tree.yview)
+    # vsb.place(relx=0.978, rely=0.175, relheight=0.713, relwidth=0.020)
+    vsb.pack(side=RIGHT, fill=Y)
+    hsb = Scrollbar(frame1, orient="horizontal", command=my_tree.xview)
+    # hsb.place(relx=0.014, rely=0.875, relheight=0.020, relwidth=0.20)
+    hsb.pack(side=BOTTOM, fill=X)
     my_tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
 
     my_tree["column"] = list(df.columns)
     my_tree["show"] = "headings"
 
     # Loop thru column list for headers
     for column in my_tree["column"]:
-        my_tree.column(column, width=80, minwidth=80)
+        my_tree.column(column, width=100, minwidth=100)
         my_tree.heading(column, text=column)
 
     # Put data in treeview
@@ -52,19 +55,19 @@ def func_show_table(selected_DBtable, df, extra):
     for row in df_rows:
         my_tree.insert("", "end", values=row)
 
-    my_tree.pack()
 
     if extra != NONE:
         frame2 = Frame(n_root, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True, pady=10)
 
         my_tree_extra = ttk.Treeview(frame2)
+
         my_tree_extra["column"] = list(extra.columns)
         my_tree_extra["show"] = "headings"
 
         # Loop thru column list for headers
         for column in my_tree_extra["column"]:
-            my_tree_extra.column(column, width=150, minwidth=100)
+            my_tree_extra.column(column, width=100, minwidth=100)
             my_tree_extra.heading(column, text=column)
 
         # Put data in treeview
@@ -73,7 +76,8 @@ def func_show_table(selected_DBtable, df, extra):
             my_tree_extra.insert("", "end", values=row)
 
         my_tree_extra.pack()
-
+    else:
+        NONE
     # n_root.mainloop()
     return ()
 
@@ -410,19 +414,19 @@ def func_sql_get(server_address, ID, password, database, command):
                 if len(sel_SSId) > 0 and len(sel_probesn) > 0:
                     query = f'''
                     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId} and probeSn = {sel_probesn}
-                    ORDER BY 1
+                    ORDER BY probeSn, measSSId, 1
                     '''
 
                 elif len(sel_SSId) > 0 and len(sel_probesn) == 0:
                     query = f'''
                     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId}
-                    ORDER BY 1
+                    ORDER BY measSSId, 1
                     '''
 
                 elif len(sel_SSId) == 0 and len(sel_probesn) > 0:
                     query = f'''
                     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and probeSn = {sel_probesn}
-                    ORDER BY 1
+                    ORDER BY probeSn, 1
                     '''
 
                 else:
@@ -464,12 +468,12 @@ def func_viewer_database():
 
                     label_SSId = Label(frame2, text='SSId')
                     label_SSId.place(x=5, y=5)
-                    combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0, state='readonly')
+                    combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0) #, state='readonly')
                     combo_SSId.place(x=115, y=5)
 
                     label_probesn = Label(frame2, text='probeSN')
                     label_probesn.place(x=5, y=25)
-                    combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0, state='readonly')
+                    combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
                     combo_probesn.place(x=115, y=25)
                 else:
                     NONE
@@ -604,7 +608,7 @@ def func_measset_gen():
                 df_grp = df.groupby(col)                                                                                ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
                 df_dic = df_grp.groups                                                                                  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
                 idx = [x[0] for x in df_dic.values() if len(x) == 1]
-
+                print(len(df.reindex(idx)))
                 func_show_table(selected_DBtable='Summary: B & M', df=select_data, extra=NONE if len(df.reindex(idx)) == 0 else df.reindex(idx))
 
                 BM_Not_same_cnt = len(df.reindex(idx))
@@ -629,7 +633,7 @@ def func_measset_gen():
                 df_dic = df_grp.groups
                 idx = [x[0] for x in df_dic.values() if len(x) == 1]
 
-                # func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=NONE if len(df.reindex(idx)) == 0 else df.reindex(idx))
+                func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=NONE) #if len(df.reindex(idx)) == 0 else df.reindex(idx))
 
                 CD_Not_same_cnt = len(df.reindex(idx))
                 print('C&D not same Count:', CD_Not_same_cnt)
