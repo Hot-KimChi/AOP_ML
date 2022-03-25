@@ -251,6 +251,7 @@ def func_machine_learning(selected_ML, data, target):
         func_show_table("failed_condition", df=failed_condition if len(failed_condition) > 0 else NONE, extra=NONE)
 
 
+
     except():
         print("Error: Machine_Learning")
 
@@ -578,6 +579,7 @@ def func_measset_gen():
                 target = AOP_data['zt'].to_numpy()
 
                 func_machine_learning(combo_ML.get(), data, target)
+                func_create_data()
 
             except:
                 print("Error: func_preprocessML")
@@ -633,6 +635,7 @@ def func_measset_gen():
                 df_dic = df_grp.groups
                 idx = [x[0] for x in df_dic.values() if len(x) == 1]
 
+                ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
                 func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=NONE) #if len(df.reindex(idx)) == 0 else df.reindex(idx))
 
                 CD_Not_same_cnt = len(df.reindex(idx))
@@ -690,7 +693,7 @@ def func_measset_gen():
                 # SysPulserSelA
 
                 func_show_table(selected_DBtable='meas_setting', df=df_merge, extra=NONE)
-                func_preprocessML()
+
 
             except:
                 print("Error: func_create_data")
@@ -713,7 +716,7 @@ def func_measset_gen():
         combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
         combo_ML.place(x=185, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_create_data)
+        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_preprocessML)
         btn_load.place(x=460, y=5)
 
         root_gen.mainloop()
