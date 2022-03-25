@@ -82,6 +82,147 @@ def func_show_table(selected_DBtable, df, extra):
     return ()
 
 
+def func_create_data():
+    try:
+        from tkinter import filedialog
+        filename = filedialog.askopenfilename(initialdir='.txt')
+        df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
+        ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
+        df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]]
+
+        ########################
+        ## B & M mode process ##
+        # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
+        df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
+        # B_num = df_sort_B['TxFocusLocCm'].nunique()
+        # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
+        df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
+
+        df = pd.concat([df_B_mode, df_M_mode])                                                                          ## 2개 데이터프레임 합치기
+        df = df.reset_index(drop=True)                                                                                  ## 데이터프레임 index reset
+        df = df.drop_duplicates()                                                                                       ## 중복된 데이터 삭제.
+
+        refer_data = df.groupby(
+            by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle', 'ProbeNumTxCycles'],
+            as_index=False).count()
+        select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
+        select_data = select_data.sort_values(
+            by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                select_data.columns[0]], ascending=True)
+
+        ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
+        col = list(df.columns)[1:10]
+        ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
+        df_grp = df.groupby(col)
+        df_dic = df_grp.groups                                                                                          ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
+        idx = [x[0] for x in df_dic.values() if len(x) == 1]
+        print(len(df.reindex(idx)))
+        func_show_table(selected_DBtable='Summary: B & M', df=select_data,
+                        extra=NONE if len(df.reindex(idx)) == 0 else df.reindex(idx))
+
+        BM_Not_same_cnt = len(df.reindex(idx))
+        print('B&M not same Count:', BM_Not_same_cnt)
+
+        ########################
+        ## C & D mode process ##
+        df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
+        df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
+
+        df = pd.concat([df_C_mode, df_D_mode])
+        df = df.reset_index(drop=True)
+        df = df.drop_duplicates()
+
+        refer_data = df.groupby(
+            by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle', 'ProbeNumTxCycles'],
+            as_index=False).count()
+        select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
+
+        select_data = select_data.sort_values(
+            by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                select_data.columns[0]], ascending=True)
+
+        col = list(df.columns)[1:11]
+        df_grp = df.groupby(col)
+        df_dic = df_grp.groups
+        idx = [x[0] for x in df_dic.values() if len(x) == 1]
+
+        ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
+        func_show_table(selected_DBtable='Summary: C & D', df=select_data,
+                        extra=NONE)  # if len(df.reindex(idx)) == 0 else df.reindex(idx))
+
+        CD_Not_same_cnt = len(df.reindex(idx))
+        print('C&D not same Count:', CD_Not_same_cnt)
+
+        if BM_Not_same_cnt == 0 and CD_Not_same_cnt == 0:
+
+            # SettingWithCopyWarning 해결 / 복사본만 수정할 것인지 혹은 원본도 수정할 것인지 알 수 없어 경고
+            df_B_mode_update = df_B_mode.copy()
+            df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
+            df_C_mode_update = df_C_mode.copy()
+            df_C_mode_update['bsIndexTrace'] = 10
+
+            df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
+            print(df_merge)
+            same_cond = 1
+
+        elif BM_Not_same_cnt == 0 and CD_Not_same_cnt > 0:
+            df_B_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
+            df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
+            df_C_mode_update['bsIndexTrace'] = 0
+            df_D_mode_update['bsIndexTrace'] = 0
+
+            df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update])
+            print(df_merge)
+
+            same_cond = 2
+
+        elif BM_Not_same_cnt > 0 and CD_Not_same_cnt == 0:
+            df_B_mode_update, df_M_mode_update, df_C_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy()
+            df_B_mode_update['bsIndexTrace'] = 0
+            df_M_mode_update['bsIndexTrace'] = 0
+            df_C_mode_update['bsIndexTrace'] = 10
+
+            df_merge = pd.concat([df_B_mode, df_C_mode, df_M_mode])
+            print(df_merge)
+
+            same_cond = 3
+
+        else:
+            df_B_mode_update, df_M_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
+            df_B_mode_update['bsIndexTrace'] = 0
+            df_M_mode_update['bsIndexTrace'] = 0
+            df_C_mode_update['bsIndexTrace'] = 0
+            df_D_mode_update['bsIndexTrace'] = 0
+
+            df_merge = pd.concat([df_B_mode, df_C_mode, df_D_mode, df_M_mode])
+            print(df_merge)
+
+            same_cond = 4
+
+        print(same_cond)
+        # probeId,
+        #
+        # maxTxVoltageVolt
+        # ceilTxVoltageVolt
+        # profTxVoltageVolt
+        # totalVoltagePt
+        # numMeasVoltage
+        # elevAperIndex
+        # zStartDistCm = 0.5
+        # zMeasNum
+        # dumpSwVersion
+        # DTxFreqIndex
+        # VTxIndex
+        # SysPulserSelA
+
+        func_show_table(selected_DBtable='meas_setting', df=df_merge, extra=NONE)
+
+        return(df_merge)
+
+    except:
+        print("Error: func_create_data")
+
+
 def func_machine_learning(selected_ML, data, target):
     try:
 
@@ -204,7 +345,7 @@ def func_machine_learning(selected_ML, data, target):
 
         mae = mean_absolute_error(test_target, prediction)
         print('|(타깃 - 예측값)|:', mae)
-        print()
+
 
         Diff = np.round_(prediction - test_target, 2)
         Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
@@ -248,7 +389,12 @@ def func_machine_learning(selected_ML, data, target):
         print()
         print('bad:', bad)
         print('good:', good)
+
+        ## failed condition show-up
         func_show_table("failed_condition", df=failed_condition if len(failed_condition) > 0 else NONE, extra=NONE)
+
+        df_measset = func_create_data()
+        ## predict
 
 
 
@@ -579,124 +725,12 @@ def func_measset_gen():
                 target = AOP_data['zt'].to_numpy()
 
                 func_machine_learning(combo_ML.get(), data, target)
-                func_create_data()
 
             except:
                 print("Error: func_preprocessML")
 
 
-        def func_create_data():
-            try:
-                from tkinter import filedialog
-                filename = filedialog.askopenfilename(initialdir='.txt')
-                df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
-                df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]]                                        ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
 
-                ########################
-                ## B & M mode process ##
-                df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]         # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
-                # B_num = df_sort_B['TxFocusLocCm'].nunique()
-                df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]       # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
-
-                df = pd.concat([df_B_mode, df_M_mode])                                                                  ## 2개 데이터프레임 합치기
-                df = df.reset_index(drop=True)                                                                          ## 데이터프레임 index reset
-                df = df.drop_duplicates()                                                                               ## 중복된 데이터 삭제.
-
-                refer_data = df.groupby(by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle', 'ProbeNumTxCycles'], as_index=False).count()
-                select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
-                select_data = select_data.sort_values(by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4], select_data.columns[0]], ascending=True)
-
-                col = list(df.columns)[1:10]                                                                            ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
-                df_grp = df.groupby(col)                                                                                ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
-                df_dic = df_grp.groups                                                                                  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
-                idx = [x[0] for x in df_dic.values() if len(x) == 1]
-                print(len(df.reindex(idx)))
-                func_show_table(selected_DBtable='Summary: B & M', df=select_data, extra=NONE if len(df.reindex(idx)) == 0 else df.reindex(idx))
-
-                BM_Not_same_cnt = len(df.reindex(idx))
-                print('B&M not same Count:', BM_Not_same_cnt)
-
-                ########################
-                ## C & D mode process ##
-                df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
-                df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
-
-                df = pd.concat([df_C_mode, df_D_mode])
-                df = df.reset_index(drop=True)
-                df = df.drop_duplicates()
-
-                refer_data = df.groupby(by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle', 'ProbeNumTxCycles'], as_index=False).count()
-                select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
-
-                select_data = select_data.sort_values(by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4], select_data.columns[0]], ascending=True)
-
-                col = list(df.columns)[1:11]
-                df_grp = df.groupby(col)
-                df_dic = df_grp.groups
-                idx = [x[0] for x in df_dic.values() if len(x) == 1]
-
-                ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
-                func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=NONE) #if len(df.reindex(idx)) == 0 else df.reindex(idx))
-
-                CD_Not_same_cnt = len(df.reindex(idx))
-                print('C&D not same Count:', CD_Not_same_cnt)
-
-                if BM_Not_same_cnt == 0 and CD_Not_same_cnt == 0:
-
-                    # SettingWithCopyWarning 해결 / 복사본만 수정할 것인지 혹은 원본도 수정할 것인지 알 수 없어 경고
-                    df_B_mode_update = df_B_mode.copy()
-                    df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
-                    df_C_mode_update = df_C_mode.copy()
-                    df_C_mode_update['bsInDexTrace'] = [10]
-
-                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
-                    print(df_merge)
-                    same_cond = 1
-
-                elif BM_Not_same_cnt == 0 and CD_Not_same_cnt > 0:
-                    df_B_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
-                    df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
-                    df_C_mode_update['bsIndexTrace'] = 0
-                    df_D_mode_update['bsIndexTrace'] = 0
-
-                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update])
-                    print(df_merge)
-
-                    same_cond = 2
-
-                elif BM_Not_same_cnt > 0 and CD_Not_same_cnt == 0:
-                    B_bsIndexTrace = 0
-                    D_bsIndexTrace = 10
-                    df_merge = pd.concat([df_B_mode, df_C_mode, df_M_mode])
-                    same_cond = 3
-
-                else:
-                    B_bsIndexTrace = 0
-                    D_bsIndexTrace = 0
-                    df_merge = pd.concat([df_B_mode, df_C_mode, df_D_mode, df_M_mode])
-                    same_cond = 4
-
-                print(same_cond)
-                # probeId,
-                #
-                # maxTxVoltageVolt
-                # ceilTxVoltageVolt
-                # profTxVoltageVolt
-                # totalVoltagePt
-                # numMeasVoltage
-                # elevAperIndex
-                # zStartDistCm = 0.5
-                # zMeasNum
-                # dumpSwVersion
-                # DTxFreqIndex
-                # VTxIndex
-                # SysPulserSelA
-
-                func_show_table(selected_DBtable='meas_setting', df=df_merge, extra=NONE)
-
-
-            except:
-                print("Error: func_create_data")
 
         root_gen = Tk()
         root_gen.title(f"{database}" + ' / MeasSet_generation')
