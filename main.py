@@ -394,6 +394,7 @@ def func_machine_learning(selected_ML, data, target):
         func_show_table("failed_condition", df=failed_condition if len(failed_condition) > 0 else NONE, extra=NONE)
 
         df_measset = func_create_data()
+
         ## predict
 
 
@@ -759,7 +760,7 @@ def func_measset_gen():
         print("Error: measset_gen")
 
 
-def tx_sum():
+def func_tx_sum():
     try:
         print("see")
     except:
@@ -799,6 +800,8 @@ def func_main():
         btn_sum = Button(root_main, width=30, height=3, text='SQL Viewer', command=func_viewer_database)
         btn_sum.grid(row=0, column=1)
 
+        btn_tx_summ = Button(root_main, width=30, height=3, text='Tx Summary', command=func_tx_sum())
+        btn_tx_summ.grid(row=1, column=0)
 
         # btn_ML = Button(root_main, width=30, height=3, text='Machine Learning', command=sql_main(server_address, ID, password, database))
         # btn_ML.grid(row=1, column=0)
