@@ -6,6 +6,7 @@ from tkinter import ttk
 from functools import partial
 import configparser
 import warnings
+from tkinter import filedialog
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_validate
@@ -84,7 +85,6 @@ def func_show_table(selected_DBtable, df, extra):
 
 def func_create_data():
     try:
-        from tkinter import filedialog
         filename = filedialog.askopenfilename(initialdir='.txt')
         df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
         ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
@@ -762,7 +762,22 @@ def func_measset_gen():
 
 def func_tx_sum():
     try:
-        print("see")
+        filename = filedialog.askopenfilename(initialdir='.txt')
+        df_UE_Tx_sum = pd.read_csv(filename, sep='\t', encoding='cp949')
+        ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
+        df_first = df_UE_Tx_sum.iloc[:, [2, 4, 5, 6, 7, 8, 9, 10]]
+
+        df = df_first.drop_duplicates()
+        df_D_mode = df.loc[(df['BeamStyleIndex'] == 10) & (df['ProbeNumTxCycles'] == 4)]
+        df_Others_mode = df.loc[df['BeamStyleIndex'] != 10]
+
+        df_D_mode = df_D_mode.drop_duplicates(['Mode', 'BeamStyleIndex', 'TxFreqIndex', 'TxFrequency', 'ProbeNumElevAper', 'TxpgWaveformStyle', 'TxChannelModulationEn'])
+        df_Others_mode = df_Others_mode.drop_duplicates()
+        df_final_mode = pd.concat([df_Others_mode, df_D_mode])  ## 2개 데이터프레임 합치기
+        df_final_mode = df_final_mode.reset_index(drop=True)  ## 데이터프레임 index reset
+
+        func_show_table('Tx_summary', df_final_mode, extra=NONE)
+
     except:
         print("Error: Tx_Summary")
 
@@ -800,8 +815,8 @@ def func_main():
         btn_sum = Button(root_main, width=30, height=3, text='SQL Viewer', command=func_viewer_database)
         btn_sum.grid(row=0, column=1)
 
-        btn_tx_summ = Button(root_main, width=30, height=3, text='Tx Summary', command=func_tx_sum())
-        btn_tx_summ.grid(row=1, column=0)
+        btn_tx_sum = Button(root_main, width=30, height=3, text='Tx Summary', command=func_tx_sum)
+        btn_tx_sum.grid(row=1, column=0)
 
         # btn_ML = Button(root_main, width=30, height=3, text='Machine Learning', command=sql_main(server_address, ID, password, database))
         # btn_ML.grid(row=1, column=0)
