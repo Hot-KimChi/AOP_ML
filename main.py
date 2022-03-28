@@ -161,6 +161,27 @@ def func_create_data():
             df_C_mode_update = df_C_mode.copy()
             df_C_mode_update['bsIndexTrace'] = 10
 
+            # [txFrequencyHz]
+            #       ,[focusRangeCm]
+            #       ,[maxTxVoltageVolt]
+            #       ,[ceilTxVoltageVolt]
+            #       ,[profTxVoltageVolt]
+            #       ,[totalVoltagePt]
+            #       ,[numMeasVoltage]
+            #       ,[numTxElements]
+            #       ,[txpgWaveformStyle]
+            #       ,[numTxCycles]
+            #       ,[elevAperIndex]
+            #       ,[zStartDistCm]
+            #       ,[zMeasNum]
+            #       ,[IsTxAperModulationEn]
+            #       ,[dumpSwVersion]
+            #       ,[DTxFreqIndex]
+            #       ,[VTxIndex]
+            #       ,[IsCPAEn]
+            #       ,[TxPulseRleA]
+            #       ,[SysPulserSelA]
+            #       ,[CpaDelayOffsetClkA]
             df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
             print(df_merge)
             same_cond = 1
