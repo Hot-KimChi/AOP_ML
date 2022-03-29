@@ -26,21 +26,38 @@ def func_show_table(selected_DBtable, df, extra):
     n_root.title(f"{database}  //  {selected_DBtable}")
     n_root.geometry("1000x800")
 
-    frame1 = Frame(n_root, relief="solid", bd=2)
-    frame1.pack(side="top", fill="both", expand=True, pady=10)
+    # Add some style
+    style = ttk.Style()
+    # Pick a theme
+    style.theme_use("default")
+    # Configure our treeview colors
 
-    my_tree = ttk.Treeview(frame1, selectmode="extended")
-    my_tree.pack(pady=10)
+    style.configure("Treeview",
+                    background="#D3D3D3",
+                    foreground="black",
+                    rowheight=25,
+                    fieldbackground="#D3D3D3"
+                    )
+    # Change selected color
+    style.map('Treeview',
+              background=[('selected', 'black')])
+
+    # Create Treeview Frame
+    frame1 = Frame(n_root)
+    frame1.pack(pady=20)
 
 
-    # scrollbars
-    vsb = Scrollbar(frame1, orient="vertical", command=my_tree.yview)
-    # vsb.place(relx=0.978, rely=0.175, relheight=0.713, relwidth=0.020)
-    vsb.pack(side=RIGHT, fill=Y)
-    hsb = Scrollbar(frame1, orient="horizontal", command=my_tree.xview)
-    # hsb.place(relx=0.014, rely=0.875, relheight=0.020, relwidth=0.20)
-    hsb.pack(side=BOTTOM, fill=X)
-    my_tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+    tree_scroll_y = Scrollbar(frame1, orient="vertical")
+    tree_scroll_y.pack(side=RIGHT, fill=Y)
+    tree_scroll_x = Scrollbar(frame1, orient="horizontal")
+    tree_scroll_x.pack(side=BOTTOM, fill=X)
+
+    my_tree = ttk.Treeview(frame1, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
+    # Pack to the screen
+    my_tree.pack()
+
+    tree_scroll_y.config(command=my_tree.yview)
+    tree_scroll_x.config(command=my_tree.xview)
 
 
     my_tree["column"] = list(df.columns)
@@ -51,10 +68,20 @@ def func_show_table(selected_DBtable, df, extra):
         my_tree.column(column, width=100, minwidth=100)
         my_tree.heading(column, text=column)
 
+    my_tree.tag_configure('oddrow', background="lightblue")
+    my_tree.tag_configure('evenrow', background="white")
+
     # Put data in treeview
     df_rows = df.to_numpy().tolist()
+
+    global count
+    count = 0
     for row in df_rows:
-        my_tree.insert("", "end", values=row)
+        if count % 2 == 0:
+            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
+        else:
+            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
+        count += 1
 
 
     if extra != NONE:
@@ -785,7 +812,7 @@ def func_tx_sum():
     try:
         filename = filedialog.askopenfilename(initialdir='.txt')
         df_UE_Tx_sum = pd.read_csv(filename, sep='\t', encoding='cp949')
-        ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
+        ## mode, BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
         df_first = df_UE_Tx_sum.iloc[:, [2, 4, 5, 6, 7, 8, 9, 10]]
 
         df = df_first.drop_duplicates()
@@ -794,10 +821,14 @@ def func_tx_sum():
 
         df_D_mode = df_D_mode.drop_duplicates(['Mode', 'BeamStyleIndex', 'TxFreqIndex', 'TxFrequency', 'ProbeNumElevAper', 'TxpgWaveformStyle', 'TxChannelModulationEn'])
         df_Others_mode = df_Others_mode.drop_duplicates()
-        df_final_mode = pd.concat([df_Others_mode, df_D_mode])  ## 2개 데이터프레임 합치기
-        df_final_mode = df_final_mode.reset_index(drop=True)  ## 데이터프레임 index reset
+        df_final_mode = pd.concat([df_Others_mode, df_D_mode])                                                          ## 2개 데이터프레임 합치기
+        df_final_mode = df_final_mode.reset_index(drop=True)                                                            ## 데이터프레임 index reset
+        df_final_mode = df_final_mode.sort_values(
+            by=[df_final_mode.columns[0], df_final_mode.columns[1], df_final_mode.columns[2], df_final_mode.columns[4],
+                df_final_mode.columns[6]], ascending=True)
 
         func_show_table('Tx_summary', df_final_mode, extra=NONE)
+
 
     except:
         print("Error: Tx_Summary")
