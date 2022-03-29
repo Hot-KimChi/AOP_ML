@@ -209,6 +209,7 @@ def func_create_data():
             #       ,[TxPulseRleA]
             #       ,[SysPulserSelA]
             #       ,[CpaDelayOffsetClkA]
+
             df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
             print(df_merge)
             same_cond = 1
