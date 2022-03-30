@@ -52,7 +52,7 @@ def func_show_table(selected_DBtable, df, extra):
     tree_scroll_x = Scrollbar(frame1, orient="horizontal")
     tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-    my_tree = ttk.Treeview(frame1, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
+    my_tree = ttk.Treeview(frame1, height=50, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
     # Pack to the screen
     my_tree.pack()
 
@@ -188,28 +188,6 @@ def func_create_data():
             df_C_mode_update = df_C_mode.copy()
             df_C_mode_update['bsIndexTrace'] = 10
 
-            # [txFrequencyHz]
-            #       ,[focusRangeCm]
-            #       ,[maxTxVoltageVolt]
-            #       ,[ceilTxVoltageVolt]
-            #       ,[profTxVoltageVolt]
-            #       ,[totalVoltagePt]
-            #       ,[numMeasVoltage]
-            #       ,[numTxElements]
-            #       ,[txpgWaveformStyle]
-            #       ,[numTxCycles]
-            #       ,[elevAperIndex]
-            #       ,[zStartDistCm]
-            #       ,[zMeasNum]
-            #       ,[IsTxAperModulationEn]
-            #       ,[dumpSwVersion]
-            #       ,[DTxFreqIndex]
-            #       ,[VTxIndex]
-            #       ,[IsCPAEn]
-            #       ,[TxPulseRleA]
-            #       ,[SysPulserSelA]
-            #       ,[CpaDelayOffsetClkA]
-
             df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
             print(df_merge)
             same_cond = 1
@@ -244,13 +222,30 @@ def func_create_data():
             df_D_mode_update['bsIndexTrace'] = 0
 
             df_merge = pd.concat([df_B_mode, df_C_mode, df_D_mode, df_M_mode])
+            # probeId,
+            # [txFrequencyHz]
+            #       ,[maxTxVoltageVolt]
+            #       ,[ceilTxVoltageVolt]
+            #       ,[profTxVoltageVolt]
+            #       ,[totalVoltagePt]
+            #       ,[numMeasVoltage]
+            #       ,[zStartDistCm]
+            #       ,[zMeasNum]
+            #       ,[dumpSwVersion]
+            #       ,[DTxFreqIndex]
+            #       ,[VTxIndex]
+            #       ,[IsCPAEn]
+            #       ,[TxPulseRleA]
+            #       ,[SysPulserSelA]
+            #       ,[CpaDelayOffsetClkA]
+
             print(df_merge)
 
             same_cond = 4
 
         print(same_cond)
-        # probeId,
-        #
+
+
         # maxTxVoltageVolt
         # ceilTxVoltageVolt
         # profTxVoltageVolt
