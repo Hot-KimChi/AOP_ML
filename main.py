@@ -59,7 +59,6 @@ def func_show_table(selected_DBtable, df, extra):
     tree_scroll_y.config(command=my_tree.yview)
     tree_scroll_x.config(command=my_tree.xview)
 
-
     my_tree["column"] = list(df.columns)
     my_tree["show"] = "headings"
 
