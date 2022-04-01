@@ -21,7 +21,7 @@ pd.set_option('display.max_colwidth', None)
 # warnings.simplefilter(action='ignore', category=FutureWarning)
 
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
-def func_show_table(selected_DBtable, df, extra):
+def func_show_table(selected_DBtable, df, extra=None):
     n_root = Tk()
     n_root.title(f"{database}  //  {selected_DBtable}")
     n_root.geometry("1000x800")
@@ -85,8 +85,8 @@ def func_show_table(selected_DBtable, df, extra):
         count += 1
 
 
-    if extra != NONE:
-        print('1')
+    # if extra != None:
+    if (extra is not None):
         frame2 = Frame(n_root, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True, pady=10)
 
@@ -106,8 +106,8 @@ def func_show_table(selected_DBtable, df, extra):
             my_tree_extra.insert("", "end", values=row)
 
         my_tree_extra.pack()
-    else:
-        NONE
+    # else:
+    #     NONE
     # n_root.mainloop()
     return ()
 
@@ -146,7 +146,7 @@ def func_create_data():
         df_dic = df_grp.groups                                                                                          ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
         idx = [x[0] for x in df_dic.values() if len(x) == 1]
 
-        func_show_table(selected_DBtable='Summary: B & M', df=select_data, extra=NONE) #if len(idx) > 0 else NONE)
+        func_show_table(selected_DBtable='Summary: B & M', df=select_data, extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
 
         BM_Not_same_cnt = len(df.reindex(idx))
         print('B&M not same Count:', BM_Not_same_cnt)
@@ -175,7 +175,7 @@ def func_create_data():
         idx = [x[0] for x in df_dic.values() if len(x) == 1]
 
         ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
-        func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=NONE) #if len(idx) > 0 else NONE)
+        func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
 
         CD_Not_same_cnt = len(df.reindex(idx))
         print('C&D not same Count:', CD_Not_same_cnt)
@@ -226,7 +226,7 @@ def func_create_data():
             same_cond = 4
 
 
-        # df_merge = df_merge['probeId'] = [selected_probeId]
+        df_merge['probeId'] = selected_probeId
 
         print(same_cond)
 
@@ -263,9 +263,9 @@ def func_create_data():
         # VTxIndex
         # SysPulserSelA
 
-        func_show_table(selected_DBtable='meas_setting', df=df_merge, extra=NONE)
+        func_show_table(selected_DBtable='meas_setting', df=df_merge)
 
-        return(df_merge)
+        return df_merge
 
     except:
         print("Error: func_create_data")
@@ -441,7 +441,7 @@ def func_machine_learning(selected_ML, data, target):
         print('good:', good)
 
         ## failed condition show-up
-        func_show_table("failed_condition", df=failed_condition if len(failed_condition.index) > 0 else NONE, extra=NONE)
+        func_show_table("failed_condition", df=failed_condition if len(failed_condition.index) > 0 else None)
 
         # df_measset = func_create_data()
 
@@ -674,7 +674,7 @@ def func_viewer_database():
                     combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
                     combo_probesn.place(x=115, y=25)
                 else:
-                    NONE
+                    None
 
             except():
                 print("Error: func_1st_load")
@@ -688,7 +688,7 @@ def func_viewer_database():
                 selected_DBtable = combo_DBtable.get()
 
                 df = func_sql_get(server_address, ID, password, database, 2)
-                func_show_table(selected_DBtable, df, extra=NONE)
+                func_show_table(selected_DBtable, df=df)
 
             except():
                 print("Error: func_selected_infor")
@@ -730,6 +730,9 @@ def func_measset_gen():
     try:
         def func_preprocessML():
             try:
+                global selected_probeId
+                selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
+
                 conn = pymssql.connect(server_address, ID, password, database)
 
                 query = f'''
@@ -828,7 +831,7 @@ def func_tx_sum():
             by=[df_final_mode.columns[0], df_final_mode.columns[1], df_final_mode.columns[2], df_final_mode.columns[4],
                 df_final_mode.columns[6]], ascending=True)
 
-        func_show_table('Tx_summary', df_final_mode, extra=NONE)
+        func_show_table('Tx_summary', df_final_mode)
 
 
     except:
