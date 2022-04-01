@@ -39,7 +39,7 @@ def func_show_table(selected_DBtable, df, extra):
                     fieldbackground="#D3D3D3"
                     )
     # Change selected color
-    style.map('Treeview',
+    style.map("Treeview",
               background=[('selected', 'black')])
 
     # Create Treeview Frame
@@ -52,7 +52,7 @@ def func_show_table(selected_DBtable, df, extra):
     tree_scroll_x = Scrollbar(frame1, orient="horizontal")
     tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-    my_tree = ttk.Treeview(frame1, height=50, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
+    my_tree = ttk.Treeview(frame1, style="Treeview", height=20, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
     # Pack to the screen
     my_tree.pack()
 
@@ -71,7 +71,9 @@ def func_show_table(selected_DBtable, df, extra):
     my_tree.tag_configure('evenrow', background="white")
 
     # Put data in treeview
-    df_rows = df.to_numpy().tolist()
+    df_rows = df.round(3)
+    df_rows = df_rows.to_numpy().tolist()
+
 
     global count
     count = 0
@@ -84,6 +86,7 @@ def func_show_table(selected_DBtable, df, extra):
 
 
     if extra != NONE:
+        print('1')
         frame2 = Frame(n_root, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True, pady=10)
 
@@ -142,9 +145,8 @@ def func_create_data():
         df_grp = df.groupby(col)
         df_dic = df_grp.groups                                                                                          ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
         idx = [x[0] for x in df_dic.values() if len(x) == 1]
-        print(len(df.reindex(idx)))
-        func_show_table(selected_DBtable='Summary: B & M', df=select_data,
-                        extra=NONE if len(df.reindex(idx)) == 0 else df.reindex(idx))
+
+        func_show_table(selected_DBtable='Summary: B & M', df=select_data, extra=NONE) #if len(idx) > 0 else NONE)
 
         BM_Not_same_cnt = len(df.reindex(idx))
         print('B&M not same Count:', BM_Not_same_cnt)
@@ -173,8 +175,7 @@ def func_create_data():
         idx = [x[0] for x in df_dic.values() if len(x) == 1]
 
         ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
-        func_show_table(selected_DBtable='Summary: C & D', df=select_data,
-                        extra=NONE)  # if len(df.reindex(idx)) == 0 else df.reindex(idx))
+        func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=NONE) #if len(idx) > 0 else NONE)
 
         CD_Not_same_cnt = len(df.reindex(idx))
         print('C&D not same Count:', CD_Not_same_cnt)
@@ -188,7 +189,7 @@ def func_create_data():
             df_C_mode_update['bsIndexTrace'] = 10
 
             df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
-            print(df_merge)
+
             same_cond = 1
 
         elif BM_Not_same_cnt == 0 and CD_Not_same_cnt > 0:
@@ -198,7 +199,7 @@ def func_create_data():
             df_D_mode_update['bsIndexTrace'] = 0
 
             df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update])
-            print(df_merge)
+
 
             same_cond = 2
 
@@ -208,8 +209,8 @@ def func_create_data():
             df_M_mode_update['bsIndexTrace'] = 0
             df_C_mode_update['bsIndexTrace'] = 10
 
-            df_merge = pd.concat([df_B_mode, df_C_mode, df_M_mode])
-            print(df_merge)
+            df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_M_mode_update])
+
 
             same_cond = 3
 
@@ -220,8 +221,15 @@ def func_create_data():
             df_C_mode_update['bsIndexTrace'] = 0
             df_D_mode_update['bsIndexTrace'] = 0
 
-            df_merge = pd.concat([df_B_mode, df_C_mode, df_D_mode, df_M_mode])
-            # probeId,
+            df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update, df_M_mode_update])
+
+            same_cond = 4
+
+
+        # df_merge = df_merge['probeId'] = [selected_probeId]
+
+        print(same_cond)
+
             # [txFrequencyHz]
             #       ,[maxTxVoltageVolt]
             #       ,[ceilTxVoltageVolt]
@@ -238,11 +246,8 @@ def func_create_data():
             #       ,[SysPulserSelA]
             #       ,[CpaDelayOffsetClkA]
 
-            print(df_merge)
 
-            same_cond = 4
 
-        print(same_cond)
 
 
         # maxTxVoltageVolt
@@ -386,12 +391,14 @@ def func_machine_learning(selected_ML, data, target):
             plt.ylabel('R^2')
             plt.show()
 
+
         mae = mean_absolute_error(test_target, prediction)
         print('|(타깃 - 예측값)|:', mae)
 
 
         Diff = np.round_(prediction - test_target, 2)
         Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
+
 
         bad = 0
         good = 0
@@ -434,9 +441,9 @@ def func_machine_learning(selected_ML, data, target):
         print('good:', good)
 
         ## failed condition show-up
-        func_show_table("failed_condition", df=failed_condition if len(failed_condition) > 0 else NONE, extra=NONE)
+        func_show_table("failed_condition", df=failed_condition if len(failed_condition.index) > 0 else NONE, extra=NONE)
 
-        df_measset = func_create_data()
+        # df_measset = func_create_data()
 
         ## predict
 
@@ -768,12 +775,11 @@ def func_measset_gen():
                                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
                 target = AOP_data['zt'].to_numpy()
 
+                df_measset = func_create_data()
                 func_machine_learning(combo_ML.get(), data, target)
 
             except:
                 print("Error: func_preprocessML")
-
-
 
 
         root_gen = Tk()
