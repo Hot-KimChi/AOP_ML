@@ -106,6 +106,7 @@ def func_show_table(selected_DBtable, df, extra=None):
             my_tree_extra.insert("", "end", values=row)
 
         my_tree_extra.pack()
+
     # else:
     #     NONE
     # n_root.mainloop()
