@@ -21,7 +21,7 @@ pd.set_option('display.max_colwidth', None)
 # warnings.simplefilter(action='ignore', category=FutureWarning)
 
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
-def func_show_table(selected_DBtable, df, extra=None):
+def func_show_table(selected_DBtable, df=None, extra=None):
     n_root = Tk()
     n_root.title(f"{database}  //  {selected_DBtable}")
     n_root.geometry("1000x800")
@@ -85,7 +85,6 @@ def func_show_table(selected_DBtable, df, extra=None):
         count += 1
 
 
-    # if extra != None:
     if (extra is not None):
         frame2 = Frame(n_root, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True, pady=10)
@@ -107,10 +106,7 @@ def func_show_table(selected_DBtable, df, extra=None):
 
         my_tree_extra.pack()
 
-    # else:
-    #     NONE
     # n_root.mainloop()
-    return ()
 
 
 def func_create_data():
@@ -232,11 +228,7 @@ def func_create_data():
         print(same_cond)
 
             # [txFrequencyHz]
-            #       ,[maxTxVoltageVolt]
-            #       ,[ceilTxVoltageVolt]
-            #       ,[profTxVoltageVolt]
-            #       ,[totalVoltagePt]
-            #       ,[numMeasVoltage]
+
             #       ,[zStartDistCm]
             #       ,[zMeasNum]
             #       ,[dumpSwVersion]
@@ -247,15 +239,6 @@ def func_create_data():
             #       ,[SysPulserSelA]
             #       ,[CpaDelayOffsetClkA]
 
-
-
-
-
-        # maxTxVoltageVolt
-        # ceilTxVoltageVolt
-        # profTxVoltageVolt
-        # totalVoltagePt
-        # numMeasVoltage
         # elevAperIndex
         # zStartDistCm = 0.5
         # zMeasNum
@@ -436,13 +419,13 @@ def func_machine_learning(selected_ML, data, target):
             else:
                 good = good + 1
 
-        print(df_sort_values)
+
         print()
         print('bad:', bad)
         print('good:', good)
 
         ## failed condition show-up
-        func_show_table("failed_condition", df=failed_condition if len(failed_condition.index) > 0 else None)
+        func_show_table("failed_condition", df=df_sort_values if len(df_sort_values.index) > 0 else None, extra=failed_condition if len(failed_condition.index) > 0 else None)
 
         # df_measset = func_create_data()
 
@@ -662,8 +645,8 @@ def func_viewer_database():
                 df = func_sql_get(server_address, ID, password, database, 0)
 
                 if selected_DBtable == 'SSR_table':
-                    measSSId = str(df['measSSId'].unique())[1:-1]
-                    probeSN = str(df['probeSn'].unique())[1:-1]
+                    measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
+                    probeSN = str(df['probeSn'].sort_values().unique())[1:-1]
 
                     label_SSId = Label(frame2, text='SSId')
                     label_SSId.place(x=5, y=5)
@@ -806,6 +789,12 @@ def func_measset_gen():
 
         btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_preprocessML)
         btn_load.place(x=460, y=5)
+
+        #       ,[maxTxVoltageVolt]
+        #       ,[ceilTxVoltageVolt]
+        #       ,[profTxVoltageVolt]
+        #       ,[totalVoltagePt]
+        #       ,[numMeasVoltage]
 
         root_gen.mainloop()
 
