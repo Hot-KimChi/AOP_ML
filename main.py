@@ -109,337 +109,6 @@ def func_show_table(selected_DBtable, df=None, extra=None):
     # n_root.mainloop()
 
 
-def func_create_data():
-    try:
-        filename = filedialog.askopenfilename(initialdir='.txt')
-        df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
-        ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
-        df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]]
-
-        ########################
-        ## B & M mode process ##
-        # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
-        df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
-        # B_num = df_sort_B['TxFocusLocCm'].nunique()
-        # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
-        df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
-
-        df = pd.concat([df_B_mode, df_M_mode])                                                                          ## 2개 데이터프레임 합치기
-        df = df.reset_index(drop=True)                                                                                  ## 데이터프레임 index reset
-        df = df.drop_duplicates()                                                                                       ## 중복된 데이터 삭제.
-
-        refer_data = df.groupby(
-            by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle', 'ProbeNumTxCycles'],
-            as_index=False).count()
-        select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
-        select_data = select_data.sort_values(
-            by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
-                select_data.columns[0]], ascending=True)
-
-        ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
-        col = list(df.columns)[1:10]
-        ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
-        df_grp = df.groupby(col)
-        df_dic = df_grp.groups                                                                                          ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
-        idx = [x[0] for x in df_dic.values() if len(x) == 1]
-
-        func_show_table(selected_DBtable='Summary: B & M', df=select_data, extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
-
-        BM_Not_same_cnt = len(df.reindex(idx))
-        print('B&M not same Count:', BM_Not_same_cnt)
-
-        ########################
-        ## C & D mode process ##
-        df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
-        df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
-
-        df = pd.concat([df_C_mode, df_D_mode])
-        df = df.reset_index(drop=True)
-        df = df.drop_duplicates()
-
-        refer_data = df.groupby(
-            by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle', 'ProbeNumTxCycles'],
-            as_index=False).count()
-        select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
-
-        select_data = select_data.sort_values(
-            by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
-                select_data.columns[0]], ascending=True)
-
-        col = list(df.columns)[1:11]
-        df_grp = df.groupby(col)
-        df_dic = df_grp.groups
-        idx = [x[0] for x in df_dic.values() if len(x) == 1]
-
-        ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
-        func_show_table(selected_DBtable='Summary: C & D', df=select_data, extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
-
-        CD_Not_same_cnt = len(df.reindex(idx))
-        print('C&D not same Count:', CD_Not_same_cnt)
-
-        if BM_Not_same_cnt == 0 and CD_Not_same_cnt == 0:
-
-            # SettingWithCopyWarning 해결 / 복사본만 수정할 것인지 혹은 원본도 수정할 것인지 알 수 없어 경고
-            df_B_mode_update = df_B_mode.copy()
-            df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
-            df_C_mode_update = df_C_mode.copy()
-            df_C_mode_update['bsIndexTrace'] = 10
-
-            df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
-
-            same_cond = 1
-
-        elif BM_Not_same_cnt == 0 and CD_Not_same_cnt > 0:
-            df_B_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
-            df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
-            df_C_mode_update['bsIndexTrace'] = 0
-            df_D_mode_update['bsIndexTrace'] = 0
-
-            df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update])
-
-
-            same_cond = 2
-
-        elif BM_Not_same_cnt > 0 and CD_Not_same_cnt == 0:
-            df_B_mode_update, df_M_mode_update, df_C_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy()
-            df_B_mode_update['bsIndexTrace'] = 0
-            df_M_mode_update['bsIndexTrace'] = 0
-            df_C_mode_update['bsIndexTrace'] = 10
-
-            df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_M_mode_update])
-
-
-            same_cond = 3
-
-        else:
-            df_B_mode_update, df_M_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
-            df_B_mode_update['bsIndexTrace'] = 0
-            df_M_mode_update['bsIndexTrace'] = 0
-            df_C_mode_update['bsIndexTrace'] = 0
-            df_D_mode_update['bsIndexTrace'] = 0
-
-            df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update, df_M_mode_update])
-
-            same_cond = 4
-
-
-        df_merge['probeId'] = selected_probeId
-
-        print(same_cond)
-
-            # [txFrequencyHz]
-
-            #       ,[zStartDistCm]
-            #       ,[zMeasNum]
-            #       ,[dumpSwVersion]
-            #       ,[DTxFreqIndex]
-            #       ,[VTxIndex]
-            #       ,[IsCPAEn]
-            #       ,[TxPulseRleA]
-            #       ,[SysPulserSelA]
-            #       ,[CpaDelayOffsetClkA]
-
-        # elevAperIndex
-        # zStartDistCm = 0.5
-        # zMeasNum
-        # dumpSwVersion
-        # DTxFreqIndex
-        # VTxIndex
-        # SysPulserSelA
-
-        func_show_table(selected_DBtable='meas_setting', df=df_merge)
-
-        return df_merge
-
-    except:
-        print("Error: func_create_data")
-
-
-def func_machine_learning(selected_ML, data, target):
-    try:
-
-        train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
-
-        ## Random Forest 훈련하기.
-        if selected_ML == 'RandomForestRegressor':
-
-            from sklearn.ensemble import RandomForestRegressor
-            rf = RandomForestRegressor(n_jobs=-1)
-            scores = cross_validate(rf, train_input, train_target, return_train_score=True, n_jobs=-1)
-            print()
-            print(scores)
-            print('Random Forest - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-            print('Random Forest - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-            rf.fit(train_input, train_target)
-            print('Random Forest - Test R^2:', np.round_(rf.score(test_input, test_target), 3))
-            prediction = np.round_(rf.predict(test_input), 2)
-
-
-        ## LinearRegression 훈련하기.
-        elif selected_ML == 'LinearRegression':
-
-            ## PolynomialFeatures 훈련.
-            from sklearn.preprocessing import PolynomialFeatures
-            poly = PolynomialFeatures(degree=5, include_bias=False)
-            poly.fit(train_input)
-            train_poly = poly.transform(train_input)
-            test_poly = poly.transform(test_input)
-            print(train_poly.shape)
-
-            from sklearn.linear_model import LinearRegression
-            lr = LinearRegression()
-            scores = cross_validate(lr, train_poly, train_target, return_train_score=True, n_jobs=-1)
-            print()
-            print(scores)
-            print('선형회귀 & polynomialFeatures - Train R^2 :', np.round_(np.mean(scores['train_score']), 3))
-            print('선형회귀 & polynomialFeatures - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-            lr.fit(train_poly, train_target)
-            print('선형회귀 & polynomialFeatures - Test R^2:', np.round_(lr.score(test_poly, test_target), 3))
-            prediction = np.round_(lr.predict(test_poly), 2)
-
-
-        ## StandardScaler 적용 with linear regression
-        elif selected_ML == ' StandardScaler with linear regression':
-
-            from sklearn.preprocessing import PolynomialFeatures
-            poly = PolynomialFeatures(degree=5, include_bias=False)
-            poly.fit(train_input)
-            train_poly = poly.transform(train_input)
-            test_poly = poly.transform(test_input)
-
-            from sklearn.preprocessing import StandardScaler
-            ss = StandardScaler()
-            ss.fit(train_poly)
-            train_scaled = ss.transform(train_poly)
-            test_scaled = ss.transform(test_poly)
-
-            from sklearn.linear_model import LinearRegression
-            lr = LinearRegression()
-            scores = cross_validate(lr, train_scaled, train_target, return_train_score=True, n_jobs=-1)
-            print()
-            print(scores)
-            print('선형회귀 & poly & scaling - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-            print('선형회귀 & poly & scaling - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-            lr.fit(train_scaled, train_target)
-            print('선형회귀 & poly & scaling - Test R^2:', np.round_(lr.score(test_scaled, test_target), 3))
-            prediction = np.round_(lr.predict(test_scaled), 2)
-
-
-        ## Ridge regularization(L2 regularization)
-        elif selected_ML == ' Ridge regularization(L2 regularization)':
-
-            from sklearn.preprocessing import PolynomialFeatures
-            poly = PolynomialFeatures(degree=5, include_bias=False)
-            poly.fit(train_input)
-            train_poly = poly.transform(train_input)
-            test_poly = poly.transform(test_input)
-
-            from sklearn.preprocessing import StandardScaler
-            ss = StandardScaler()
-            ss.fit(train_poly)
-            train_scaled = ss.transform(train_poly)
-            test_scaled = ss.transform(test_poly)
-
-            from sklearn.linear_model import Ridge
-            ridge = Ridge(alpha=100)
-            scores = cross_validate(ridge, train_scaled, train_target, return_train_score=True, n_jobs=-1)
-            print()
-            print(scores)
-            print('릿지 회귀 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-            print('릿지 회귀 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-            ridge.fit(train_scaled, train_target)
-            print('릿지 회귀 - Test R^2:', np.round_(ridge.score(test_scaled, test_target), 3))
-            prediction = ridge.predict(test_scaled)
-
-            ## L2 하이퍼파라미터 찾기
-            import matplotlib.pyplot as plt
-            train_score = []
-            test_score = []
-
-            alpha_list = [0.001, 0.01, 0.1, 1, 10, 100]
-            for alpha in alpha_list:
-                # 릿지모델 생성 & 훈련
-                ridge = Ridge(alpha=alpha)
-                ridge.fit(train_scaled, train_target)
-                # 훈련점수 & 테스트점수
-                train_score.append(ridge.score(train_scaled, train_target))
-                test_score.append(ridge.score(test_scaled, test_target))
-
-            plt.plot(np.log10(alpha_list), train_score)
-            plt.plot(np.log10(alpha_list), test_score)
-            plt.xlabel('alpha')
-            plt.ylabel('R^2')
-            plt.show()
-
-
-        mae = mean_absolute_error(test_target, prediction)
-        print('|(타깃 - 예측값)|:', mae)
-
-
-        Diff = np.round_(prediction - test_target, 2)
-        Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
-
-
-        bad = 0
-        good = 0
-        print()
-        df = pd.DataFrame(columns=['index', 'target', 'expect', 'Diff', 'Diff(%)'])
-        failed_condition = pd.DataFrame(
-            columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
-                     'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                     'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
-
-        for i in range(len(Diff)):
-            if Diff[i] > abs(2):
-                bad = bad + 1
-                df = df.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
-                                            columns=['index', 'target', 'expect', 'Diff', 'Diff(%)']),
-                               ignore_index=True)
-                df_sort_values = df.sort_values(by=df.columns[3], ascending=True)
-                df_sort_values = df_sort_values.reset_index(drop=True)
-
-                failed_condition = failed_condition.append(pd.DataFrame([test_input[i]],
-                                                                        columns=['txFrequencyHz',
-                                                                                 'focusRangeCm',
-                                                                                 'numTxElements',
-                                                                                 'txpgWaveformStyle',
-                                                                                 'numTxCycles',
-                                                                                 'elevAperIndex',
-                                                                                 'IsTxAperModulationEn',
-                                                                                 'probePitchCm',
-                                                                                 'probeRadiusCm',
-                                                                                 'probeElevAperCm0',
-                                                                                 'probeElevFocusRangCm']),
-                                                            ignore_index=True)
-
-            else:
-                good = good + 1
-
-
-        print()
-        print('bad:', bad)
-        print('good:', good)
-
-        ## failed condition show-up
-        func_show_table("failed_condition", df=df_sort_values if len(df_sort_values.index) > 0 else None, extra=failed_condition if len(failed_condition.index) > 0 else None)
-
-        # df_measset = func_create_data()
-
-        ## predict
-
-
-
-    except():
-        print("Error: Machine_Learning")
-
-
-
-    # DB 서버 주소 # 데이터 베이스 이름 # 접속 유저명 # 접속 유저 패스워드
-
 # def sql_main(server, username, passwd, database):
 #     try:
 #         ## 데이터 SQL에서 가지고 오기.
@@ -564,6 +233,11 @@ def func_machine_learning(selected_ML, data, target):
 #     except():
 #         print("Error: SQL_main")
 
+  # DB 서버 주소 # 데이터 베이스 이름 # 접속 유저명 # 접속 유저 패스워드
+##
+
+## SQL 데이터베이스
+## SQL 데이터베이스에 접속하여 데이터 load.
 def func_sql_get(server_address, ID, password, database, command):
     try:
         conn = pymssql.connect(server_address, ID, password, database)
@@ -631,7 +305,7 @@ def func_sql_get(server_address, ID, password, database, command):
         print("Error: func_sql_get")
 
 
-## Login 버튼누를 경우, listbox에 있는 database로 접속.
+
 ## root 제목 DB 변경 --> SQL 접속
 def func_viewer_database():
     try:
@@ -698,7 +372,7 @@ def func_viewer_database():
         combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
         combo_DBtable.place(x=115, y=25)
 
-        btn_view = Button(frame1, width=15, height=2, text='Load from SQL', command=func_1st_load)
+        btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
         btn_view.place(x=290, y=5)
 
         btn_view = Button(frame2, width=15, height=2, text='View Table', command=func_selected_infor)
@@ -712,6 +386,330 @@ def func_viewer_database():
 
 def func_measset_gen():
     try:
+
+        def func_create_data():
+            try:
+                filename = filedialog.askopenfilename(initialdir='.txt')
+                df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
+                ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
+                df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]]
+
+                ########################
+                ## B & M mode process ##
+                # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
+                df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
+                # B_num = df_sort_B['TxFocusLocCm'].nunique()
+                # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
+                df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
+
+                df = pd.concat([df_B_mode, df_M_mode])  ## 2개 데이터프레임 합치기
+                df = df.reset_index(drop=True)  ## 데이터프레임 index reset
+                df = df.drop_duplicates()  ## 중복된 데이터 삭제.
+
+                refer_data = df.groupby(
+                    by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle',
+                        'ProbeNumTxCycles'],
+                    as_index=False).count()
+                select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
+                select_data = select_data.sort_values(
+                    by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                        select_data.columns[0]], ascending=True)
+
+                ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
+                col = list(df.columns)[1:10]
+                ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
+                df_grp = df.groupby(col)
+                df_dic = df_grp.groups  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
+                idx = [x[0] for x in df_dic.values() if len(x) == 1]
+
+                func_show_table(selected_DBtable='Summary: B & M', df=select_data,
+                                extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
+
+                BM_Not_same_cnt = len(df.reindex(idx))
+                print('B&M not same Count:', BM_Not_same_cnt)
+
+                ########################
+                ## C & D mode process ##
+                df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
+                df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
+
+                df = pd.concat([df_C_mode, df_D_mode])
+                df = df.reset_index(drop=True)
+                df = df.drop_duplicates()
+
+                refer_data = df.groupby(
+                    by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle',
+                        'ProbeNumTxCycles'],
+                    as_index=False).count()
+                select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
+
+                select_data = select_data.sort_values(
+                    by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                        select_data.columns[0]], ascending=True)
+
+                col = list(df.columns)[1:11]
+                df_grp = df.groupby(col)
+                df_dic = df_grp.groups
+                idx = [x[0] for x in df_dic.values() if len(x) == 1]
+
+                ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
+                func_show_table(selected_DBtable='Summary: C & D', df=select_data,
+                                extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
+
+                CD_Not_same_cnt = len(df.reindex(idx))
+                print('C&D not same Count:', CD_Not_same_cnt)
+
+                if BM_Not_same_cnt == 0 and CD_Not_same_cnt == 0:
+
+                    # SettingWithCopyWarning 해결 / 복사본만 수정할 것인지 혹은 원본도 수정할 것인지 알 수 없어 경고
+                    df_B_mode_update = df_B_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
+                    df_C_mode_update = df_C_mode.copy()
+                    df_C_mode_update['bsIndexTrace'] = 10
+
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
+
+                    same_cond = 1
+
+                elif BM_Not_same_cnt == 0 and CD_Not_same_cnt > 0:
+                    df_B_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
+                    df_C_mode_update['bsIndexTrace'] = 0
+                    df_D_mode_update['bsIndexTrace'] = 0
+
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update])
+
+                    same_cond = 2
+
+                elif BM_Not_same_cnt > 0 and CD_Not_same_cnt == 0:
+                    df_B_mode_update, df_M_mode_update, df_C_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = 0
+                    df_M_mode_update['bsIndexTrace'] = 0
+                    df_C_mode_update['bsIndexTrace'] = 10
+
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_M_mode_update])
+
+                    same_cond = 3
+
+                else:
+                    df_B_mode_update, df_M_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = 0
+                    df_M_mode_update['bsIndexTrace'] = 0
+                    df_C_mode_update['bsIndexTrace'] = 0
+                    df_D_mode_update['bsIndexTrace'] = 0
+
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update, df_M_mode_update])
+
+                    same_cond = 4
+
+                df_merge['probeId'] = selected_probeId
+
+                print(same_cond)
+
+                # [txFrequencyHz]
+
+                #       ,[zStartDistCm]
+                #       ,[zMeasNum]
+                #       ,[dumpSwVersion]
+                #       ,[DTxFreqIndex]
+                #       ,[VTxIndex]
+                #       ,[IsCPAEn]
+                #       ,[TxPulseRleA]
+                #       ,[SysPulserSelA]
+                #       ,[CpaDelayOffsetClkA]
+
+                # elevAperIndex
+                # zStartDistCm = 0.5
+                # zMeasNum
+                # dumpSwVersion
+                # DTxFreqIndex
+                # VTxIndex
+                # SysPulserSelA
+
+                func_show_table(selected_DBtable='meas_setting', df=df_merge)
+
+                return df_merge
+
+            except:
+                print("Error: func_create_data")
+
+
+        def func_machine_learning(selected_ML, data, target):
+            try:
+                train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
+
+                ## Random Forest 훈련하기.
+                if selected_ML == 'RandomForestRegressor':
+
+                    from sklearn.ensemble import RandomForestRegressor
+                    rf = RandomForestRegressor(n_jobs=-1)
+                    scores = cross_validate(rf, train_input, train_target, return_train_score=True, n_jobs=-1)
+                    print()
+                    print(scores)
+                    print('Random Forest - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                    print('Random Forest - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                    rf.fit(train_input, train_target)
+                    print('Random Forest - Test R^2:', np.round_(rf.score(test_input, test_target), 3))
+                    prediction = np.round_(rf.predict(test_input), 2)
+
+
+                ## LinearRegression 훈련하기.
+                elif selected_ML == 'LinearRegression':
+
+                    ## PolynomialFeatures 훈련.
+                    from sklearn.preprocessing import PolynomialFeatures
+                    poly = PolynomialFeatures(degree=5, include_bias=False)
+                    poly.fit(train_input)
+                    train_poly = poly.transform(train_input)
+                    test_poly = poly.transform(test_input)
+                    print(train_poly.shape)
+
+                    from sklearn.linear_model import LinearRegression
+                    lr = LinearRegression()
+                    scores = cross_validate(lr, train_poly, train_target, return_train_score=True, n_jobs=-1)
+                    print()
+                    print(scores)
+                    print('선형회귀 & polynomialFeatures - Train R^2 :', np.round_(np.mean(scores['train_score']), 3))
+                    print('선형회귀 & polynomialFeatures - Train_validation R^2:',
+                          np.round_(np.mean(scores['test_score']), 3))
+
+                    lr.fit(train_poly, train_target)
+                    print('선형회귀 & polynomialFeatures - Test R^2:', np.round_(lr.score(test_poly, test_target), 3))
+                    prediction = np.round_(lr.predict(test_poly), 2)
+
+
+                ## StandardScaler 적용 with linear regression
+                elif selected_ML == ' StandardScaler with linear regression':
+
+                    from sklearn.preprocessing import PolynomialFeatures
+                    poly = PolynomialFeatures(degree=5, include_bias=False)
+                    poly.fit(train_input)
+                    train_poly = poly.transform(train_input)
+                    test_poly = poly.transform(test_input)
+
+                    from sklearn.preprocessing import StandardScaler
+                    ss = StandardScaler()
+                    ss.fit(train_poly)
+                    train_scaled = ss.transform(train_poly)
+                    test_scaled = ss.transform(test_poly)
+
+                    from sklearn.linear_model import LinearRegression
+                    lr = LinearRegression()
+                    scores = cross_validate(lr, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+                    print()
+                    print(scores)
+                    print('선형회귀 & poly & scaling - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                    print('선형회귀 & poly & scaling - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                    lr.fit(train_scaled, train_target)
+                    print('선형회귀 & poly & scaling - Test R^2:', np.round_(lr.score(test_scaled, test_target), 3))
+                    prediction = np.round_(lr.predict(test_scaled), 2)
+
+
+                ## Ridge regularization(L2 regularization)
+                elif selected_ML == ' Ridge regularization(L2 regularization)':
+
+                    from sklearn.preprocessing import PolynomialFeatures
+                    poly = PolynomialFeatures(degree=5, include_bias=False)
+                    poly.fit(train_input)
+                    train_poly = poly.transform(train_input)
+                    test_poly = poly.transform(test_input)
+
+                    from sklearn.preprocessing import StandardScaler
+                    ss = StandardScaler()
+                    ss.fit(train_poly)
+                    train_scaled = ss.transform(train_poly)
+                    test_scaled = ss.transform(test_poly)
+
+                    from sklearn.linear_model import Ridge
+                    ridge = Ridge(alpha=100)
+                    scores = cross_validate(ridge, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+                    print()
+                    print(scores)
+                    print('릿지 회귀 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                    print('릿지 회귀 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                    ridge.fit(train_scaled, train_target)
+                    print('릿지 회귀 - Test R^2:', np.round_(ridge.score(test_scaled, test_target), 3))
+                    prediction = ridge.predict(test_scaled)
+
+                    ## L2 하이퍼파라미터 찾기
+                    import matplotlib.pyplot as plt
+                    train_score = []
+                    test_score = []
+
+                    alpha_list = [0.001, 0.01, 0.1, 1, 10, 100]
+                    for alpha in alpha_list:
+                        # 릿지모델 생성 & 훈련
+                        ridge = Ridge(alpha=alpha)
+                        ridge.fit(train_scaled, train_target)
+                        # 훈련점수 & 테스트점수
+                        train_score.append(ridge.score(train_scaled, train_target))
+                        test_score.append(ridge.score(test_scaled, test_target))
+
+                    plt.plot(np.log10(alpha_list), train_score)
+                    plt.plot(np.log10(alpha_list), test_score)
+                    plt.xlabel('alpha')
+                    plt.ylabel('R^2')
+                    plt.show()
+
+                mae = mean_absolute_error(test_target, prediction)
+                print('|(타깃 - 예측값)|:', mae)
+
+                Diff = np.round_(prediction - test_target, 2)
+                Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
+
+                bad = 0
+                good = 0
+                print()
+                df = pd.DataFrame(columns=['index', 'target', 'expect', 'Diff', 'Diff(%)'])
+                failed_condition = pd.DataFrame(
+                    columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+
+                for i in range(len(Diff)):
+                    if Diff[i] > abs(2):
+                        bad = bad + 1
+                        df = df.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
+                                                    columns=['index', 'target', 'expect', 'Diff', 'Diff(%)']),
+                                       ignore_index=True)
+                        df_sort_values = df.sort_values(by=df.columns[3], ascending=True)
+                        df_sort_values = df_sort_values.reset_index(drop=True)
+
+                        failed_condition = failed_condition.append(pd.DataFrame([test_input[i]],
+                                                                                columns=['txFrequencyHz',
+                                                                                         'focusRangeCm',
+                                                                                         'numTxElements',
+                                                                                         'txpgWaveformStyle',
+                                                                                         'numTxCycles',
+                                                                                         'elevAperIndex',
+                                                                                         'IsTxAperModulationEn',
+                                                                                         'probePitchCm',
+                                                                                         'probeRadiusCm',
+                                                                                         'probeElevAperCm0',
+                                                                                         'probeElevFocusRangCm']),
+                                                                   ignore_index=True)
+
+                    else:
+                        good = good + 1
+
+                print()
+                print('bad:', bad)
+                print('good:', good)
+
+                ## failed condition show-up
+                func_show_table("failed_condition", df=df_sort_values if len(df_sort_values.index) > 0 else None,
+                                extra=failed_condition if len(failed_condition.index) > 0 else None)
+
+                # df_measset = func_create_data()
+                ## predict
+
+            except():
+                print("Error: Machine_Learning")
+
+
         def func_preprocessML():
             try:
                 global selected_probeId
@@ -790,8 +788,14 @@ def func_measset_gen():
         btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_preprocessML)
         btn_load.place(x=460, y=5)
 
+        # label_MaxVolt =
+        #
+        # label_CeilVolt =
+        #
+        # label_ProfVolt
+
         #       ,[maxTxVoltageVolt]
-        #       ,[ceilTxVoltageVolt]
+        #       ,[c]
         #       ,[profTxVoltageVolt]
         #       ,[totalVoltagePt]
         #       ,[numMeasVoltage]
@@ -827,7 +831,7 @@ def func_tx_sum():
     except:
         print("Error: Tx_Summary")
 
-
+## Login 버튼누를 경우, listbox에 있는 database로 접속.
 def func_main():
     try:
         global database, list_probeIds, list_probe, list_probenames
