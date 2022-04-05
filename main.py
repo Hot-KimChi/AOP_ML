@@ -305,7 +305,6 @@ def func_sql_get(server_address, ID, password, database, command):
         print("Error: func_sql_get")
 
 
-
 ## root 제목 DB 변경 --> SQL 접속
 def func_viewer_database():
     try:
@@ -769,7 +768,7 @@ def func_measset_gen():
 
         root_gen = Tk()
         root_gen.title(f"{database}" + ' / MeasSet_generation')
-        root_gen.geometry("590x200")
+        root_gen.geometry("730x200")
         root_gen.resizable(False, False)
 
         frame1 = Frame(root_gen, relief="solid", bd=2)
@@ -788,17 +787,40 @@ def func_measset_gen():
         btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_preprocessML)
         btn_load.place(x=460, y=5)
 
-        # label_MaxVolt =
-        #
-        # label_CeilVolt =
-        #
-        # label_ProfVolt
+        frame2 = Frame(root_gen, relief="solid", bd=2)
+        frame2.pack(side="bottom", fill="both", expand=True)
 
-        #       ,[maxTxVoltageVolt]
-        #       ,[c]
-        #       ,[profTxVoltageVolt]
-        #       ,[totalVoltagePt]
-        #       ,[numMeasVoltage]
+        #Labels
+        label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
+        label_MaxVolt.grid(row=0, column=0)
+
+        label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
+        label_CeilVolt.grid(row=0, column=1)
+
+        label_ProfVolt = Label(frame2, text="[profTxVoltageVolt]")
+        label_ProfVolt.grid(row=0, column=2)
+
+        label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
+        label_TotalVoltpt.grid(row=0, column=3)
+
+        label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
+        label_NumMeasVolt.grid(row=0, column=4)
+
+        #Entry boxes
+        box_MaxVolt = Entry(frame2, justify='center')
+        box_MaxVolt.grid(row=1, column=0)
+
+        box_CeilVolt = Entry(frame2, justify='center')
+        box_CeilVolt.grid(row=1, column=1)
+
+        box_ProfVolt = Entry(frame2, justify='center')
+        box_ProfVolt.grid(row=1, column=2)
+
+        box_TotalVoltpt = Entry(frame2, justify='center')
+        box_TotalVoltpt.grid(row=1, column=3)
+
+        box_NumMeasVolt = Entry(frame2, justify='center')
+        box_NumMeasVolt.grid(row=1, column=4)
 
         root_gen.mainloop()
 
@@ -831,7 +853,8 @@ def func_tx_sum():
     except:
         print("Error: Tx_Summary")
 
-## Login 버튼누를 경우, listbox에 있는 database로 접속.
+
+## Login 버튼누를 경우, func_main 실행 listbox에 있는 database로 접속.
 def func_main():
     try:
         global database, list_probeIds, list_probe, list_probenames
