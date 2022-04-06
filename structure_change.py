@@ -43,21 +43,11 @@ def func_show_table(selected_DBtable, df, extra):
               background=[('selected', 'black')])
 
     # Create Treeview Frame
-    frame1 = Frame(n_root)
-    frame1.pack(pady=20)
 
-
-    tree_scroll_y = Scrollbar(frame1, orient="vertical")
-    tree_scroll_y.pack(side=RIGHT, fill=Y)
-    tree_scroll_x = Scrollbar(frame1, orient="horizontal")
-    tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-    my_tree = ttk.Treeview(frame1, style="Treeview", height=20, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
+    my_tree = ttk.Treeview(n_root, style="Treeview", height=20, selectmode="extended")
     # Pack to the screen
     my_tree.pack()
 
-    tree_scroll_y.config(command=my_tree.yview)
-    tree_scroll_x.config(command=my_tree.xview)
 
     my_tree["column"] = list(df.columns)
     my_tree["show"] = "headings"
