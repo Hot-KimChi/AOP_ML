@@ -20,6 +20,66 @@ pd.set_option('display.max_colwidth', None)
 
 # warnings.simplefilter(action='ignore', category=FutureWarning)
 
+def func_freqidx2Hz(idx):
+    try:
+        frequencyTable = [1000000,
+                          1111100,
+                          1250000,
+                          1333300,
+                          1428600,
+                          1538500,
+                          1666700,
+                          1818200,
+                          2000000,
+                          2222200,
+                          2500000,
+                          2666700,
+                          2857100,
+                          3076900,
+                          3333300,
+                          3636400,
+                          3809500,
+                          4000000,
+                          4210500,
+                          4444400,
+                          4705900,
+                          5000000,
+                          5333300,
+                          5714300,
+                          6153800,
+                          6666700,
+                          7272700,
+                          8000000,
+                          8888900,
+                          10000000,
+                          11428600,
+                          13333333,
+                          16000000,
+                          20000000,
+                          26666667,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600,
+                          11428600]
+        FreqIndex = idx
+        freqHz = frequencyTable[FreqIndex]
+
+        return freqHz
+
+    except:
+        print("Error: func_freqidx2Hz")
+
+
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
 def func_show_table(selected_DBtable, df=None, extra=None):
     n_root = Tk()
@@ -30,8 +90,8 @@ def func_show_table(selected_DBtable, df=None, extra=None):
     style = ttk.Style()
     # Pick a theme
     style.theme_use("default")
-    # Configure our treeview colors
 
+    # Configure our treeview colors
     style.configure("Treeview",
                     background="#D3D3D3",
                     foreground="black",
@@ -39,7 +99,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
                     fieldbackground="#D3D3D3"
                     )
     # Change selected color
-    style.map("Treeview",
+    style.map('Treeview',
               background=[('selected', 'black')])
 
     # Create Treeview Frame
@@ -502,28 +562,31 @@ def func_measset_gen():
                     same_cond = 4
 
                 df_merge['probeId'] = selected_probeId
+                df_merge['maxTxVoltageVolt'] = box_MaxVolt.get()
+                df_merge['ceilTxVoltageVolt'] = box_CeilVolt.get()
+                df_merge['profTxVoltageVolt'] = box_ProfVolt.get()
+                df_merge['totalVoltagePt'] = box_TotalVoltpt.get()
+                df_merge['numMeasVoltage'] = box_NumMeasVolt.get()
+                df_merge['zStartDistCm'] = 0.5
+                df_merge['DTxFreqIndex'] = 0
+                df_merge['dumpSwVersion'] = box_DumpSW.get()
+
+                # FrequencyIndex to FrequencyHz
+                n = 0
+                FrequencyHz = []
+                for i in df_merge['SysTxFreqIndex'].values:
+                    FrequencyHz.insert(n, func_freqidx2Hz(i))
+                    n += 1
+                df_merge['TxFrequencyHz'] = FrequencyHz
 
                 print(same_cond)
 
-                # [txFrequencyHz]
-
-                #       ,[zStartDistCm]
                 #       ,[zMeasNum]
-                #       ,[dumpSwVersion]
-                #       ,[DTxFreqIndex]
-                #       ,[VTxIndex]
-                #       ,[IsCPAEn]
-                #       ,[TxPulseRleA]
-                #       ,[SysPulserSelA]
-                #       ,[CpaDelayOffsetClkA]
 
                 # elevAperIndex
-                # zStartDistCm = 0.5
-                # zMeasNum
-                # dumpSwVersion
-                # DTxFreqIndex
-                # VTxIndex
-                # SysPulserSelA
+                #       ,[VTxIndex]
+                 #       ,[SysPulserSelA]
+
 
                 func_show_table(selected_DBtable='meas_setting', df=df_merge)
 
@@ -768,7 +831,7 @@ def func_measset_gen():
 
         root_gen = Tk()
         root_gen.title(f"{database}" + ' / MeasSet_generation')
-        root_gen.geometry("730x200")
+        root_gen.geometry("880x200")
         root_gen.resizable(False, False)
 
         frame1 = Frame(root_gen, relief="solid", bd=2)
@@ -791,36 +854,42 @@ def func_measset_gen():
         frame2.pack(side="bottom", fill="both", expand=True)
 
         #Labels
+        label_DumpSW = Label(frame2, text="[dumpSwVersion]")
+        label_DumpSW.grid(row=0, column=0)
+
         label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
-        label_MaxVolt.grid(row=0, column=0)
+        label_MaxVolt.grid(row=0, column=1)
 
         label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
-        label_CeilVolt.grid(row=0, column=1)
+        label_CeilVolt.grid(row=0, column=2)
 
         label_ProfVolt = Label(frame2, text="[profTxVoltageVolt]")
-        label_ProfVolt.grid(row=0, column=2)
+        label_ProfVolt.grid(row=0, column=3)
 
         label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
-        label_TotalVoltpt.grid(row=0, column=3)
+        label_TotalVoltpt.grid(row=0, column=4)
 
         label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
-        label_NumMeasVolt.grid(row=0, column=4)
+        label_NumMeasVolt.grid(row=0, column=5)
 
         #Entry boxes
+        box_DumpSW = Entry(frame2, justify='center')
+        box_DumpSW.grid(row=1, column=0)
+
         box_MaxVolt = Entry(frame2, justify='center')
-        box_MaxVolt.grid(row=1, column=0)
+        box_MaxVolt.grid(row=1, column=1)
 
         box_CeilVolt = Entry(frame2, justify='center')
-        box_CeilVolt.grid(row=1, column=1)
+        box_CeilVolt.grid(row=1, column=2)
 
         box_ProfVolt = Entry(frame2, justify='center')
-        box_ProfVolt.grid(row=1, column=2)
+        box_ProfVolt.grid(row=1, column=3)
 
         box_TotalVoltpt = Entry(frame2, justify='center')
-        box_TotalVoltpt.grid(row=1, column=3)
+        box_TotalVoltpt.grid(row=1, column=4)
 
         box_NumMeasVolt = Entry(frame2, justify='center')
-        box_NumMeasVolt.grid(row=1, column=4)
+        box_NumMeasVolt.grid(row=1, column=5)
 
         root_gen.mainloop()
 
