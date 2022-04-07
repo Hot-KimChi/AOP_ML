@@ -20,6 +20,7 @@ pd.set_option('display.max_colwidth', None)
 
 # warnings.simplefilter(action='ignore', category=FutureWarning)
 
+
 def func_freqidx2Hz(idx):
     try:
         frequencyTable = [1000000,
@@ -164,7 +165,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
         for row in df_rows:
             my_tree_extra.insert("", "end", values=row)
 
-        my_tree_extra.pack()
+        my_tree_extra.pack(pady=20)
 
     # n_root.mainloop()
 
@@ -308,7 +309,7 @@ def func_sql_get(server_address, ID, password, database, command):
         elif command == 0:
             if selected_DBtable == 'SSR_table':
                 query = f'''
-                SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%'
+                SELECT * FROM meas_station_setup WHERE probeId = {selected_probeId}
                 ORDER BY 1
                 '''
             else:
@@ -324,32 +325,38 @@ def func_sql_get(server_address, ID, password, database, command):
 
         elif command == 2:
             if selected_DBtable == 'SSR_table':
-                sel_SSId = combo_SSId.get()
-                sel_probesn = combo_probesn.get()
+                query = f'''
+                SELECT * FROM {selected_DBtable} WHERE measSSId = {measSSId}
+                ORDER BY measSSId, 1
+                '''
+            # sel_SSId = combo_SSId.get()
+                # sel_probesn = combo_probesn.get()
+                #
+                #
+                # if len(sel_SSId) > 0 and len(sel_probesn) > 0:
+                #     query = f'''
+                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId} and probeSn = {sel_probesn}
+                #     ORDER BY probeSn, measSSId, 1
+                #     '''
+                #
+                # elif len(sel_SSId) > 0 and len(sel_probesn) == 0:
+                #     query = f'''
+                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId}
+                #     ORDER BY measSSId, 1
+                #     '''
+                #
+                # elif len(sel_SSId) == 0 and len(sel_probesn) > 0:
+                #     query = f'''
+                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and probeSn = {sel_probesn}
+                #     ORDER BY probeSn, 1
+                #     '''
+                #
+                # else:
+                #     query = f'''
+                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%'
+                #     ORDER BY 1
+                #     '''
 
-                if len(sel_SSId) > 0 and len(sel_probesn) > 0:
-                    query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId} and probeSn = {sel_probesn}
-                    ORDER BY probeSn, measSSId, 1
-                    '''
-
-                elif len(sel_SSId) > 0 and len(sel_probesn) == 0:
-                    query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId}
-                    ORDER BY measSSId, 1
-                    '''
-
-                elif len(sel_SSId) == 0 and len(sel_probesn) > 0:
-                    query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and probeSn = {sel_probesn}
-                    ORDER BY probeSn, 1
-                    '''
-
-                else:
-                    query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%'
-                    ORDER BY 1
-                    '''
 
             else:
                 query = f'''
@@ -370,7 +377,7 @@ def func_viewer_database():
     try:
         def func_1st_load():
             try:
-                global selected_probeId, selected_DBtable, selected_probename, combo_SSId, combo_probesn
+                global selected_probeId, selected_DBtable, selected_probename   #, combo_SSId, combo_probesn
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 selected_probename = str(list_probenames[combo_probename.current()])
                 selected_DBtable = combo_DBtable.get()
@@ -378,20 +385,67 @@ def func_viewer_database():
                 df = func_sql_get(server_address, ID, password, database, 0)
 
                 if selected_DBtable == 'SSR_table':
-                    measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
-                    probeSN = str(df['probeSn'].sort_values().unique())[1:-1]
+                    # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
+                    # probeSN = str(df['probeSn'].sort_values().unique())[1:-1]
+                    #
+                    # label_SSId = Label(frame2, text='SSId')
+                    # label_SSId.place(x=5, y=5)
+                    # combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0) #, state='readonly')
+                    # combo_SSId.place(x=115, y=5)
+                    #
+                    # label_probesn = Label(frame2, text='probeSN')
+                    # label_probesn.place(x=5, y=25)
+                    # combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
+                    # combo_probesn.place(x=115, y=25)
 
-                    label_SSId = Label(frame2, text='SSId')
-                    label_SSId.place(x=5, y=5)
-                    combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0) #, state='readonly')
-                    combo_SSId.place(x=115, y=5)
+                    def func_click_item(event):
+                        global measSSId
+                        selectedItem = my_tree.focus()
+                        measSSId = my_tree.item(selectedItem).get('values')[0]  # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
 
-                    label_probesn = Label(frame2, text='probeSN')
-                    label_probesn.place(x=5, y=25)
-                    combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
-                    combo_probesn.place(x=115, y=25)
+
+                    tree_scroll_y = Scrollbar(frame2, orient="vertical")
+                    tree_scroll_y.pack(side=RIGHT, fill=Y)
+                    tree_scroll_x = Scrollbar(frame2, orient="horizontal")
+                    tree_scroll_x.pack(side=BOTTOM, fill=X)
+
+                    my_tree = ttk.Treeview(frame2, height=20, yscrollcommand=tree_scroll_y.set,
+                                           xscrollcommand=tree_scroll_x.set, selectmode="extended")
+                    # Pack to the screen
+                    my_tree.pack(pady=50)
+
+                    tree_scroll_y.config(command=my_tree.yview)
+                    tree_scroll_x.config(command=my_tree.xview)
+
+                    my_tree["column"] = list(df.columns)
+                    my_tree["show"] = "headings"
+
+                    # Loop thru column list for headers
+                    for column in my_tree["column"]:
+                        my_tree.column(column, width=100, minwidth=100)
+                        my_tree.heading(column, text=column)
+
+                    my_tree.tag_configure('oddrow', background="lightblue")
+                    my_tree.tag_configure('evenrow', background="white")
+
+                    # Put data in treeview
+                    df_rows = df.round(3)
+                    df_rows = df_rows.to_numpy().tolist()
+
+                    global count
+                    count = 0
+                    for row in df_rows:
+                        if count % 2 == 0:
+                            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
+                        else:
+                            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
+                        count += 1
+
+                    my_tree.bind('<ButtonRelease-1>', func_click_item)
+
+
                 else:
-                    None
+                    func_show_table(selected_DBtable, df=df)
 
             except():
                 print("Error: func_1st_load")
@@ -413,7 +467,8 @@ def func_viewer_database():
 
         root_view = Tk()
         root_view.title(f"{database}" + ' / Viewer')
-        root_view.geometry("420x400")
+        # root_view.geometry("420x400")
+        root_view.geometry("1720x1000")
         root_view.resizable(False, False)
 
         frame1 = Frame(root_view, relief="solid", bd=2)
@@ -591,6 +646,7 @@ def func_measset_gen():
                 func_show_table(selected_DBtable='meas_setting', df=df_merge)
 
                 return df_merge
+
 
             except:
                 print("Error: func_create_data")
@@ -822,8 +878,12 @@ def func_measset_gen():
                                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
                 target = AOP_data['zt'].to_numpy()
 
+                # MeasSetting generation.
                 df_measset = func_create_data()
+
+                # Machine Learning
                 func_machine_learning(combo_ML.get(), data, target)
+
 
             except:
                 print("Error: func_preprocessML")
