@@ -85,7 +85,7 @@ def func_freqidx2Hz(idx):
 def func_show_table(selected_DBtable, df=None, extra=None):
     n_root = Tk()
     n_root.title(f"{database}  //  {selected_DBtable}")
-    n_root.geometry("1000x800")
+    n_root.geometry("1720x1000")
 
     # Add some style
     style = ttk.Style()
@@ -401,7 +401,17 @@ def func_viewer_database():
                     def func_click_item(event):
                         global measSSId
                         selectedItem = my_tree.focus()
-                        measSSId = my_tree.item(selectedItem).get('values')[0]  # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
+                        # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
+                        measSSId = my_tree.item(selectedItem).get('values')[0]
+
+
+                    btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
+                    btn_view.place(x=290, y=5)
+
+                    list_stations = df.columns.values.tolist()
+                    
+                    combo_list_station = ttk.Combobox(frame2, value=list_stations, height=0, state='readonly')
+                    combo_list_station.place(x=25, y=5)
 
 
                     tree_scroll_y = Scrollbar(frame2, orient="vertical")
@@ -409,10 +419,11 @@ def func_viewer_database():
                     tree_scroll_x = Scrollbar(frame2, orient="horizontal")
                     tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-                    my_tree = ttk.Treeview(frame2, height=20, yscrollcommand=tree_scroll_y.set,
+                    my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
                                            xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                    # Pack to the screen
                     my_tree.pack(pady=50)
+
+                    my_tree.bind('<ButtonRelease-1>', func_click_item)
 
                     tree_scroll_y.config(command=my_tree.yview)
                     tree_scroll_x.config(command=my_tree.xview)
@@ -441,9 +452,6 @@ def func_viewer_database():
                             my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
                         count += 1
 
-                    my_tree.bind('<ButtonRelease-1>', func_click_item)
-
-
                 else:
                     func_show_table(selected_DBtable, df=df)
 
@@ -451,7 +459,7 @@ def func_viewer_database():
                 print("Error: func_1st_load")
 
 
-        def func_selected_infor():
+        def func_select_view():
             try:
                 global selected_probeId, selected_DBtable, selected_probename
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
@@ -462,7 +470,7 @@ def func_viewer_database():
                 func_show_table(selected_DBtable, df=df)
 
             except():
-                print("Error: func_selected_infor")
+                print("Error: func_select_view")
 
 
         root_view = Tk()
@@ -489,8 +497,14 @@ def func_viewer_database():
         btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
         btn_view.place(x=290, y=5)
 
-        btn_view = Button(frame2, width=15, height=2, text='View Table', command=func_selected_infor)
-        btn_view.place(x=290, y=5)
+
+
+        # if combo_DBtable == 'SSR_table':
+        #     combo_list = ttk.Combobox(frame2, value=df.columns, height=0, state='readonly')
+        #     combo_list.place(x=115, y=5)
+        #     # combo_probename = ttk.Combobox(frame2, value=list_probe, height=0, state='readonly')
+        #     # combo_probename.place(x=115, y=5)
+
 
         root_view.mainloop()
 
