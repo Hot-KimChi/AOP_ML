@@ -383,6 +383,18 @@ def func_viewer_database():
                 selected_DBtable = combo_DBtable.get()
 
                 df = func_sql_get(server_address, ID, password, database, 0)
+                list_stations = df.columns.values.tolist()
+                combo_list_station = ttk.Combobox(frame1, value=list_stations, height=0, state='readonly')
+                combo_list_station.place(x=5, y=45)
+
+                def on_selected(event):
+                    selected_station = event.widget.get()
+                    sel_station = str(df[f'{selected_station}'].sort_values().unique())[1:-1]
+
+                    combo_sel_station = ttk.Combobox(frame1, value=sel_station, height=0, state='readonly')
+                    combo_sel_station.place(x=185, y=45)
+
+                combo_list_station.bind('<<ComboboxSelected>>', on_selected)
 
                 if selected_DBtable == 'SSR_table':
                     # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
@@ -398,20 +410,12 @@ def func_viewer_database():
                     # combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
                     # combo_probesn.place(x=115, y=25)
 
-                    def func_click_item(event):
-                        global measSSId
-                        selectedItem = my_tree.focus()
-                        # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
-                        measSSId = my_tree.item(selectedItem).get('values')[0]
-
 
                     btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
-                    btn_view.place(x=290, y=5)
+                    btn_view.place(x=35, y=5)
 
-                    list_stations = df.columns.values.tolist()
-                    
-                    combo_list_station = ttk.Combobox(frame2, value=list_stations, height=0, state='readonly')
-                    combo_list_station.place(x=25, y=5)
+
+
 
 
                     tree_scroll_y = Scrollbar(frame2, orient="vertical")
@@ -419,11 +423,18 @@ def func_viewer_database():
                     tree_scroll_x = Scrollbar(frame2, orient="horizontal")
                     tree_scroll_x.pack(side=BOTTOM, fill=X)
 
+                    def func_click_item(event):
+                        global measSSId
+                        selectedItem = my_tree.focus()
+                        # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
+                        measSSId = my_tree.item(selectedItem).get('values')[0]
+
                     my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
                                            xscrollcommand=tree_scroll_x.set, selectmode="extended")
                     my_tree.pack(pady=50)
-
+                    # event update시, func_click_item수행.
                     my_tree.bind('<ButtonRelease-1>', func_click_item)
+
 
                     tree_scroll_y.config(command=my_tree.yview)
                     tree_scroll_x.config(command=my_tree.xview)
@@ -487,15 +498,15 @@ def func_viewer_database():
         label_probename = Label(frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
         combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
-        combo_probename.place(x=115, y=5)
+        combo_probename.place(x=185, y=5)
 
         label_DB_table = Label(frame1, text='SQL Table Name')
         label_DB_table.place(x=5, y=25)
         combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
-        combo_DBtable.place(x=115, y=25)
+        combo_DBtable.place(x=185, y=25)
 
         btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
-        btn_view.place(x=290, y=5)
+        btn_view.place(x=390, y=5)
 
 
 

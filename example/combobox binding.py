@@ -23,8 +23,8 @@ def gui(root):
                                 validatecommand=(root.register(check_okay), '%P'))
         combobox.grid(row=row, column=1)
 
-        combobox.bind('<Return>', lambda event, entry=combobox, text=text:
-                                    update(entry.get(), entry=text))
+        # combobox.bind('<Return>', lambda event, entry=combobox, text=text:
+        #                             update(entry.get(), entry=text))
         combobox.bind('<<ComboboxSelected>>', lambda event, entry=combobox, text=text:
                                                 update(entry.get(), entry=text))
 
