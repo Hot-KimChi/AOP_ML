@@ -386,6 +386,8 @@ def func_viewer_database():
                 # parameter list from SQL table
                 list_param = df.columns.values.tolist()
 
+                combo_list_station = ttk.Combobox(frame2, value=list_param, height=0, state='readonly')
+                combo_list_station.place(x=185, y=5)
 
                 def on_selected(event):
                     global selected_param
@@ -396,15 +398,13 @@ def func_viewer_database():
                     set_datas = set(list_datas)
                     filtered_datas = list(set_datas)
 
-                    combo_sel_station = ttk.Combobox(frame1, value=filtered_datas, height=0, state='readonly')
-                    combo_sel_station.place(x=185, y=45)
+                    combo_sel_station = ttk.Combobox(frame2, value=filtered_datas, height=0, state='readonly')
+                    combo_sel_station.place(x=125, y=4)
 
-                combo_list_station = ttk.Combobox(frame1, value=list_param, height=0, state='readonly')
-                combo_list_station.place(x=5, y=45)
+
                 combo_list_station.bind('<<ComboboxSelected>>', on_selected)
 
 
-                if selected_DBtable == 'SSR_table':
                     # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
                     # probeSN = str(df['probeSn'].sort_values().unique())[1:-1]
                     #
@@ -419,58 +419,61 @@ def func_viewer_database():
                     # combo_probesn.place(x=115, y=25)
 
 
-                    btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
-                    btn_view.place(x=35, y=5)
+                btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
+                btn_view.place(x=35, y=5)
 
 
-                    tree_scroll_y = Scrollbar(frame2, orient="vertical")
-                    tree_scroll_y.pack(side=RIGHT, fill=Y)
-                    tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-                    tree_scroll_x.pack(side=BOTTOM, fill=X)
+                tree_scroll_y = Scrollbar(frame2, orient="vertical")
+                tree_scroll_y.pack(side=RIGHT, fill=Y)
+                tree_scroll_x = Scrollbar(frame2, orient="horizontal")
+                tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-                    def func_click_item(event):
-                        global measSSId
-                        selectedItem = my_tree.focus()
-                        # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
-                        measSSId = my_tree.item(selectedItem).get('values')[0]
-
-                    my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
-                                           xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                    my_tree.pack(pady=50)
-
-                    # event update시, func_click_item수행.
-                    my_tree.bind('<ButtonRelease-1>', func_click_item)
+                def func_click_item(event):
+                    global measSSId
+                    selectedItem = my_tree.focus()
+                    # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
+                    measSSId = my_tree.item(selectedItem).get('values')[0]
 
 
-                    tree_scroll_y.config(command=my_tree.yview)
-                    tree_scroll_x.config(command=my_tree.xview)
 
-                    my_tree["column"] = list(df.columns)
-                    my_tree["show"] = "headings"
+                my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
+                                       xscrollcommand=tree_scroll_x.set, selectmode="extended")
+                my_tree.pack(pady=50)
 
-                    # Loop thru column list for headers
-                    for column in my_tree["column"]:
-                        my_tree.column(column, width=100, minwidth=100)
-                        my_tree.heading(column, text=column)
 
-                    my_tree.tag_configure('oddrow', background="lightblue")
-                    my_tree.tag_configure('evenrow', background="white")
 
-                    # Put data in treeview
-                    df_rows = df.round(3)
-                    df_rows = df_rows.to_numpy().tolist()
 
-                    global count
-                    count = 0
-                    for row in df_rows:
-                        if count % 2 == 0:
-                            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
-                        else:
-                            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
-                        count += 1
+                # event update시, func_click_item수행.
+                my_tree.bind('<ButtonRelease-1>', func_click_item)
 
-                else:
-                    func_show_table(selected_DBtable, df=df)
+
+                tree_scroll_y.config(command=my_tree.yview)
+                tree_scroll_x.config(command=my_tree.xview)
+
+                my_tree["column"] = list(df.columns)
+                my_tree["show"] = "headings"
+
+                # Loop thru column list for headers
+                for column in my_tree["column"]:
+                    my_tree.column(column, width=100, minwidth=100)
+                    my_tree.heading(column, text=column)
+
+                my_tree.tag_configure('oddrow', background="lightblue")
+                my_tree.tag_configure('evenrow', background="white")
+
+                # Put data in treeview
+                df_rows = df.round(3)
+                df_rows = df_rows.to_numpy().tolist()
+
+                global count
+                count = 0
+                for row in df_rows:
+                    if count % 2 == 0:
+                        my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
+                    else:
+                        my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
+                    count += 1
+
 
             except():
                 print("Error: func_1st_load")
@@ -513,8 +516,6 @@ def func_viewer_database():
 
         btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
         btn_view.place(x=390, y=5)
-
-
 
         # if combo_DBtable == 'SSR_table':
         #     combo_list = ttk.Combobox(frame2, value=df.columns, height=0, state='readonly')
