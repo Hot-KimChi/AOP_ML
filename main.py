@@ -415,9 +415,6 @@ def func_viewer_database():
                     btn_view.place(x=35, y=5)
 
 
-
-
-
                     tree_scroll_y = Scrollbar(frame2, orient="vertical")
                     tree_scroll_y.pack(side=RIGHT, fill=Y)
                     tree_scroll_x = Scrollbar(frame2, orient="horizontal")
