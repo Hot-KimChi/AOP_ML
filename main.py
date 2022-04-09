@@ -383,18 +383,26 @@ def func_viewer_database():
                 selected_DBtable = combo_DBtable.get()
 
                 df = func_sql_get(server_address, ID, password, database, 0)
-                list_stations = df.columns.values.tolist()
-                combo_list_station = ttk.Combobox(frame1, value=list_stations, height=0, state='readonly')
-                combo_list_station.place(x=5, y=45)
+                # parameter list from SQL table
+                list_param = df.columns.values.tolist()
+
 
                 def on_selected(event):
-                    selected_station = event.widget.get()
-                    sel_station = str(df[f'{selected_station}'].sort_values().unique())[1:-1]
+                    global selected_param
+                    # parameter 중 한개를 선정하게 되면 filter 기능.
+                    selected_param = event.widget.get()
+                    list_datas = df[f'{selected_param}'].values.tolist()
+                    # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
+                    set_datas = set(list_datas)
+                    filtered_datas = list(set_datas)
 
-                    combo_sel_station = ttk.Combobox(frame1, value=sel_station, height=0, state='readonly')
+                    combo_sel_station = ttk.Combobox(frame1, value=filtered_datas, height=0, state='readonly')
                     combo_sel_station.place(x=185, y=45)
 
+                combo_list_station = ttk.Combobox(frame1, value=list_param, height=0, state='readonly')
+                combo_list_station.place(x=5, y=45)
                 combo_list_station.bind('<<ComboboxSelected>>', on_selected)
+
 
                 if selected_DBtable == 'SSR_table':
                     # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
@@ -429,6 +437,7 @@ def func_viewer_database():
                     my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
                                            xscrollcommand=tree_scroll_x.set, selectmode="extended")
                     my_tree.pack(pady=50)
+
                     # event update시, func_click_item수행.
                     my_tree.bind('<ButtonRelease-1>', func_click_item)
 
