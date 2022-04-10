@@ -375,9 +375,13 @@ def func_sql_get(server_address, ID, password, database, command):
 ## root 제목 DB 변경 --> SQL 접속
 def func_viewer_database():
     try:
+        global iteration
+        iteration = 0
         def func_1st_load():
             try:
-                global selected_probeId, selected_DBtable, selected_probename   #, combo_SSId, combo_probesn
+                global selected_probeId, selected_DBtable, selected_probename, iteration   #, combo_SSId, combo_probesn
+                iteration += 1
+
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 selected_probename = str(list_probenames[combo_probename.current()])
                 selected_DBtable = combo_DBtable.get()
@@ -431,22 +435,27 @@ def func_viewer_database():
                 def func_click_item(event):
                     global measSSId
                     selectedItem = my_tree.focus()
-                    # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
+                    # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
                     measSSId = my_tree.item(selectedItem).get('values')[0]
 
+                if iteration == 1:
+                    global my_tree
+                    my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
+                                           xscrollcommand=tree_scroll_x.set, selectmode="extended")
+                    my_tree.pack(pady=50)
+                else:
+                    for i in my_tree.get_children():
+                        my_tree.delete(i)
 
 
-                my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
-                                       xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                my_tree.pack(pady=50)
+                    # my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
+                    #                        xscrollcommand=tree_scroll_x.set, selectmode="extended")
+                    # my_tree.pack(pady=50)
 
-
-
-
-                # event update시, func_click_item수행.
+                # event update시, func_click_item 수행.
                 my_tree.bind('<ButtonRelease-1>', func_click_item)
 
-
+                print(iteration)
                 tree_scroll_y.config(command=my_tree.yview)
                 tree_scroll_x.config(command=my_tree.xview)
 
@@ -455,6 +464,7 @@ def func_viewer_database():
 
                 # Loop thru column list for headers
                 for column in my_tree["column"]:
+
                     my_tree.column(column, width=100, minwidth=100)
                     my_tree.heading(column, text=column)
 
@@ -467,13 +477,17 @@ def func_viewer_database():
 
                 global count
                 count = 0
+
+                for i in my_tree.get_children():
+                    my_tree.delete(i)
+
                 for row in df_rows:
                     if count % 2 == 0:
+
                         my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
                     else:
                         my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
                     count += 1
-
 
             except():
                 print("Error: func_1st_load")
