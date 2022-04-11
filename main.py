@@ -327,7 +327,7 @@ def func_sql_get(server_address, ID, password, database, command):
         elif command == 2:
             if selected_DBtable == 'SSR_table':
                 query = f'''
-                SELECT * FROM {selected_DBtable} WHERE measSSId = {measSSId}
+                SELECT * FROM {selected_DBtable} WHERE measSSId = {sel_param_click}
                 ORDER BY measSSId, 1
                 '''
             # sel_SSId = combo_SSId.get()
@@ -379,8 +379,69 @@ def func_viewer_database():
     try:
         global iteration
         iteration = 0
+
+
+
         def func_1st_load():
             try:
+                def func_tree_update(data=None):
+                    try:
+                        tree_scroll_y = Scrollbar(frame2, orient="vertical")
+                        tree_scroll_y.pack(side=RIGHT, fill=Y)
+                        tree_scroll_x = Scrollbar(frame2, orient="horizontal")
+                        tree_scroll_x.pack(side=BOTTOM, fill=X)
+
+                        def func_click_item(event):
+                            global sel_param_click
+                            selectedItem = my_tree.focus()
+                            # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
+                            sel_param_click = my_tree.item(selectedItem).get('values')[0]
+
+                        if iteration == 1:
+                            global my_tree
+                            my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
+                                                   xscrollcommand=tree_scroll_x.set, selectmode="extended")
+                            my_tree.pack(pady=50)
+                        else:
+                            for i in my_tree.get_children():
+                                my_tree.delete(i)
+
+                        # event update시, func_click_item 수행.
+                        my_tree.bind('<ButtonRelease-1>', func_click_item)
+
+                        print(iteration)
+                        tree_scroll_y.config(command=my_tree.yview)
+                        tree_scroll_x.config(command=my_tree.xview)
+
+                        my_tree["column"] = list(df.columns)
+                        my_tree["show"] = "headings"
+
+                        # Loop thru column list for headers
+                        for column in my_tree["column"]:
+                            my_tree.column(column, width=100, minwidth=100)
+                            my_tree.heading(column, text=column)
+
+                        my_tree.tag_configure('oddrow', background="lightblue")
+                        my_tree.tag_configure('evenrow', background="white")
+
+                        # Put data in treeview
+                        df_rows = df.round(3)
+                        df_rows = df_rows.to_numpy().tolist()
+
+                        global count
+                        count = 0
+                        for row in df_rows:
+                            if count % 2 == 0:
+                                my_tree.insert(parent='', index='end', iid=count, text="", values=row,
+                                               tags=('evenrow',))
+                            else:
+                                my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
+                            count += 1
+
+                    except():
+                        print("Error: func_tree_update")
+
+
                 global selected_probeId, selected_DBtable, selected_probename, iteration   #, combo_SSId, combo_probesn
 
                 iteration += 1
@@ -389,12 +450,16 @@ def func_viewer_database():
                 selected_DBtable = combo_DBtable.get()
 
                 df = func_sql_get(server_address, ID, password, database, 0)
+
+                ''' 선택한 table treeview update'''
+                func_tree_update(df)
+
                 ''' parameter list from SQL table '''
                 list_params = df.columns.values.tolist()
 
                 ''' SQL DB에서 받은 데이터의 선택된 column(ex: meas_person_name)에서 선택된 datas(HIS, others)를 추출하는 algorithm'''
                 def func_on_selected(event):
-                    global selected_param
+                    global selected_param, combo_sel_datas
                     # parameter 중 한개를 선정하게 되면 filter 기능.
                     selected_param = event.widget.get()
                     list_datas = df[f'{selected_param}'].values.tolist()
@@ -404,7 +469,6 @@ def func_viewer_database():
 
                     combo_sel_datas = ttk.Combobox(frame2, value=filtered_datas, height=0, state='readonly')
                     combo_sel_datas.place(x=185, y=25)
-                    # combo_sel_datas.bind('<<ComboboxSelected>>', Self)
 
 
                 ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
@@ -430,57 +494,6 @@ def func_viewer_database():
                 btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
                 btn_view.place(x=5, y=5)
 
-
-                tree_scroll_y = Scrollbar(frame2, orient="vertical")
-                tree_scroll_y.pack(side=RIGHT, fill=Y)
-                tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-                tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-                def func_click_item(event):
-                    global measSSId
-                    selectedItem = my_tree.focus()
-                    # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
-                    measSSId = my_tree.item(selectedItem).get('values')[0]
-
-                if iteration == 1:
-                    global my_tree
-                    my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
-                                           xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                    my_tree.pack(pady=50)
-                else:
-                    for i in my_tree.get_children():
-                        my_tree.delete(i)
-
-                # event update시, func_click_item 수행.
-                my_tree.bind('<ButtonRelease-1>', func_click_item)
-
-                print(iteration)
-                tree_scroll_y.config(command=my_tree.yview)
-                tree_scroll_x.config(command=my_tree.xview)
-
-                my_tree["column"] = list(df.columns)
-                my_tree["show"] = "headings"
-
-                # Loop thru column list for headers
-                for column in my_tree["column"]:
-                    my_tree.column(column, width=100, minwidth=100)
-                    my_tree.heading(column, text=column)
-
-                my_tree.tag_configure('oddrow', background="lightblue")
-                my_tree.tag_configure('evenrow', background="white")
-
-                # Put data in treeview
-                df_rows = df.round(3)
-                df_rows = df_rows.to_numpy().tolist()
-
-                global count
-                count = 0
-                for row in df_rows:
-                    if count % 2 == 0:
-                        my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
-                    else:
-                        my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
-                    count += 1
 
             except():
                 print("Error: func_1st_load")
