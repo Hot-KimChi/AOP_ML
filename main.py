@@ -315,6 +315,7 @@ def func_sql_get(server_address, ID, password, database, command):
             else:
                 query = f'''
                 SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
+                ORDER BY 1
                 '''
 
         elif command == 1:
@@ -361,6 +362,7 @@ def func_sql_get(server_address, ID, password, database, command):
             else:
                 query = f'''
                 SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
+                ORDER BY 1
                 '''
 
         Raw_data = pd.read_sql(sql=query, con=conn)
@@ -380,20 +382,18 @@ def func_viewer_database():
         def func_1st_load():
             try:
                 global selected_probeId, selected_DBtable, selected_probename, iteration   #, combo_SSId, combo_probesn
-                iteration += 1
 
+                iteration += 1
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 selected_probename = str(list_probenames[combo_probename.current()])
                 selected_DBtable = combo_DBtable.get()
 
                 df = func_sql_get(server_address, ID, password, database, 0)
-                # parameter list from SQL table
-                list_param = df.columns.values.tolist()
+                ''' parameter list from SQL table '''
+                list_params = df.columns.values.tolist()
 
-                combo_list_station = ttk.Combobox(frame2, value=list_param, height=0, state='readonly')
-                combo_list_station.place(x=185, y=5)
-
-                def on_selected(event):
+                ''' SQL DB에서 받은 데이터의 선택된 column(ex: meas_person_name)에서 선택된 datas(HIS, others)를 추출하는 algorithm'''
+                def func_on_selected(event):
                     global selected_param
                     # parameter 중 한개를 선정하게 되면 filter 기능.
                     selected_param = event.widget.get()
@@ -402,11 +402,15 @@ def func_viewer_database():
                     set_datas = set(list_datas)
                     filtered_datas = list(set_datas)
 
-                    combo_sel_station = ttk.Combobox(frame2, value=filtered_datas, height=0, state='readonly')
-                    combo_sel_station.place(x=125, y=4)
+                    combo_sel_datas = ttk.Combobox(frame2, value=filtered_datas, height=0, state='readonly')
+                    combo_sel_datas.place(x=185, y=25)
+                    # combo_sel_datas.bind('<<ComboboxSelected>>', Self)
 
 
-                combo_list_station.bind('<<ComboboxSelected>>', on_selected)
+                ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
+                combo_list_columns = ttk.Combobox(frame2, value=list_params, height=0, state='readonly')
+                combo_list_columns.place(x=185, y=5)
+                combo_list_columns.bind('<<ComboboxSelected>>', func_on_selected)
 
 
                     # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
@@ -424,7 +428,7 @@ def func_viewer_database():
 
 
                 btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
-                btn_view.place(x=35, y=5)
+                btn_view.place(x=5, y=5)
 
 
                 tree_scroll_y = Scrollbar(frame2, orient="vertical")
@@ -447,11 +451,6 @@ def func_viewer_database():
                     for i in my_tree.get_children():
                         my_tree.delete(i)
 
-
-                    # my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
-                    #                        xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                    # my_tree.pack(pady=50)
-
                 # event update시, func_click_item 수행.
                 my_tree.bind('<ButtonRelease-1>', func_click_item)
 
@@ -464,7 +463,6 @@ def func_viewer_database():
 
                 # Loop thru column list for headers
                 for column in my_tree["column"]:
-
                     my_tree.column(column, width=100, minwidth=100)
                     my_tree.heading(column, text=column)
 
@@ -477,13 +475,8 @@ def func_viewer_database():
 
                 global count
                 count = 0
-
-                for i in my_tree.get_children():
-                    my_tree.delete(i)
-
                 for row in df_rows:
                     if count % 2 == 0:
-
                         my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
                     else:
                         my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
@@ -509,7 +502,6 @@ def func_viewer_database():
 
         root_view = Tk()
         root_view.title(f"{database}" + ' / Viewer')
-        # root_view.geometry("420x400")
         root_view.geometry("1720x1000")
         root_view.resizable(False, False)
 
@@ -529,7 +521,7 @@ def func_viewer_database():
         combo_DBtable.place(x=185, y=25)
 
         btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
-        btn_view.place(x=390, y=5)
+        btn_view.place(x=360, y=5)
 
         # if combo_DBtable == 'SSR_table':
         #     combo_list = ttk.Combobox(frame2, value=df.columns, height=0, state='readonly')
