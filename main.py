@@ -404,19 +404,36 @@ def func_viewer_database():
                             sel_param_click = my_tree.item(selectedItem).get('values')[0]
 
 
-                        tree_scroll_y = Scrollbar(frame2, orient="vertical")
-                        tree_scroll_y.pack(side=RIGHT, fill=Y)
-                        tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-                        tree_scroll_x.pack(side=BOTTOM, fill=X)
+                        # tree_scroll_y = Scrollbar(frame2, orient="vertical")
+                        # tree_scroll_y.pack(side=RIGHT, fill=Y)
+                        # tree_scroll_x = Scrollbar(frame2, orient="horizontal")
+                        # tree_scroll_x.pack(side=BOTTOM, fill=X)
 
                         if iteration == 1 and selected_input == None:
-                            global my_tree
+                            global my_tree, tree_scroll_y, tree_scroll_x
+                            tree_scroll_y = Scrollbar(frame2, orient="vertical")
+                            tree_scroll_y.pack(side=RIGHT, fill=Y)
+                            tree_scroll_x = Scrollbar(frame2, orient="horizontal")
+                            tree_scroll_x.pack(side=BOTTOM, fill=X)
+
                             my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
                                                    xscrollcommand=tree_scroll_x.set, selectmode="extended")
                             my_tree.pack(pady=50)
                         else:
-                            for i in my_tree.get_children():
-                                my_tree.delete(i)
+                            my_tree.destroy()
+                            tree_scroll_y.destroy()
+                            tree_scroll_x.destroy()
+
+                            tree_scroll_y = Scrollbar(frame2, orient="vertical")
+                            tree_scroll_y.pack(side=RIGHT, fill=Y)
+                            tree_scroll_x = Scrollbar(frame2, orient="horizontal")
+                            tree_scroll_x.pack(side=BOTTOM, fill=X)
+
+                            my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
+                                                   xscrollcommand=tree_scroll_x.set, selectmode="extended")
+                            my_tree.pack(pady=50)
+                            # for i in my_tree.get_children():
+                            #     my_tree.delete(i)
 
 
                         # event update시, func_click_item 수행.
