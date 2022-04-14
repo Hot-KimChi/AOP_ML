@@ -347,6 +347,7 @@ def func_sql_get(server_address, ID, password, database, command):
                 ORDER BY 1
                 '''
 
+
             # sel_SSId = combo_SSId.get()
                 # sel_probesn = combo_probesn.get()
                 #
