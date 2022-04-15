@@ -419,7 +419,7 @@ def func_viewer_database():
 
                             my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
                                                    xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                            my_tree.pack(pady=50)
+                            my_tree.pack(padx=20, pady=20, side='left')
                         else:
                             my_tree.destroy()
                             tree_scroll_y.destroy()
@@ -432,7 +432,7 @@ def func_viewer_database():
 
                             my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
                                                    xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                            my_tree.pack(pady=50)
+                            my_tree.pack(padx=20, pady=20, side='left')
                             # for i in my_tree.get_children():
                             #     my_tree.delete(i)
 
@@ -563,7 +563,7 @@ def func_viewer_database():
 
         root_view = Tk()
         root_view.title(f"{database}" + ' / Viewer')
-        root_view.geometry("1720x1000")
+        root_view.geometry("1720x800")
         root_view.resizable(False, False)
 
         frame1 = Frame(root_view, relief="solid", bd=2)
@@ -599,7 +599,6 @@ def func_viewer_database():
 
 def func_measset_gen():
     try:
-
         def func_create_data():
             try:
                 filename = filedialog.askopenfilename(initialdir='.txt')
@@ -735,11 +734,10 @@ def func_measset_gen():
 
                 print(same_cond)
 
-                #       ,[zMeasNum]
-
+                # [zMeasNum]
                 # elevAperIndex
-                #       ,[VTxIndex]
-                 #       ,[SysPulserSelA]
+                # [VTxIndex]
+                # [SysPulserSelA]
 
 
                 func_show_table(selected_DBtable='meas_setting', df=df_merge)
@@ -1006,6 +1004,7 @@ def func_measset_gen():
         combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
         combo_ML.place(x=185, y=25)
 
+        ''' file select and load -> Machine Learning'''
         btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_preprocessML)
         btn_load.place(x=460, y=5)
 
