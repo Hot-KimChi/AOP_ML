@@ -767,6 +767,7 @@ def func_measset_gen():
                     rf.fit(train_input, train_target)
                     print('Random Forest - Test R^2:', np.round_(rf.score(test_input, test_target), 3))
                     prediction = np.round_(rf.predict(test_input), 2)
+                    print(rf.feature_importances_)
 
 
                 ## LinearRegression 훈련하기.
@@ -869,6 +870,7 @@ def func_measset_gen():
                     plt.ylabel('R^2')
                     plt.show()
 
+
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
 
@@ -878,20 +880,28 @@ def func_measset_gen():
                 bad = 0
                 good = 0
                 print()
-                df = pd.DataFrame(columns=['index', 'target', 'expect', 'Diff', 'Diff(%)'])
+
+                df_bad = pd.DataFrame(columns=['index', 'target', 'expect', 'Diff', 'Diff(%)'])
                 failed_condition = pd.DataFrame(
                     columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
                              'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
 
+                df = pd.DataFrame(columns=['index', 'target', 'expect', 'Diff', 'Diff(%)'])
+                pass_condition = pd.DataFrame(
+                    columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+
                 for i in range(len(Diff)):
-                    if Diff[i] > abs(2):
+                    if abs(Diff[i]) > 1:
                         bad = bad + 1
-                        df = df.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
+
+                        df_bad = df_bad.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
                                                     columns=['index', 'target', 'expect', 'Diff', 'Diff(%)']),
                                        ignore_index=True)
-                        df_sort_values = df.sort_values(by=df.columns[3], ascending=True)
-                        df_sort_values = df_sort_values.reset_index(drop=True)
+                        df_bad_sort_values = df_bad.sort_values(by=df_bad.columns[3], ascending=True)
+                        df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
 
                         failed_condition = failed_condition.append(pd.DataFrame([test_input[i]],
                                                                                 columns=['txFrequencyHz',
@@ -907,16 +917,44 @@ def func_measset_gen():
                                                                                          'probeElevFocusRangCm']),
                                                                    ignore_index=True)
 
+
                     else:
                         good = good + 1
+
+
+                        df = df.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
+                                                    columns=['index', 'target', 'expect', 'Diff', 'Diff(%)']),
+                                       ignore_index=True)
+                        df_sort_values = df.sort_values(by=df.columns[3], ascending=True)
+                        df_sort_values = df_sort_values.reset_index(drop=True)
+
+                        pass_condition = pass_condition.append(pd.DataFrame([test_input[i]],
+                                                                                columns=['txFrequencyHz',
+                                                                                         'focusRangeCm',
+                                                                                         'numTxElements',
+                                                                                         'txpgWaveformStyle',
+                                                                                         'numTxCycles',
+                                                                                         'elevAperIndex',
+                                                                                         'IsTxAperModulationEn',
+                                                                                         'probePitchCm',
+                                                                                         'probeRadiusCm',
+                                                                                         'probeElevAperCm0',
+                                                                                         'probeElevFocusRangCm']),
+                                                                   ignore_index=True)
+
 
                 print()
                 print('bad:', bad)
                 print('good:', good)
 
                 ## failed condition show-up
-                func_show_table("failed_condition", df=df_sort_values if len(df_sort_values.index) > 0 else None,
+                func_show_table("failed_condition",
+                                df=df_bad_sort_values if len(df_bad_sort_values.index) > 0 else None,
                                 extra=failed_condition if len(failed_condition.index) > 0 else None)
+
+                func_show_table("pass_condition",
+                                df=df_sort_values if len(df_sort_values.index) > 0 else None,
+                                extra=pass_condition if len(pass_condition.index) > 0 else None)
 
                 # df_measset = func_create_data()
                 ## predict
