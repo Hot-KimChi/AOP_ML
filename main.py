@@ -894,6 +894,17 @@ def func_measset_gen():
                     print('결정트리 - Test R^2:', np.round_(dt.score(test_scaled, test_target), 3))
                     prediction = dt.predict(test_scaled)
 
+                    df_import = pd.DataFrame()
+                    df_import = df_import.append(pd.DataFrame([np.round((dt.feature_importances_) * 100, 2)],
+                                                              columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
+                                                                       'txpgWaveformStyle',
+                                                                       'numTxCycles', 'elevAperIndex',
+                                                                       'IsTxAperModulationEn', 'probePitchCm',
+                                                                       'probeRadiusCm', 'probeElevAperCm0',
+                                                                       'probeElevFocusRangCm']), ignore_index=True)
+
+                    func_show_table('DecisionTreeRegressor', df=df_import)
+
 
                     ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
                     import matplotlib.pyplot as plt
@@ -923,6 +934,14 @@ def func_measset_gen():
                     prediction = dt.predict(test_input)
 
 
+                    df_import = pd.DataFrame()
+                    df_import = df_import.append(pd.DataFrame([np.round((dt.feature_importances_)*100, 2)], columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                                 'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                                 'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']), ignore_index=True)
+
+                    func_show_table('DecisionTreeRegressor', df=df_import)
+
+
                     ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
                     import matplotlib.pyplot as plt
                     from sklearn.tree import plot_tree
@@ -931,7 +950,6 @@ def func_measset_gen():
                              'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
-
 
 
                 mae = mean_absolute_error(test_target, prediction)
@@ -944,17 +962,11 @@ def func_measset_gen():
                 good = 0
                 print()
 
-                df_bad = pd.DataFrame(columns=['index', 'target', 'expect', 'Diff', 'Diff(%)'])
-                failed_condition = pd.DataFrame(
-                    columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
-                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                df_bad = pd.DataFrame()
+                failed_condition = pd.DataFrame()
 
-                df = pd.DataFrame(columns=['index', 'target', 'expect', 'Diff', 'Diff(%)'])
-                pass_condition = pd.DataFrame(
-                    columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
-                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                df = pd.DataFrame()
+                pass_condition = pd.DataFrame()
 
                 for i in range(len(Diff)):
                     if abs(Diff[i]) > 1:
