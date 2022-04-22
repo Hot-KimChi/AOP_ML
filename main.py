@@ -871,6 +871,69 @@ def func_measset_gen():
                     plt.show()
 
 
+                elif selected_ML == 'DecisionTreeRegressor(scaled data)':
+
+                    from sklearn.tree import DecisionTreeRegressor
+                    dt = DecisionTreeRegressor(max_depth=10, random_state=42)
+
+                    from sklearn.preprocessing import StandardScaler
+                    ss = StandardScaler()
+                    ss.fit(train_input)
+                    train_scaled = ss.transform(train_input)
+                    test_scaled = ss.transform(test_input)
+
+                    dt.fit(train_scaled, train_target)
+
+                    scores = cross_validate(dt, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+                    print()
+                    print(scores)
+                    print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                    print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                    # dt.fit(train_scaled, train_target)
+                    print('결정트리 - Test R^2:', np.round_(dt.score(test_scaled, test_target), 3))
+                    prediction = dt.predict(test_scaled)
+
+
+                    ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
+                    import matplotlib.pyplot as plt
+                    from sklearn.tree import plot_tree
+                    plt.figure(figsize=(10, 7))
+                    plot_tree(dt, max_depth=2, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                    plt.show()
+
+
+                elif selected_ML == ' DecisionTreeRegressor(No scaled data)':
+
+                    from sklearn.tree import DecisionTreeRegressor
+                    dt = DecisionTreeRegressor(max_depth=10, random_state=42)
+
+                    dt.fit(train_input, train_target)
+
+                    scores = cross_validate(dt, train_input, train_target, return_train_score=True, n_jobs=-1)
+                    print()
+                    print(scores)
+                    print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                    print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                    # dt.fit(train_scaled, train_target)
+                    print('결정트리 - Test R^2:', np.round_(dt.score(test_input, test_target), 3))
+                    prediction = dt.predict(test_input)
+
+
+                    ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
+                    import matplotlib.pyplot as plt
+                    from sklearn.tree import plot_tree
+                    plt.figure(figsize=(10, 7))
+                    plot_tree(dt, max_depth=1, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                    plt.show()
+
+
+
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
 
