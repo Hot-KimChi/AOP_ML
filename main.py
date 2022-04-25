@@ -874,6 +874,7 @@ def func_measset_gen():
                 elif selected_ML == 'DecisionTreeRegressor(scaled data)':
 
                     from sklearn.tree import DecisionTreeRegressor
+                    ## 
                     dt = DecisionTreeRegressor(max_depth=10, random_state=42)
 
                     from sklearn.preprocessing import StandardScaler
@@ -919,6 +920,7 @@ def func_measset_gen():
                 elif selected_ML == ' DecisionTreeRegressor(No scaled data)':
 
                     from sklearn.tree import DecisionTreeRegressor
+
                     dt = DecisionTreeRegressor(max_depth=10, random_state=42)
 
                     dt.fit(train_input, train_target)
