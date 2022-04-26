@@ -125,7 +125,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
 
     # Loop thru column list for headers
     for column in my_tree["column"]:
-        my_tree.column(column, width=100, minwidth=100)
+        my_tree.column(column, width=110, minwidth=110)
         my_tree.heading(column, text=column)
 
     my_tree.tag_configure('oddrow', background="lightblue")
@@ -157,7 +157,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
 
         # Loop thru column list for headers
         for column in my_tree_extra["column"]:
-            my_tree_extra.column(column, width=100, minwidth=100)
+            my_tree_extra.column(column, width=110, minwidth=110)
             my_tree_extra.heading(column, text=column)
 
         # Put data in treeview
@@ -767,7 +767,17 @@ def func_measset_gen():
                     rf.fit(train_input, train_target)
                     print('Random Forest - Test R^2:', np.round_(rf.score(test_input, test_target), 3))
                     prediction = np.round_(rf.predict(test_input), 2)
-                    print(rf.feature_importances_)
+
+                    df_import = pd.DataFrame()
+                    df_import = df_import.append(pd.DataFrame([np.round((rf.feature_importances_) * 100, 2)],
+                                                              columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
+                                                                       'txpgWaveformStyle',
+                                                                       'numTxCycles', 'elevAperIndex',
+                                                                       'IsTxAperModulationEn', 'probePitchCm',
+                                                                       'probeRadiusCm', 'probeElevAperCm0',
+                                                                       'probeElevFocusRangCm']), ignore_index=True)
+
+                    func_show_table('RandomForestRegressor', df=df_import)
 
 
                 ## LinearRegression 훈련하기.
@@ -970,15 +980,30 @@ def func_measset_gen():
                 df = pd.DataFrame()
                 pass_condition = pd.DataFrame()
 
+                #
+                # df_test_input = pd.DataFrame(test_input, columns=['txFrequencyHz',
+                #                                                                          'focusRangeCm',
+                #                                                                          'numTxElements',
+                #                                                                          'txpgWaveformStyle',
+                #                                                                          'numTxCycles',
+                #                                                                          'elevAperIndex',
+                #                                                                          'IsTxAperModulationEn',
+                #                                                                          'probePitchCm',
+                #                                                                          'probeRadiusCm',
+                #                                                                          'probeElevAperCm0',
+                #                                                                          'probeElevFocusRangCm'])
+                #
+                # func_show_table('test_input', df=df_test_input)
+
                 for i in range(len(Diff)):
                     if abs(Diff[i]) > 1:
                         bad = bad + 1
 
                         df_bad = df_bad.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
-                                                    columns=['index', 'target', 'expect', 'Diff', 'Diff(%)']),
+                                                    columns=['index', 'target', 'expect', 'Diff(Cm)', 'Diff(%)']),
                                        ignore_index=True)
-                        df_bad_sort_values = df_bad.sort_values(by=df_bad.columns[3], ascending=True)
-                        df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
+                        # df_bad_sort_values = df_bad.sort_values(by=df_bad.columns[3], ascending=True)
+                        # df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
 
                         failed_condition = failed_condition.append(pd.DataFrame([test_input[i]],
                                                                                 columns=['txFrequencyHz',
@@ -1000,10 +1025,10 @@ def func_measset_gen():
 
 
                         df = df.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
-                                                    columns=['index', 'target', 'expect', 'Diff', 'Diff(%)']),
+                                                    columns=['index', 'target', 'expect', 'Diff(Cm)', 'Diff(%)']),
                                        ignore_index=True)
-                        df_sort_values = df.sort_values(by=df.columns[3], ascending=True)
-                        df_sort_values = df_sort_values.reset_index(drop=True)
+                        # df_sort_values = df.sort_values(by=df.columns[3], ascending=True)
+                        # df_sort_values = df_sort_values.reset_index(drop=True)
 
                         pass_condition = pass_condition.append(pd.DataFrame([test_input[i]],
                                                                                 columns=['txFrequencyHz',
@@ -1024,14 +1049,15 @@ def func_measset_gen():
                 print('bad:', bad)
                 print('good:', good)
 
+                merge_bad_inner = pd.concat([df_bad, failed_condition], axis=1)
+                merge_good_inner = pd.concat([df, pass_condition], axis=1)
+
                 ## failed condition show-up
                 func_show_table("failed_condition",
-                                df=df_bad_sort_values if len(df_bad_sort_values.index) > 0 else None,
-                                extra=failed_condition if len(failed_condition.index) > 0 else None)
+                                df=merge_bad_inner if len(merge_bad_inner.index) > 0 else None)
 
                 func_show_table("pass_condition",
-                                df=df_sort_values if len(df_sort_values.index) > 0 else None,
-                                extra=pass_condition if len(pass_condition.index) > 0 else None)
+                                df=merge_good_inner if len(merge_good_inner.index) > 0 else None)
 
                 # df_measset = func_create_data()
                 ## predict
