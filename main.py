@@ -1071,6 +1071,8 @@ def func_measset_gen():
                 global selected_probeId
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
 
+                ## K2, Juniper, NX3, NX2 and FROSK
+
                 conn = pymssql.connect(server_address, ID, password, database)
 
                 query = f'''
