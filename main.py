@@ -167,7 +167,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
 
         my_tree_extra.pack(pady=20)
 
-    # n_root.mainloop()
+    #n_root.mainloop()
 
 
 # def sql_main(server, username, passwd, database):
@@ -1070,48 +1070,53 @@ def func_measset_gen():
             try:
                 global selected_probeId
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
+                print(list_database)
+
 
                 ## K2, Juniper, NX3, NX2 and FROSK
+                for i in list_database:
 
-                conn = pymssql.connect(server_address, ID, password, database)
+                    print(i)
+                    conn = pymssql.connect(server_address, ID, password, database=i)
 
-                query = f'''
-                         SELECT * FROM
-                         (
-                         SELECT a.[measSetId]
-                         ,a.[probeId]
-                         ,a.[beamstyleIndex]
-                         ,a.[txFrequencyHz]
-                         ,a.[focusRangeCm]
-                         ,a.[numTxElements]
-                         ,a.[txpgWaveformStyle]
-                         ,a.[numTxCycles]
-                         ,a.[elevAperIndex]
-                         ,a.[IsTxAperModulationEn]
-                         ,d.[probeName]
-                         ,d.[probePitchCm]
-                         ,d.[probeRadiusCm]
-                         ,d.[probeElevAperCm0]
-                         ,d.[probeElevFocusRangCm]
-                         ,b.[measResId]
-                         ,b.[zt]
-                         ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
-                         FROM meas_setting AS a
-                         LEFT JOIN meas_res_summary AS b
-                             ON a.[measSetId] = b.[measSetId]
-                         LEFT JOIN meas_station_setup AS c
-                             ON b.[measSSId] = c.[measSSId]
-                         LEFT JOIN probe_geo AS d
-                             ON a.[probeId] = d.[probeId]
-                         where b.[isDataUsable] ='yes' and c.[measPurpose] like '%Beamstyle%' and b.[errorDataLog] = ''
-                         ) T
-                         where RankNo = 1
-                         order by 1
-                         '''
+                    query = f'''
+                             SELECT * FROM
+                             (
+                             SELECT a.[measSetId]
+                             ,a.[probeId]
+                             ,a.[beamstyleIndex]
+                             ,a.[txFrequencyHz]
+                             ,a.[focusRangeCm]
+                             ,a.[numTxElements]
+                             ,a.[txpgWaveformStyle]
+                             ,a.[numTxCycles]
+                             ,a.[elevAperIndex]
+                             ,a.[IsTxAperModulationEn]
+                             ,d.[probeName]
+                             ,d.[probePitchCm]
+                             ,d.[probeRadiusCm]
+                             ,d.[probeElevAperCm0]
+                             ,d.[probeElevFocusRangCm]
+                             ,b.[measResId]
+                             ,b.[zt]
+                             ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
+                             FROM meas_setting AS a
+                             LEFT JOIN meas_res_summary AS b
+                                 ON a.[measSetId] = b.[measSetId]
+                             LEFT JOIN meas_station_setup AS c
+                                 ON b.[measSSId] = c.[measSSId]
+                             LEFT JOIN probe_geo AS d
+                                 ON a.[probeId] = d.[probeId]
+                             where b.[isDataUsable] ='yes' and c.[measPurpose] like '%Beamstyle%' and b.[errorDataLog] = ''
+                             ) T
+                             where RankNo = 1
+                             order by 1
+                             '''
 
-                Raw_data = pd.read_sql(sql=query, con=conn)
-                print(Raw_data['probeName'].value_counts(dropna=False))
-                AOP_data = Raw_data.dropna()
+                    Raw_data = pd.read_sql(sql=query, con=conn)
+                    print(Raw_data['probeName'].value_counts(dropna=False))
+                    AOP_data = Raw_data.dropna()
+                    AOP_data = AOP_data.append(AOP_data, ignore_index=True)
 
                 data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
                                  'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
