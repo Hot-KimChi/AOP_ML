@@ -68,4 +68,4 @@ for i in databases:
     AOP_data = Raw_data.dropna()
     AOP_data = AOP_data.append(AOP_data, ignore_index=True)
 
-print(AOP_data)
+print(AOP_data.count())
