@@ -1072,7 +1072,6 @@ def func_measset_gen():
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 print(list_database)
 
-
                 ## K2, Juniper, NX3, NX2 and FROSK
                 for i in list_database:
 
