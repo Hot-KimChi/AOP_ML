@@ -8,7 +8,6 @@ import seaborn as sns
 
 
 
-## funcs_window
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
 def func_show_table(selected_DBtable, df=None, extra=None):
     n_root = Tk()
