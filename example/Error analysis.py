@@ -1,3 +1,5 @@
+import tkinter
+
 import pandas as pd
 import numpy as np
 import pymssql
@@ -5,12 +7,12 @@ from tkinter import *
 from tkinter import ttk
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from functools import partial
 
 
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
-def func_show_table(selected_DBtable, df=None, extra=None):
-    n_root = Tk()
+def func_show_table(selected_DBtable=None, df=None, extra=None):
+    n_root = tkinter.Toplevel()
     n_root.title(f"{database}  //  {selected_DBtable}")
     n_root.geometry("1720x1000")
 
@@ -166,4 +168,33 @@ sns.catplot(data=AOP_data, x='reportdate', y='Difference_1', aspect=4)
 plt.show()
 
 
-func_show_table('Error', df=AOP_data)
+## Start tk 만들기.
+root = Tk()
+root.title("DB 선택")
+root.geometry("280x150")
+root.resizable(False, False)
+
+# Add some style
+style = ttk.Style()
+# Pick a theme
+style.theme_use("default")
+
+# Configure our treeview colors
+style.configure("Treeview",
+                background="#D3D3D3",
+                foreground="black",
+                rowheight=25,
+                fieldbackground="#D3D3D3"
+                )
+
+label1 = Label(root, text='데이터베이스를 선택하세요')
+label1.place(x=10, y=10)
+
+btn_login = Button(root, width=10, height=2, text='Login', command=partial(func_show_table, '12', df=AOP_data))
+btn_login.place(x=180, y=10)
+
+
+
+root.mainloop()
+
+# func_show_table('Error', df=AOP_data)
