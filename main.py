@@ -1,3 +1,5 @@
+import tkinter
+
 import pymssql
 import numpy as np
 import pandas as pd
@@ -19,7 +21,6 @@ pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
 # warnings.simplefilter(action='ignore', category=FutureWarning)
-
 
 def func_freqidx2Hz(idx):
     try:
@@ -83,7 +84,7 @@ def func_freqidx2Hz(idx):
 
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
 def func_show_table(selected_DBtable, df=None, extra=None):
-    n_root = Tk()
+    n_root = tkinter.Toplevel()
     n_root.title(f"{database}  //  {selected_DBtable}")
     n_root.geometry("1720x1000")
 
@@ -101,7 +102,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
                     )
     # Change selected color
     style.map('Treeview',
-              background=[('selected', 'black')])
+              background=[('selected', '#347083')])
 
     # Create Treeview Frame
     frame1 = Frame(n_root)
@@ -167,7 +168,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
 
         my_tree_extra.pack(pady=20)
 
-    #n_root.mainloop()
+    n_root.mainloop()
 
 
 # def sql_main(server, username, passwd, database):
@@ -417,7 +418,7 @@ def func_viewer_database():
                             tree_scroll_x = Scrollbar(frame2, orient="horizontal")
                             tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-                            my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
+                            my_tree = ttk.Treeview(frame2, height=20, yscrollcommand=tree_scroll_y.set,
                                                    xscrollcommand=tree_scroll_x.set, selectmode="extended")
                             my_tree.pack(padx=20, pady=20, side='left')
                         else:
@@ -430,7 +431,7 @@ def func_viewer_database():
                             tree_scroll_x = Scrollbar(frame2, orient="horizontal")
                             tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-                            my_tree = ttk.Treeview(frame2, height=30, yscrollcommand=tree_scroll_y.set,
+                            my_tree = ttk.Treeview(frame2, height=20, yscrollcommand=tree_scroll_y.set,
                                                    xscrollcommand=tree_scroll_x.set, selectmode="extended")
                             my_tree.pack(padx=20, pady=20, side='left')
                             # for i in my_tree.get_children():
@@ -561,7 +562,7 @@ def func_viewer_database():
                 print("Error: func_select_view")
 
 
-        root_view = Tk()
+        root_view = tkinter.Toplevel()
         root_view.title(f"{database}" + ' / Viewer')
         root_view.geometry("1720x800")
         root_view.resizable(False, False)
@@ -589,6 +590,23 @@ def func_viewer_database():
         #     combo_list.place(x=115, y=5)
         #     # combo_probename = ttk.Combobox(frame2, value=list_probe, height=0, state='readonly')
         #     # combo_probename.place(x=115, y=5)
+
+
+        # Add some style
+        style = ttk.Style()
+        # Pick a theme
+        style.theme_use("default")
+
+        # Configure our treeview colors
+        style.configure("Treeview",
+                        background="#D3D3D3",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#D3D3D3"
+                        )
+        # Change selected color
+        style.map('Treeview',
+                  background=[('selected', '#347083')])
 
 
         root_view.mainloop()
@@ -1096,6 +1114,7 @@ def func_measset_gen():
                              ,d.[probeRadiusCm]
                              ,d.[probeElevAperCm0]
                              ,d.[probeElevFocusRangCm]
+--                              ,d.[probeElevFocusRangCm1]
                              ,b.[measResId]
                              ,b.[zt]
                              ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
@@ -1133,7 +1152,7 @@ def func_measset_gen():
                 print("Error: func_preprocessML")
 
 
-        root_gen = Tk()
+        root_gen = tkinter.Toplevel()
         root_gen.title(f"{database}" + ' / MeasSet_generation')
         root_gen.geometry("880x200")
         root_gen.resizable(False, False)
@@ -1234,7 +1253,7 @@ def func_main():
         global database, list_probeIds, list_probe, list_probenames
         database = combo_login.get()
 
-        root_main = Tk()
+        root_main = tkinter.Toplevel()
         root_main.title(f"{database}" + ' / main')
         root_main.geometry("440x300")
         root_main.resizable(False, False)
