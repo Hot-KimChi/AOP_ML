@@ -168,7 +168,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
 
         my_tree_extra.pack(pady=20)
 
-    n_root.mainloop()
+    # n_root.mainloop()
 
 
 # def sql_main(server, username, passwd, database):
