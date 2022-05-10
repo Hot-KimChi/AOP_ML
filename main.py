@@ -632,9 +632,9 @@ def func_measset_gen():
                 # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
                 df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
 
-                df = pd.concat([df_B_mode, df_M_mode])  ## 2개 데이터프레임 합치기
-                df = df.reset_index(drop=True)  ## 데이터프레임 index reset
-                df = df.drop_duplicates()  ## 중복된 데이터 삭제.
+                df = pd.concat([df_B_mode, df_M_mode])      ## 2개 데이터프레임 합치기
+                df = df.reset_index(drop=True)              ## 데이터프레임 index reset
+                df = df.drop_duplicates()                   ## 중복된 데이터 삭제.
 
                 refer_data = df.groupby(
                     by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle',
