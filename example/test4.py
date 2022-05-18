@@ -1,5 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+
+import pandas as pd
+
+
 def update(updated_entry, entry):
     entry.delete('1.0', tk.END)
     entry.insert(tk.END, updated_entry)
