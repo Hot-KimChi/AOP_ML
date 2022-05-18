@@ -100,13 +100,31 @@ def func_create_data():
         ##  ----------------------------
         ##  duplicated parameter check.
         #
-        # dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
-        # df_dup = pd.concat([df, dup], axis=1)
-        # df_dup.rename(columns={0:'Dup'}, inplace=True)
-        # df_dup = df_dup.sort_values(by=[df_dup.columns[6], df_dup.columns[1], df_dup.columns[2], df_dup.columns[5],
-        #                 df_dup.columns[9], df_dup.columns[0], df_dup.columns[3], df_dup.columns[4]], ascending=True)
-        # print(df_dup)
-        # count = df_dup[['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'BeamStyleIndex']].value_counts(sort=False)
+        dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
+        df_dup = pd.concat([df, dup], axis=1)
+        df_dup.rename(columns={0:'Dup'}, inplace=True)
+        df_dup = df_dup.sort_values(by=[df_dup.columns[6], df_dup.columns[1], df_dup.columns[2], df_dup.columns[5],
+                        df_dup.columns[9], df_dup.columns[0], df_dup.columns[3], df_dup.columns[4]], ascending=True)
+        print(df_dup)
+
+        ## 데이터를 저장할 list 만듬.
+        bsIndexTrace = []
+        for dupli, beam in zip(df_dup['Dup'], df_dup['BeamStyleIndex']):
+            if dupli == False and beam == 0:
+                bsIndexTrace.append(15)
+            elif dupli == False and beam == 1:
+                bsIndexTrace.append(20)
+            elif dupli == False and beam == 5:
+                bsIndexTrace.append(10)
+            else:
+                bsIndexTrace.append(0)
+        df_dup['bsIndexTrace'] = bsIndexTrace
+
+        # df_dup['bsIndexTrace'] = [15 if data == False else 0 for data in df_dup['Dup']]
+
+        print(df_dup)
+
+        # count = df_dup[['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'BeamStyleIndex']].value_counts(sort=False).reset_index().rename(columns={0:'count'})
         # print(count)
         # print(count.index)
         #
@@ -116,8 +134,7 @@ def func_create_data():
         ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
         col = list(df.columns)[1:10]
         ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
-        df_grp = df.groupby(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle']).size().reset_index().rename(columns={0:'count'})
-        print(type(df_grp))
+        df_grp = df.groupby(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements']).size().reset_index().rename(columns={0:'bsIdxTrace_Count'})
         print(df_grp)
 
         # df_dic = df_grp.groups  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
@@ -125,8 +142,7 @@ def func_create_data():
         # idx = [x[0] for x in df_dic.values() if len(x) == 1]
         # df = df.reindex(idx) if len(df.reindex(idx).index) > 0 else None
 
-        # func_show_table(df=df_dup)
-        func_show_table(df=df_grp)
+        # func_show_table(df=df_grp)
 
     except:
         print('error: create data')
