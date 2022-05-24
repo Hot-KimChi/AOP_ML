@@ -88,49 +88,34 @@ def func_create_data():
 
         ########################
         ## B & M mode process ##
-        # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
         df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
-        # B_num = df_sort_B['TxFocusLocCm'].nunique()
-        # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
         df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
 
         df = pd.concat([df_B_mode, df_M_mode])      ## 2개 데이터프레임 합치기
         df = df.reset_index(drop=True)              ## 데이터프레임 index reset
 
-        ##  ----------------------------
-        ##  duplicated parameter check.
-        # dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
-        dup = df.drop_duplicates(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'])
-        print(dup)
-        df_dup = pd.concat([df, dup], axis=1)
-        df_dup.rename(columns={0:'Dup'}, inplace=True)
-        df_dup = df_dup.sort_values(by=[df_dup.columns[6], df_dup.columns[1], df_dup.columns[2], df_dup.columns[5],
-                        df_dup.columns[9], df_dup.columns[0], df_dup.columns[3], df_dup.columns[4]], ascending=True)
-        print(df_dup)
+        ## groupby로 중복 count.
+        dup_count = df.groupby(by=['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements'], as_index=False).count()
+        print(dup_count)
 
-        ## 데이터를 저장할 list 만듬.
+
+        ##  duplicated parameter check. => dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
+        dup = df.drop_duplicates(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements'])
+        sort_dup = dup.sort_values(by=[dup.columns[6], dup.columns[1], dup.columns[2], dup.columns[5], dup.columns[3], dup.columns[4]], ascending=True).reset_index()
+
+        ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
         bsIndexTrace = []
-        for dupli, beam in zip(df_dup['Dup'], df_dup['BeamStyleIndex']):
-            if dupli == False and beam == 0:
+        for beam, cnt in zip(sort_dup['BeamStyleIndex'], dup_count['BeamStyleIndex']):
+            if beam == 0 and cnt == 2:
                 bsIndexTrace.append(15)
-            elif dupli == False and beam == 1:
+            elif beam == 1 and cnt == 2:
                 bsIndexTrace.append(20)
-            elif dupli == False and beam == 5:
-                bsIndexTrace.append(10)
             else:
                 bsIndexTrace.append(0)
-        df_dup['bsIndexTrace'] = bsIndexTrace
+        sort_dup['bsIndexTrace'] = bsIndexTrace
 
-        # df_dup['bsIndexTrace'] = [15 if data == False else 0 for data in df_dup['Dup']]
+        print(sort_dup)
 
-        print(df_dup)
-
-        # count = df_dup[['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'BeamStyleIndex']].value_counts(sort=False).reset_index().rename(columns={0:'count'})
-        # print(count)
-        # print(count.index)
-        #
-        ##  End
-        ##  ----------------------------
 
         ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
         col = list(df.columns)[1:10]
@@ -138,10 +123,7 @@ def func_create_data():
         df_grp = df.groupby(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements']).size().reset_index().rename(columns={0:'bsIdxTrace_Count'})
         print(df_grp)
 
-        # df_dic = df_grp.groups  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
-        # print(df_dic.keys())
-        # idx = [x[0] for x in df_dic.values() if len(x) == 1]
-        # df = df.reindex(idx) if len(df.reindex(idx).index) > 0 else None
+
 
         # func_show_table(df=df_grp)
 
@@ -151,3 +133,29 @@ def func_create_data():
 
 if __name__ == '__main__':
     func_create_data()
+
+
+
+
+    ## 아래 code 내것으로 만들기.
+    # df_dic = df_grp.groups  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
+    # print(df_dic.keys())
+    # idx = [x[0] for x in df_dic.values() if len(x) == 1]
+    # df = df.reindex(idx) if len(df.reindex(idx).index) > 0 else None
+
+    # # df_dup['bsIndexTrace'] = [15 if data == False else 0 for data in df_dup['Dup']]
+    #
+    # print(df_dup)
+
+    # count = df_dup[['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'BeamStyleIndex']].value_counts(sort=False).reset_index().rename(columns={0:'count'})
+    # print(count)
+    # print(count.index)
+    #
+    ##  End
+    ##  ----------------------------
+
+    # df_dup = pd.concat([df, dup], axis=1)
+    # df_dup.rename(columns={0:'Dup'}, inplace=True)
+    # df_dup = df_dup.sort_values(by=[df_dup.columns[6], df_dup.columns[1], df_dup.columns[2], df_dup.columns[5],
+    #                 df_dup.columns[9], df_dup.columns[0], df_dup.columns[3], df_dup.columns[4]], ascending=True)
+    # print(df_dup)
