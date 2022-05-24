@@ -93,11 +93,16 @@ def func_create_data():
 
         df = pd.concat([df_B_mode, df_M_mode])      ## 2개 데이터프레임 합치기
         df = df.reset_index(drop=True)              ## 데이터프레임 index reset
+        df = df.fillna(0)
 
         ## groupby로 중복 count.
-        dup_count = df.groupby(by=['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements'], as_index=False).count()
+        dup_count = df.groupby(by=['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements'], as_index=False).count()
         print(dup_count)
 
+        print(df.isnull().sum())
+
+
+        ## null --> 0으로 다 수정.
 
         ##  duplicated parameter check. => dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
         dup = df.drop_duplicates(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements'])
