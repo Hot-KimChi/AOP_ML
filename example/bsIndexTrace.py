@@ -116,7 +116,9 @@ def func_create_data():
         sort_dup['bsIndexTrace'] = bsIndexTrace
         print(sort_dup)
 
+
         max, ceil, totalp, nump = 90, 90, 15, 10
+
         list_profTxVoltageVolt = []
         for i in range(nump):
             list_profTxVoltageVolt.append(round((min(max, ceil)) ** ((totalp-1-i)/(totalp-1)), 2))
