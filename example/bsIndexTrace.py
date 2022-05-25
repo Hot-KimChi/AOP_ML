@@ -93,20 +93,16 @@ def func_create_data():
 
         df = pd.concat([df_B_mode, df_M_mode])      ## 2개 데이터프레임 합치기
         df = df.reset_index(drop=True)              ## 데이터프레임 index reset
-        df = df.fillna(0)
+        df = df.fillna(0)                           ## 데이터 Null --> [0]으로 변환.(데이터의 정렬, groupby등)
 
+        list_params = ['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements']
         ## groupby로 중복 count.
-        dup_count = df.groupby(by=['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements'], as_index=False).count()
-        print(dup_count)
+        dup_count = df.groupby(by=list_params, as_index=False).count()
 
-        print(df.isnull().sum())
-
-
-        ## null --> 0으로 다 수정.
 
         ##  duplicated parameter check. => dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
-        dup = df.drop_duplicates(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements'])
-        sort_dup = dup.sort_values(by=[dup.columns[6], dup.columns[1], dup.columns[2], dup.columns[5], dup.columns[3], dup.columns[4]], ascending=True).reset_index()
+        dup = df.drop_duplicates(list_params)
+        sort_dup = dup.sort_values(by=list_params, ascending=True).reset_index()
 
         ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
         bsIndexTrace = []
@@ -118,19 +114,20 @@ def func_create_data():
             else:
                 bsIndexTrace.append(0)
         sort_dup['bsIndexTrace'] = bsIndexTrace
-
         print(sort_dup)
+
+        max, ceil, totalp, nump = 90, 90, 15, 10
+        list_profTxVoltageVolt = []
+        for i in range(nump):
+            list_profTxVoltageVolt.append(round((min(max, ceil)) ** ((totalp-1-i)/(totalp-1)), 2))
+        profTxVoltageVolt = list_profTxVoltageVolt[2]
+        print(max, ceil, totalp, profTxVoltageVolt)
 
 
         ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
         col = list(df.columns)[1:10]
-        ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
-        df_grp = df.groupby(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxFocusLocCm', 'NumTxElements']).size().reset_index().rename(columns={0:'bsIdxTrace_Count'})
-        print(df_grp)
-
-
-
-        # func_show_table(df=df_grp)
+        df_grp = df.groupby(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle']).size().reset_index().rename(columns={0:'bsIdxTrace_Count'})
+        func_show_table(df=df_grp)
 
     except:
         print('error: create data')
