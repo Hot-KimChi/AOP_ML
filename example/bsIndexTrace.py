@@ -90,10 +90,12 @@ def func_create_data():
         ## B & M mode process ##
         df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
         df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
+        df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
+        df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
 
-        df = pd.concat([df_B_mode, df_M_mode])      ## 2개 데이터프레임 합치기
-        df = df.reset_index(drop=True)              ## 데이터프레임 index reset
-        df = df.fillna(0)                           ## 데이터 Null --> [0]으로 변환.(데이터의 정렬, groupby등)
+        df = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode])        ## 2개 데이터프레임 합치기
+        df = df.reset_index(drop=True)                                      ## 데이터프레임 index reset
+        df = df.fillna(0)                                                   ## 데이터 Null --> [0]으로 변환.(데이터의 정렬, groupby등)
 
         list_params = ['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements']
         ## groupby로 중복 count.
@@ -111,29 +113,64 @@ def func_create_data():
                 bsIndexTrace.append(15)
             elif beam == 1 and cnt == 2:
                 bsIndexTrace.append(20)
+            elif beam == 5 and cnt == 2:
+                bsIndexTrace.append(10)
             else:
                 bsIndexTrace.append(0)
         sort_dup['bsIndexTrace'] = bsIndexTrace
         print(sort_dup)
 
+        ## function: calc_profTxVoltage 구현
+        def func_profvolt():
+            try:
+                max, ceil, totalp, nump = 90, 90, 15, 10
 
-        max, ceil, totalp, nump = 90, 90, 15, 10
+                list_profTxVoltageVolt = []
+                for i in range(nump):
+                    list_profTxVoltageVolt.append(round((min(max, ceil)) ** ((totalp-1-i)/(totalp-1)), 2))
+                profTxVoltageVolt = list_profTxVoltageVolt[2]
+                print(max, ceil, totalp, profTxVoltageVolt)
 
-        list_profTxVoltageVolt = []
-        for i in range(nump):
-            list_profTxVoltageVolt.append(round((min(max, ceil)) ** ((totalp-1-i)/(totalp-1)), 2))
-        profTxVoltageVolt = list_profTxVoltageVolt[2]
-        print(max, ceil, totalp, profTxVoltageVolt)
+            except():
+                print('error: func_profvolt')
+
+
+        ## function: calc zMeasNum 구현
+        def func_zMeasNum():
+            try:
+                zStartDistCm = 0.5
+                zMeasNum = []
+                for focus in sort_dup['TxFocusLocCm']:
+                    if(focus <= 3):
+                        zMeasNum.append((5-zStartDistCm)*10)
+                    elif(focus <= 6):
+                        zMeasNum.append((8 - zStartDistCm) * 10)
+                    elif(focus <= 9):
+                        zMeasNum.append((12 - zStartDistCm) * 10)
+                    else:
+                        zMeasNum.append((14 - zStartDistCm) * 10)
+                sort_dup['zMeasNum'] = zMeasNum
+                print(sort_dup)
+
+
+            except():
+                print('error: func_zMeasNum')
+
+        func_profvolt()
+        func_zMeasNum()
 
 
         ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
         col = list(df.columns)[1:10]
         df_grp = df.groupby(['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle']).size().reset_index().rename(columns={0:'bsIdxTrace_Count'})
+        df_grp = df_grp.sort_values(by=['IsTxChannelModulationEn', 'ProbeNumTxCycles', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'TxPulseRle'], ascending=True).reset_index()
+        df_grp['index'] = df_grp.index
+        print(df_grp)
+
         func_show_table(df=df_grp)
 
-    except:
+    except():
         print('error: create data')
-
 
 if __name__ == '__main__':
     func_create_data()
@@ -163,3 +200,69 @@ if __name__ == '__main__':
     # df_dup = df_dup.sort_values(by=[df_dup.columns[6], df_dup.columns[1], df_dup.columns[2], df_dup.columns[5],
     #                 df_dup.columns[9], df_dup.columns[0], df_dup.columns[3], df_dup.columns[4]], ascending=True)
     # print(df_dup)
+
+
+########################
+                # ## B & M mode process ##
+                # # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
+                # df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
+                # # B_num = df_sort_B['TxFocusLocCm'].nunique()
+                # # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
+                # df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
+                #
+                # df = pd.concat([df_B_mode, df_M_mode])      ## 2개 데이터프레임 합치기
+                # df = df.reset_index(drop=True)              ## 데이터프레임 index reset
+                # df = df.drop_duplicates()                   ## 중복된 데이터 삭제.
+                #
+                # refer_data = df.groupby(
+                #     by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle',
+                #         'ProbeNumTxCycles'],
+                #     as_index=False).count()
+                # select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
+                # select_data = select_data.sort_values(
+                #     by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                #         select_data.columns[0]], ascending=True)
+                #
+                # ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
+                # col = list(df.columns)[1:10]
+                # ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
+                # df_grp = df.groupby(col)
+                # df_dic = df_grp.groups  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
+                # idx = [x[0] for x in df_dic.values() if len(x) == 1]
+                #
+                # func_show_table(selected_DBtable='Summary: B & M', df=select_data,
+                #                 extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
+                #
+                # BM_Not_same_cnt = len(df.reindex(idx))
+                # print('B&M not same Count:', BM_Not_same_cnt)
+                #
+                # ########################
+                # ## C & D mode process ##
+                # df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
+                # df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
+                #
+                # df = pd.concat([df_C_mode, df_D_mode])
+                # df = df.reset_index(drop=True)
+                # df = df.drop_duplicates()
+                #
+                # refer_data = df.groupby(
+                #     by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle',
+                #         'ProbeNumTxCycles'],
+                #     as_index=False).count()
+                # select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
+                #
+                # select_data = select_data.sort_values(
+                #     by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                #         select_data.columns[0]], ascending=True)
+                #
+                # col = list(df.columns)[1:11]
+                # df_grp = df.groupby(col)
+                # df_dic = df_grp.groups
+                # idx = [x[0] for x in df_dic.values() if len(x) == 1]
+                #
+                # ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
+                # func_show_table(selected_DBtable='Summary: C & D', df=select_data,
+                #                 extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
+                #
+                # CD_Not_same_cnt = len(df.reindex(idx))
+                # print('C&D not same Count:', CD_Not_same_cnt)
