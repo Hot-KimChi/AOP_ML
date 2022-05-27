@@ -10,6 +10,7 @@ import configparser
 import warnings
 from tkinter import filedialog
 
+
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import mean_absolute_error
@@ -627,84 +628,130 @@ def func_measset_gen():
                 ########################
                 ## B & M mode process ##
                 # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
-                # B_num = df_sort_B['TxFocusLocCm'].nunique()
-
                 df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
+                # B_num = df_sort_B['TxFocusLocCm'].nunique()
+                # df_sort_M = df_M_mode.sort_values(by=[df_M_mode.columns[0], df_M_mode.columns[1], df_M_mode.columns[2], df_M_mode.columns[5], df_M_mode.columns[3]], ascending=True)
                 df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
+
+                df = pd.concat([df_B_mode, df_M_mode])      ## 2개 데이터프레임 합치기
+                df = df.reset_index(drop=True)              ## 데이터프레임 index reset
+                df = df.drop_duplicates()                   ## 중복된 데이터 삭제.
+
+                refer_data = df.groupby(
+                    by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle',
+                        'ProbeNumTxCycles'],
+                    as_index=False).count()
+                select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
+                select_data = select_data.sort_values(
+                    by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                        select_data.columns[0]], ascending=True)
+
+                ## 데이터프레임 columns name 추출('SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'TxPulseRle')
+                col = list(df.columns)[1:10]
+                ## columns name으로 정렬(TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE)
+                df_grp = df.groupby(col)
+                df_dic = df_grp.groups  ## groupby 객체의 groups 변수 --> 딕셔너리형태로 키값과 인덱스로 구성.
+                idx = [x[0] for x in df_dic.values() if len(x) == 1]
+
+                func_show_table(selected_DBtable='Summary: B & M', df=select_data,
+                                extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
+
+                BM_Not_same_cnt = len(df.reindex(idx))
+                print('B&M not same Count:', BM_Not_same_cnt)
+
+                ########################
+                ## C & D mode process ##
                 df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
                 df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
 
-                df = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode])        ## 2개 데이터프레임 합치기
-                df = df.reset_index(drop=True)                                      ## 데이터프레임 index reset
-                df = df.fillna(0)                                                   ## 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
+                df = pd.concat([df_C_mode, df_D_mode])
+                df = df.reset_index(drop=True)
+                df = df.drop_duplicates()
 
-                list_params =['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements']
+                refer_data = df.groupby(
+                    by=['BeamStyleIndex', 'SysTxFreqIndex', 'IsTxChannelModulationEn', 'TxpgWaveformStyle',
+                        'ProbeNumTxCycles'],
+                    as_index=False).count()
+                select_data = refer_data.iloc[:, [0, 1, 2, 3, 4, 5]]
 
-                ## groupby로 중복 count.
-                dup_count = df.groupby(by=list_params, as_index=False).count()
+                select_data = select_data.sort_values(
+                    by=[select_data.columns[1], select_data.columns[2], select_data.columns[3], select_data.columns[4],
+                        select_data.columns[0]], ascending=True)
 
-                ##  duplicated parameter check. => dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
-                ##  중복된 parameter가 있을 경우, 제거하기.
-                drop_dup = df.drop_duplicates(list_params)
-                sort_dup = drop_dup.sort_values(by=list_params, ascending=True).reset_index()
+                col = list(df.columns)[1:11]
+                df_grp = df.groupby(col)
+                df_dic = df_grp.groups
+                idx = [x[0] for x in df_dic.values() if len(x) == 1]
 
+                ## FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison return op(a, b)
+                func_show_table(selected_DBtable='Summary: C & D', df=select_data,
+                                extra=df.reindex(idx) if len(df.reindex(idx).index) > 0 else None)
 
-                ##  input parameter define.
-                sort_dup['probeId'] = selected_probeId
-                sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
-                sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
-                sort_dup['totalVoltagePt'] = box_TotalVoltpt.get()
-                sort_dup['numMeasVoltage'] = box_NumMeasVolt.get()
-                sort_dup['zStartDistCm'] = 0.5
-                sort_dup['DTxFreqIndex'] = 0
-                sort_dup['dumpSwVersion'] = box_DumpSW.get()
+                CD_Not_same_cnt = len(df.reindex(idx))
+                print('C&D not same Count:', CD_Not_same_cnt)
 
+                if BM_Not_same_cnt == 0 and CD_Not_same_cnt == 0:
 
-                ##  function: update bsIndexTrace 구현.
-                def func_bsIndexTrace():
-                    try:
-                        ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
-                        bsIndexTrace = []
-                        for beam, cnt in zip(sort_dup['BeamStyleIndex'], dup_count['BeamStyleIndex']):
-                            if beam == 0 and cnt == 2:
-                                bsIndexTrace.append(15)
-                            elif beam == 1 and cnt == 2:
-                                bsIndexTrace.append(20)
-                            else:
-                                bsIndexTrace.append(0)
-                        sort_dup['bsIndexTrace'] = bsIndexTrace
-                    except():
-                        print('error: func_bsIndexTrace')
+                    # SettingWithCopyWarning 해결 / 복사본만 수정할 것인지 혹은 원본도 수정할 것인지 알 수 없어 경고
+                    df_B_mode_update = df_B_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
+                    df_C_mode_update = df_C_mode.copy()
+                    df_C_mode_update['bsIndexTrace'] = 10
 
-                ## function: calc_profTxVoltage 구현
-                def func_profvolt():
-                    try:
-                        ## DataFrame에서 parameter 가져오기
-                        for max, ceil, totalp, nump in zip(sort_dup['maxTxVoltageVolt'], sort_dup['ceilTxVoltageVolt'], sort_dup['totalVoltagePt'], sort_dup['numMeasVoltage']):
-                            list_profTxVoltageVolt = []
-                            for i in range(nump):
-                                list_profTxVoltageVolt.append(round((min(max, ceil)) ** ((totalp-1-i)/(totalp-1)), 2))
-                            profTxVoltageVolt = list_profTxVoltageVolt[2]
-                            sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update])
 
-                    except():
-                        print('error: func_profvolt')
+                    same_cond = 1
 
-                func_bsIndexTrace()
-                func_profvolt()
+                elif BM_Not_same_cnt == 0 and CD_Not_same_cnt > 0:
+                    df_B_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = np.where(df_B_mode_update['BeamStyleIndex'] == 0, '15', '20')
+                    df_C_mode_update['bsIndexTrace'] = 0
+                    df_D_mode_update['bsIndexTrace'] = 0
 
-                print(sort_dup)
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update])
 
+                    same_cond = 2
+
+                elif BM_Not_same_cnt > 0 and CD_Not_same_cnt == 0:
+                    df_B_mode_update, df_M_mode_update, df_C_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = 0
+                    df_M_mode_update['bsIndexTrace'] = 0
+                    df_C_mode_update['bsIndexTrace'] = 10
+
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_M_mode_update])
+
+                    same_cond = 3
+
+                else:
+                    df_B_mode_update, df_M_mode_update, df_C_mode_update, df_D_mode_update = df_B_mode.copy(), df_M_mode.copy(), df_C_mode.copy(), df_D_mode.copy()
+                    df_B_mode_update['bsIndexTrace'] = 0
+                    df_M_mode_update['bsIndexTrace'] = 0
+                    df_C_mode_update['bsIndexTrace'] = 0
+                    df_D_mode_update['bsIndexTrace'] = 0
+
+                    df_merge = pd.concat([df_B_mode_update, df_C_mode_update, df_D_mode_update, df_M_mode_update])
+
+                    same_cond = 4
+
+                df_merge['probeId'] = selected_probeId
+                df_merge['maxTxVoltageVolt'] = box_MaxVolt.get()
+                df_merge['ceilTxVoltageVolt'] = box_CeilVolt.get()
+                df_merge['profTxVoltageVolt'] = box_ProfVolt.get()
+                df_merge['totalVoltagePt'] = box_TotalVoltpt.get()
+                df_merge['numMeasVoltage'] = box_NumMeasVolt.get()
+                df_merge['zStartDistCm'] = 0.5
+                df_merge['DTxFreqIndex'] = 0
+                df_merge['dumpSwVersion'] = box_DumpSW.get()
 
                 # FrequencyIndex to FrequencyHz
                 n = 0
                 FrequencyHz = []
-                for i in sort_dup['SysTxFreqIndex'].values:
+                for i in df_merge['SysTxFreqIndex'].values:
                     FrequencyHz.insert(n, func_freqidx2Hz(i))
                     n += 1
-                sort_dup['TxFrequencyHz'] = FrequencyHz
+                df_merge['TxFrequencyHz'] = FrequencyHz
 
-
+                print(same_cond)
 
                 # [zMeasNum]
                 # elevAperIndex
@@ -712,9 +759,9 @@ def func_measset_gen():
                 # [SysPulserSelA]
 
 
-                func_show_table(selected_DBtable='meas_setting', df=sort_dup)
+                func_show_table(selected_DBtable='meas_setting', df=df_merge)
 
-                return sort_dup
+                return df_merge
 
 
             except:
@@ -1141,11 +1188,14 @@ def func_measset_gen():
         label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
         label_CeilVolt.grid(row=0, column=2)
 
+        label_ProfVolt = Label(frame2, text="[profTxVoltageVolt]")
+        label_ProfVolt.grid(row=0, column=3)
+
         label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
-        label_TotalVoltpt.grid(row=0, column=3)
+        label_TotalVoltpt.grid(row=0, column=4)
 
         label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
-        label_NumMeasVolt.grid(row=0, column=4)
+        label_NumMeasVolt.grid(row=0, column=5)
 
         #Entry boxes
         box_DumpSW = Entry(frame2, justify='center')
@@ -1157,11 +1207,14 @@ def func_measset_gen():
         box_CeilVolt = Entry(frame2, justify='center')
         box_CeilVolt.grid(row=1, column=2)
 
+        box_ProfVolt = Entry(frame2, justify='center')
+        box_ProfVolt.grid(row=1, column=3)
+
         box_TotalVoltpt = Entry(frame2, justify='center')
-        box_TotalVoltpt.grid(row=1, column=3)
+        box_TotalVoltpt.grid(row=1, column=4)
 
         box_NumMeasVolt = Entry(frame2, justify='center')
-        box_NumMeasVolt.grid(row=1, column=4)
+        box_NumMeasVolt.grid(row=1, column=5)
 
         root_gen.mainloop()
 

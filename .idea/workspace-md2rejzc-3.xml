@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c079b183-725b-4553-9d73-59805f821127" name="Default Changelist" comment="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- clean up and modify" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="JupyterTrust" id="d4e97993-735f-48e2-b76f-0b0bec9c35cb" />
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="1" />
+  </component>
+  <component name="ProjectId" id="1yUCun7vSSZUPaU66KYrKGb5UYR" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/OneDrive - Siemens Healthineers/1_External Training/2_Python/PycharmProjects/AOP_ML&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  }
+}</component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="AOP_ML" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="AOP_ML" />
+      </console-settings>
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\OneDrive - Siemens Healthineers\1_External Training\2_Python\PycharmProjects\AOP_ML\example" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.bsIndexTrace (1)">
+    <configuration name="Error analysis" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/example/Error analysis.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="bsIndexTrace (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/example/bsIndexTrace.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="bsIndexTrace" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="D:\OneDrive - Siemens Healthineers\1_External Training\2_Python\PycharmProjects\AOP_ML\example\bsIndexTrace.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="database extend" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/example/database extend.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="D:\OneDrive - Siemens Healthineers\1_External Training\2_Python\PycharmProjects\AOP_ML\main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test_20220518" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/example/test_20220518.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.bsIndexTrace (1)" />
+        <item itemvalue="Python.test_20220518" />
+        <item itemvalue="Python.bsIndexTrace" />
+        <item itemvalue="Python.Error analysis" />
+        <item itemvalue="Python.database extend" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\sel04327\AppData\Roaming\Subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c079b183-725b-4553-9d73-59805f821127" name="Default Changelist" comment="" />
+      <created>1632297004876</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1632297004876</updated>
+      <workItem from="1632297006349" duration="8170000" />
+      <workItem from="1632448771426" duration="9061000" />
+      <workItem from="1632797879007" duration="681000" />
+      <workItem from="1632968667173" duration="52911000" />
+      <workItem from="1634373857121" duration="11591000" />
+      <workItem from="1634736191382" duration="5275000" />
+      <workItem from="1634802550835" duration="4480000" />
+      <workItem from="1634864655726" duration="5673000" />
+      <workItem from="1635065587125" duration="1784000" />
+      <workItem from="1635134960127" duration="8928000" />
+      <workItem from="1635222737551" duration="3474000" />
+      <workItem from="1635236975065" duration="564000" />
+      <workItem from="1635237928279" duration="16069000" />
+      <workItem from="1635403493433" duration="18220000" />
+      <workItem from="1635767907096" duration="24506000" />
+      <workItem from="1636509587122" duration="2510000" />
+      <workItem from="1636600534016" duration="1224000" />
+      <workItem from="1636698388318" duration="603000" />
+      <workItem from="1637028715600" duration="7061000" />
+      <workItem from="1637138416778" duration="584000" />
+      <workItem from="1637209724342" duration="11458000" />
+      <workItem from="1637282101260" duration="7567000" />
+      <workItem from="1638838024466" duration="11366000" />
+      <workItem from="1638924413491" duration="2618000" />
+      <workItem from="1638928217258" duration="17261000" />
+      <workItem from="1639013616152" duration="10382000" />
+      <workItem from="1639463757128" duration="1118000" />
+      <workItem from="1641789338688" duration="2442000" />
+      <workItem from="1641883263669" duration="3450000" />
+      <workItem from="1641948990969" duration="12473000" />
+      <workItem from="1642994110357" duration="2688000" />
+      <workItem from="1643000262167" duration="7592000" />
+      <workItem from="1643093773817" duration="4518000" />
+      <workItem from="1643871353575" duration="2611000" />
+      <workItem from="1645589519739" duration="5397000" />
+      <workItem from="1645757285235" duration="13638000" />
+      <workItem from="1645788371015" duration="2811000" />
+      <workItem from="1646008421146" duration="14929000" />
+      <workItem from="1646267216212" duration="9897000" />
+      <workItem from="1646291337916" duration="15349000" />
+      <workItem from="1646379605351" duration="5746000" />
+      <workItem from="1646719157817" duration="7937000" />
+      <workItem from="1646796494499" duration="636000" />
+      <workItem from="1646873215322" duration="659000" />
+      <workItem from="1646893777579" duration="8358000" />
+      <workItem from="1647218496206" duration="3899000" />
+      <workItem from="1647485691912" duration="9423000" />
+      <workItem from="1647848150657" duration="14043000" />
+      <workItem from="1647932393021" duration="4099000" />
+      <workItem from="1648000821035" duration="42251000" />
+      <workItem from="1648183689166" duration="971000" />
+      <workItem from="1648206802407" duration="6924000" />
+      <workItem from="1648260404604" duration="469000" />
+      <workItem from="1648278165442" duration="2767000" />
+      <workItem from="1648382157181" duration="597000" />
+      <workItem from="1648457333898" duration="7637000" />
+      <workItem from="1648513922824" duration="12503000" />
+      <workItem from="1648536961684" duration="11403000" />
+      <workItem from="1648557387340" duration="615000" />
+      <workItem from="1648609156655" duration="22616000" />
+      <workItem from="1648775501684" duration="18457000" />
+      <workItem from="1648820712474" duration="2240000" />
+      <workItem from="1648911574782" duration="247000" />
+      <workItem from="1648953194860" duration="4472000" />
+      <workItem from="1649053886296" duration="3032000" />
+      <workItem from="1649072344132" duration="4019000" />
+      <workItem from="1649132432248" duration="612000" />
+      <workItem from="1649157307887" duration="10167000" />
+      <workItem from="1649201076219" duration="957000" />
+      <workItem from="1649220270613" duration="46029000" />
+      <workItem from="1649472388760" duration="14756000" />
+      <workItem from="1649556096912" duration="10223000" />
+      <workItem from="1649636789663" duration="3082000" />
+      <workItem from="1649643200540" duration="8342000" />
+      <workItem from="1649724972057" duration="17126000" />
+      <workItem from="1649811660309" duration="4673000" />
+      <workItem from="1649896709588" duration="1244000" />
+      <workItem from="1650008061603" duration="630000" />
+      <workItem from="1650028696144" duration="2301000" />
+      <workItem from="1650103036658" duration="3376000" />
+      <workItem from="1650242787709" duration="2274000" />
+      <workItem from="1650415220867" duration="3369000" />
+      <workItem from="1650459668973" duration="23000" />
+      <workItem from="1650501915678" duration="5208000" />
+      <workItem from="1650587929468" duration="12362000" />
+      <workItem from="1650771571565" duration="16508000" />
+      <workItem from="1651063468036" duration="1537000" />
+      <workItem from="1651110298607" duration="20658000" />
+      <workItem from="1651196986026" duration="3148000" />
+      <workItem from="1651311039744" duration="627000" />
+      <workItem from="1651416345476" duration="176000" />
+      <workItem from="1651538347142" duration="2800000" />
+      <workItem from="1651647330796" duration="2674000" />
+      <workItem from="1651670424219" duration="5152000" />
+      <workItem from="1651843613882" duration="3912000" />
+      <workItem from="1651998392390" duration="621000" />
+      <workItem from="1652143389778" duration="1497000" />
+      <workItem from="1652249026583" duration="1815000" />
+      <workItem from="1652317087091" duration="14464000" />
+      <workItem from="1652589601375" duration="2196000" />
+      <workItem from="1652691744274" duration="83000" />
+      <workItem from="1652761273224" duration="13325000" />
+      <workItem from="1652830952906" duration="3676000" />
+      <workItem from="1653054978548" duration="5771000" />
+      <workItem from="1653314352696" duration="550000" />
+      <workItem from="1653354370412" duration="12213000" />
+      <workItem from="1653438525293" duration="8274000" />
+      <workItem from="1653572286313" duration="1732000" />
+      <workItem from="1653574847573" duration="2042000" />
+      <workItem from="1653612674545" duration="552000" />
+    </task>
+    <task id="LOCAL-00012" summary="committed details.&#10;1) in progress&#10;- func_create_data&#10;2) Done&#10;- Treeview column 50EA&#10;Action Items &#10;1) preprocessML error not many times.&#10;2) func_create_data will be completed.">
+      <created>1648652174386</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1648652174386</updated>
+    </task>
+    <task id="LOCAL-00013" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;2) Done&#10;- sequence roll-back&#10;&#10;&lt;Action Items&gt; &#10;1) preprocessML error not many times.&#10;2) func_create_data will be completed.">
+      <created>1648778293925</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1648778293925</updated>
+    </task>
+    <task id="LOCAL-00014" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;2) Done&#10;- sequence roll-back&#10;&#10;&lt;Action Items&gt; &#10;1) preprocessML error not many times.&#10;2) func_create_data will be completed.">
+      <created>1648778383641</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1648778383641</updated>
+    </task>
+    <task id="LOCAL-00015" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;2) Done&#10;- sequence roll-back&#10;- preprocessML error not many times.&#10;&#10;&lt;Action Items&gt; &#10;1) func_create_data will be completed.">
+      <created>1648822533237</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1648822533237</updated>
+    </task>
+    <task id="LOCAL-00016" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;2) Done&#10;- sequence roll-back&#10;- preprocessML error not many times.&#10;&#10;&lt;Action Items&gt; &#10;1) func_create_data will be completed.">
+      <created>1648911610816</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1648911610816</updated>
+    </task>
+    <task id="LOCAL-00017" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;2) Done&#10;- sort for SSRId and probeSN">
+      <created>1649077508974</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1649077508974</updated>
+    </task>
+    <task id="LOCAL-00018" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;2) Done&#10;- func_measset_gen merge">
+      <created>1649163277034</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1649163277034</updated>
+    </task>
+    <task id="LOCAL-00019" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;2) Done&#10;- 5EA parameter added in func_measset_gen">
+      <created>1649167729706</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1649167729706</updated>
+    </task>
+    <task id="LOCAL-00020" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;2) Done&#10;- FrequencyIndex to FrequencyHz &#10;- parameter added except 'zMeasNum'">
+      <created>1649247802836</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1649247802836</updated>
+    </task>
+    <task id="LOCAL-00021" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;2) Done&#10;- FrequencyIndex to FrequencyHz &#10;- parameter added except 'zMeasNum'">
+      <created>1649247817721</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1649247817721</updated>
+    </task>
+    <task id="LOCAL-00022" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;2) Done&#10;- viewer feature: measSSID table show up.&#10;- parameter added except 'zMeasNum'">
+      <created>1649332582343</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1649332582343</updated>
+    </task>
+    <task id="LOCAL-00023" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- viewer feature: measSSID table show up.&#10;- move file to directory">
+      <created>1649333880366</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1649333880366</updated>
+    </task>
+    <task id="LOCAL-00024" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- measSSID table to list combobox item.">
+      <created>1649423890100</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1649423890100</updated>
+    </task>
+    <task id="LOCAL-00025" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- combobox binding located to frame1.">
+      <created>1649429168475</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1649429168475</updated>
+    </task>
+    <task id="LOCAL-00026" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- combobox binding located to frame1.">
+      <created>1649474696282</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1649474696282</updated>
+    </task>
+    <task id="LOCAL-00027" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- event and binding for treeview selection.">
+      <created>1649508581941</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1649508581941</updated>
+    </task>
+    <task id="LOCAL-00028" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- update">
+      <created>1649516337631</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1649516337631</updated>
+    </task>
+    <task id="LOCAL-00029" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- update treeview table">
+      <created>1649597401736</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1649597401736</updated>
+    </task>
+    <task id="LOCAL-00030" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- update treeview table">
+      <created>1649597418263</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1649597418263</updated>
+    </task>
+    <task id="LOCAL-00031" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- ready to update treeview table.">
+      <created>1649666702613</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1649666702613</updated>
+    </task>
+    <task id="LOCAL-00032" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- combobox filter &#10;2) Done&#10;- update treeview table.">
+      <created>1649685822524</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1649685822524</updated>
+    </task>
+    <task id="LOCAL-00033" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- update all treeview table&#10;- combobox filter">
+      <created>1649751397949</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1649751397949</updated>
+    </task>
+    <task id="LOCAL-00034" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- update all treeview table&#10;- combobox filter">
+      <created>1649940311483</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1649940311483</updated>
+    </task>
+    <task id="LOCAL-00035" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done">
+      <created>1650030825778</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1650030825779</updated>
+    </task>
+    <task id="LOCAL-00036" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- ML windows frame update -&gt; Bad / pass status.">
+      <created>1650547771822</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1650547771822</updated>
+    </task>
+    <task id="LOCAL-00037" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- DecisionTreeRegressor update.">
+      <created>1650612195112</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1650612195112</updated>
+    </task>
+    <task id="LOCAL-00038" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- DecisionTreeRegressor update. --&gt; add importances">
+      <created>1650615459975</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1650615459975</updated>
+    </task>
+    <task id="LOCAL-00039" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- check for rule.">
+      <created>1650875684251</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1650875684251</updated>
+    </task>
+    <task id="LOCAL-00040" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- check for rule.">
+      <created>1650875699329</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1650875699329</updated>
+    </task>
+    <task id="LOCAL-00041" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- show-up dataframe to window">
+      <created>1650982197332</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1650982197332</updated>
+    </task>
+    <task id="LOCAL-00042" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- add to connect others database&#10;&#10;2) Done&#10;-">
+      <created>1651063646638</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1651063646638</updated>
+    </task>
+    <task id="LOCAL-00043" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- add to connect others database">
+      <created>1651154321364</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1651154321364</updated>
+    </task>
+    <task id="LOCAL-00044" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- add count function.">
+      <created>1651155978755</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1651155978755</updated>
+    </task>
+    <task id="LOCAL-00045" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- add other DBs.">
+      <created>1651416449105</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1651416449105</updated>
+    </task>
+    <task id="LOCAL-00046" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- check tkinter style.">
+      <created>1651654815371</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1651654815371</updated>
+    </task>
+    <task id="LOCAL-00047" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- tkinter style: color and font.">
+      <created>1651674222272</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1651674222272</updated>
+    </task>
+    <task id="LOCAL-00048" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- tkinter style: color and font.">
+      <created>1651674229807</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1651674229807</updated>
+    </task>
+    <task id="LOCAL-00049" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- update func_show_table">
+      <created>1651844717314</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1651844717315</updated>
+    </task>
+    <task id="LOCAL-00050" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- update verify step">
+      <created>1652173475622</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1652173475622</updated>
+    </task>
+    <task id="LOCAL-00051" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- in progress: bsIndexTrace.py&#10;&#10;2) Done">
+      <created>1652346201577</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1652346201578</updated>
+    </task>
+    <task id="LOCAL-00052" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- in progress: bsIndexTrace.py&#10;a) using groupby &#10;&#10;2) Done">
+      <created>1652620847360</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1652620847360</updated>
+    </task>
+    <task id="LOCAL-00053" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- in progress: bsIndexTrace.py&#10;a) using groupby: in progress &#10;&#10;2) Done">
+      <created>1652691779611</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1652691779612</updated>
+    </task>
+    <task id="LOCAL-00054" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- in progress: bsIndexTrace.py&#10;a) using groupby: in progress">
+      <created>1652880722679</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1652880722679</updated>
+    </task>
+    <task id="LOCAL-00055" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- in progress: bsIndexTrace.py&#10;a) using groupby: in progress">
+      <created>1652880734174</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1652880734174</updated>
+    </task>
+    <task id="LOCAL-00056" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- in progress: bsIndexTrace.py&#10;a) using groupby: in progress">
+      <created>1653314843662</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1653314843662</updated>
+    </task>
+    <task id="LOCAL-00057" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- in progress: bsIndexTrace.py">
+      <created>1653382376036</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1653382376036</updated>
+    </task>
+    <task id="LOCAL-00058" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- bsIndexTrace.py, null data control">
+      <created>1653402294754</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1653402294755</updated>
+    </task>
+    <task id="LOCAL-00059" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- bsIndexTrace.py, profTxVoltageVolt function done.">
+      <created>1653469179301</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1653469179301</updated>
+    </task>
+    <task id="LOCAL-00060" summary="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- clean up and modify">
+      <created>1653489000588</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1653489000589</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;2) Done&#10;- ready to update treeview table." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- combobox filter &#10;2) Done&#10;- update treeview table." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- update all treeview table&#10;- combobox filter" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- ML windows frame update -&gt; Bad / pass status." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- DecisionTreeRegressor update." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- DecisionTreeRegressor update. --&gt; add importances" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- check for rule." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- Frame update.&#10;&#10;2) Done&#10;- show-up dataframe to window" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- add to connect others database&#10;&#10;2) Done&#10;-" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- add to connect others database" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- add count function." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- add other DBs." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- check tkinter style." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- tkinter style: color and font." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- update func_show_table" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- update verify step" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- in progress: bsIndexTrace.py&#10;&#10;2) Done" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- in progress: bsIndexTrace.py&#10;a) using groupby &#10;&#10;2) Done" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;- in progress: bsIndexTrace.py&#10;a) using groupby: in progress &#10;&#10;2) Done" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- in progress: bsIndexTrace.py&#10;a) using groupby: in progress" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- in progress: bsIndexTrace.py" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- bsIndexTrace.py, null data control" />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- bsIndexTrace.py, profTxVoltageVolt function done." />
+    <MESSAGE value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- clean up and modify" />
+    <option name="LAST_COMMIT_MESSAGE" value="&lt;committed details.&gt;&#10;1) in progress&#10;- func_create_data&#10;- preprocessML error not many times.&#10;- parameter added except 'zMeasNum'&#10;&#10;2) Done&#10;- clean up and modify" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/example/Error analysis.py</url>
+          <line>192</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/AOP_ML$bsIndexTrace__1_.coverage" NAME="bsIndexTrace (1) Coverage Results" MODIFIED="1653573539025" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example" />
+  </component>
+</project>
