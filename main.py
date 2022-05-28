@@ -2,6 +2,7 @@ import tkinter
 
 import pymssql
 import numpy as np
+import math
 import pandas as pd
 from tkinter import *
 from tkinter import ttk
@@ -660,38 +661,30 @@ def func_measset_gen():
                 sort_dup['dumpSwVersion'] = box_DumpSW.get()
 
 
-                ##  function: update bsIndexTrace 구현.
-                def func_bsIndexTrace():
-                    try:
-                        ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
-                        bsIndexTrace = []
-                        for beam, cnt in zip(sort_dup['BeamStyleIndex'], dup_count['BeamStyleIndex']):
-                            if beam == 0 and cnt == 2:
-                                bsIndexTrace.append(15)
-                            elif beam == 1 and cnt == 2:
-                                bsIndexTrace.append(20)
-                            else:
-                                bsIndexTrace.append(0)
-                        sort_dup['bsIndexTrace'] = bsIndexTrace
-                    except():
-                        print('error: func_bsIndexTrace')
+
+                ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
+                bsIndexTrace = []
+                for beam, cnt in zip(sort_dup['BeamStyleIndex'], dup_count['BeamStyleIndex']):
+                    if beam == 0 and cnt == 2:
+                        bsIndexTrace.append(15)
+                    elif beam == 1 and cnt == 2:
+                        bsIndexTrace.append(20)
+                    else:
+                        bsIndexTrace.append(0)
+                sort_dup['bsIndexTrace'] = bsIndexTrace
+
 
                 ## function: calc_profTxVoltage 구현
-                def func_profvolt():
-                    try:
-                        ## DataFrame에서 parameter 가져오기
-                        for max, ceil, totalp, nump in zip(sort_dup['maxTxVoltageVolt'], sort_dup['ceilTxVoltageVolt'], sort_dup['totalVoltagePt'], sort_dup['numMeasVoltage']):
-                            list_profTxVoltageVolt = []
-                            for i in range(nump):
-                                list_profTxVoltageVolt.append(round((min(max, ceil)) ** ((totalp-1-i)/(totalp-1)), 2))
-                            profTxVoltageVolt = list_profTxVoltageVolt[2]
-                            sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
+                ## DataFrame에서 parameter 가져오기
+                profTxVoltageVolt = []
+                for str_maxV, str_ceilV, str_totalpt in zip(sort_dup['maxTxVoltageVolt'].values, sort_dup['ceilTxVoltageVolt'].values, sort_dup['totalVoltagePt'].values):
+                    idx = 2
+                    maxV = float(str_maxV)
+                    ceilV = float(str_ceilV)
+                    totalpt = int(str_totalpt)
 
-                    except():
-                        print('error: func_profvolt')
-
-                func_bsIndexTrace()
-                func_profvolt()
+                    profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt-1-idx)/(totalpt-1)), 2))
+                sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
 
                 print(sort_dup)
 
@@ -705,17 +698,9 @@ def func_measset_gen():
                 sort_dup['TxFrequencyHz'] = FrequencyHz
 
 
-
-                # [zMeasNum]
-                # elevAperIndex
-                # [VTxIndex]
-                # [SysPulserSelA]
-
-
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
 
                 return sort_dup
-
 
             except:
                 print("Error: func_create_data")
@@ -1044,6 +1029,9 @@ def func_measset_gen():
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 print(list_database)
 
+                # MeasSetting generation.
+                df_measset = func_create_data()
+
                 ## K2, Juniper, NX3, NX2 and FROSK
                 for i in list_database:
 
@@ -1095,8 +1083,6 @@ def func_measset_gen():
                                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
                 target = AOP_data['zt'].to_numpy()
 
-                # MeasSetting generation.
-                df_measset = func_create_data()
 
                 # Machine Learning
                 func_machine_learning(combo_ML.get(), data, target)
