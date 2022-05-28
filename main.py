@@ -650,18 +650,6 @@ def func_measset_gen():
                 sort_dup = drop_dup.sort_values(by=list_params, ascending=True).reset_index()
 
 
-                ##  input parameter define.
-                sort_dup['probeId'] = selected_probeId
-                sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
-                sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
-                sort_dup['totalVoltagePt'] = box_TotalVoltpt.get()
-                sort_dup['numMeasVoltage'] = box_NumMeasVolt.get()
-                sort_dup['zStartDistCm'] = 0.5
-                sort_dup['DTxFreqIndex'] = 0
-                sort_dup['dumpSwVersion'] = box_DumpSW.get()
-
-
-
                 ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
                 bsIndexTrace = []
                 for beam, cnt in zip(sort_dup['BeamStyleIndex'], dup_count['BeamStyleIndex']):
@@ -674,19 +662,56 @@ def func_measset_gen():
                 sort_dup['bsIndexTrace'] = bsIndexTrace
 
 
+                ##  input parameter define.
+                sort_dup['probeId'] = selected_probeId
+                sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
+                sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
+                sort_dup['totalVoltagePt'] = box_TotalVoltpt.get()
+                sort_dup['numMeasVoltage'] = box_NumMeasVolt.get()
+                sort_dup['zStartDistCm'] = 0.5
+                sort_dup['DTxFreqIndex'] = 0
+                sort_dup['dumpSwVersion'] = box_DumpSW.get()
+
+
                 ## function: calc_profTxVoltage 구현
-                ## DataFrame에서 parameter 가져오기
-                profTxVoltageVolt = []
-                for str_maxV, str_ceilV, str_totalpt in zip(sort_dup['maxTxVoltageVolt'].values, sort_dup['ceilTxVoltageVolt'].values, sort_dup['totalVoltagePt'].values):
-                    idx = 2
-                    maxV = float(str_maxV)
-                    ceilV = float(str_ceilV)
-                    totalpt = int(str_totalpt)
+                def func_calc_profvolt():
+                    try:
+                        profTxVoltageVolt = []
+                        for str_maxV, str_ceilV, str_totalpt in zip(sort_dup['maxTxVoltageVolt'].values, sort_dup['ceilTxVoltageVolt'].values, sort_dup['totalVoltagePt'].values):
+                            idx = 2
+                            maxV = float(str_maxV)
+                            ceilV = float(str_ceilV)
+                            totalpt = int(str_totalpt)
 
-                    profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt-1-idx)/(totalpt-1)), 2))
-                sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
+                            profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt-1-idx)/(totalpt-1)), 2))
+                        sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
 
-                print(sort_dup)
+                    except():
+                        print('error: func_profvolt')
+
+
+                ## function: calc zMeasNum 구현
+                def func_zMeasNum():
+                    try:
+                        zStartDistCm = 0.5
+                        zMeasNum = []
+                        for focus in sort_dup['TxFocusLocCm']:
+                            if (focus <= 3):
+                                zMeasNum.append((5 - zStartDistCm) * 10)
+                            elif (focus <= 6):
+                                zMeasNum.append((8 - zStartDistCm) * 10)
+                            elif (focus <= 9):
+                                zMeasNum.append((12 - zStartDistCm) * 10)
+                            else:
+                                zMeasNum.append((14 - zStartDistCm) * 10)
+                        sort_dup['zMeasNum'] = zMeasNum
+
+                    except():
+                        print('error: func_zMeaNum')
+
+
+                func_calc_profvolt()
+                func_zMeasNum()
 
 
                 # FrequencyIndex to FrequencyHz
@@ -697,6 +722,7 @@ def func_measset_gen():
                     n += 1
                 sort_dup['TxFrequencyHz'] = FrequencyHz
 
+                print(sort_dup)
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
 
