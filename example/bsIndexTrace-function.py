@@ -143,9 +143,12 @@ def func_create_data():
         def func_profvolt():
             try:
                 ## DataFrame에서 parameter 가져오기
+
                 for max, ceil, totalp, nump in zip(sort_dup['maxTxVoltageVolt'], sort_dup['ceilTxVoltageVolt'], sort_dup['totalVoltagePt'], sort_dup['numMeasVoltage']):
                     list_profTxVoltageVolt = []
+
                     for i in range(nump):
+                        print(max, ceil, totalp, nump)
                         list_profTxVoltageVolt.append(round((min(max, ceil)) ** ((totalp-1-i)/(totalp-1)), 2))
                     profTxVoltageVolt = list_profTxVoltageVolt[2]
                     sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
@@ -159,16 +162,6 @@ def func_create_data():
         print(sort_dup)
 
 
-        # FrequencyIndex to FrequencyHz
-        n = 0
-        FrequencyHz = []
-        for i in sort_dup['SysTxFreqIndex'].values:
-            FrequencyHz.insert(n, func_freqidx2Hz(i))
-            n += 1
-        sort_dup['TxFrequencyHz'] = FrequencyHz
-
-
-
         # [zMeasNum]
         # elevAperIndex
         # [VTxIndex]
@@ -177,7 +170,7 @@ def func_create_data():
 
         func_show_table(selected_DBtable='meas_setting', df=sort_dup)
 
-        return sort_dup
+        # return sort_dup
 
 
     except:
