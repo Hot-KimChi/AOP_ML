@@ -1097,41 +1097,40 @@ def func_main():
         print("Error: main")
 
 
-##################################################
-### config 파일에서 Database information read   ###
+if __name__ == '__main__':
+    ### config 파일에서 Database information read   ###
+    config = configparser.ConfigParser()
+    config.read('AOP_config.cfg')
 
-config = configparser.ConfigParser()
-config.read('AOP_config.cfg')
+    server_address = config["server address"]["address"]
+    databases = config["database"]["name"]
+    ID = config["username"]["ID"]
+    password = config["password"]["PW"]
+    server_table_M3 = config["server table"]["M3 server table"]
+    Machine_Learning = config["Machine Learning"]["Model"]
 
-server_address = config["server address"]["address"]
-databases = config["database"]["name"]
-ID = config["username"]["ID"]
-password = config["password"]["PW"]
-server_table_M3 = config["server table"]["M3 server table"]
-Machine_Learning = config["Machine Learning"]["Model"]
+    list_database = databases.split(',')
+    list_M3_table = server_table_M3.split(',')
+    list_ML = Machine_Learning.split(',')
 
-list_database = databases.split(',')
-list_M3_table = server_table_M3.split(',')
-list_ML = Machine_Learning.split(',')
+    ## Start tk 만들기.
+    root = Tk()
+    root.title("DB 선택")
+    root.geometry("280x150")
+    root.resizable(False, False)
 
-## Start tk 만들기.
-root = Tk()
-root.title("DB 선택")
-root.geometry("280x150")
-root.resizable(False, False)
+    label1 = Label(root, text='데이터베이스를 선택하세요')
+    label1.place(x=10, y=10)
 
-label1 = Label(root, text='데이터베이스를 선택하세요')
-label1.place(x=10, y=10)
+    # combo-Box 만들어서 데이터베이스만들기
+    combo_login = ttk.Combobox(root, value=list_database)
+    # combo-Box 처음 선택되는 위치가 공란이 아니라 처음 데이터베이스 선택 옵션
+    combo_login.current(0)
+    # combo-Box 의 위치
+    combo_login.place(x=10, y=30)
+    # login_combo.pack(pady=20)
 
-# combo-Box 만들어서 데이터베이스만들기
-combo_login = ttk.Combobox(root, value=list_database)
-# combo-Box 처음 선택되는 위치가 공란이 아니라 처음 데이터베이스 선택 옵션
-combo_login.current(0)
-# combo-Box 의 위치
-combo_login.place(x=10, y=30)
-# login_combo.pack(pady=20)
+    btn_login = Button(root, width=10, height=2, text='Login', command=func_main)
+    btn_login.place(x=180, y=10)
 
-btn_login = Button(root, width=10, height=2, text='Login', command=func_main)
-btn_login.place(x=180, y=10)
-
-root.mainloop()
+    root.mainloop()
