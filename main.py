@@ -1,8 +1,6 @@
 import tkinter
-
 import pymssql
 import numpy as np
-import math
 import pandas as pd
 from tkinter import *
 from tkinter import ttk
@@ -85,219 +83,96 @@ def func_freqidx2Hz(idx):
 
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
 def func_show_table(selected_DBtable, df=None, extra=None):
-    n_root = tkinter.Toplevel()
-    n_root.title(f"{database}  //  {selected_DBtable}")
-    n_root.geometry("1720x1000")
+    try:
+        n_root = tkinter.Toplevel()
+        n_root.title(f"{database}  //  {selected_DBtable}")
+        n_root.geometry("1720x1000")
 
-    # Add some style
-    style = ttk.Style()
-    # Pick a theme
-    style.theme_use("default")
+        # Add some style
+        style = ttk.Style()
+        # Pick a theme
+        style.theme_use("default")
 
-    # Configure our treeview colors
-    style.configure("Treeview",
-                    background="#D3D3D3",
-                    foreground="black",
-                    rowheight=25,
-                    fieldbackground="#D3D3D3"
-                    )
-    # Change selected color
-    style.map('Treeview',
-              background=[('selected', '#347083')])
+        # Configure our treeview colors
+        style.configure("Treeview",
+                        background="#D3D3D3",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#D3D3D3"
+                        )
+        # Change selected color
+        style.map('Treeview',
+                  background=[('selected', '#347083')])
 
-    # Create Treeview Frame
-    frame1 = Frame(n_root)
-    frame1.pack(pady=20)
-
-
-    tree_scroll_y = Scrollbar(frame1, orient="vertical")
-    tree_scroll_y.pack(side=RIGHT, fill=Y)
-    tree_scroll_x = Scrollbar(frame1, orient="horizontal")
-    tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-    my_tree = ttk.Treeview(frame1, style="Treeview", height=20, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
-    # Pack to the screen
-    my_tree.pack()
-
-    tree_scroll_y.config(command=my_tree.yview)
-    tree_scroll_x.config(command=my_tree.xview)
-
-    my_tree["column"] = list(df.columns)
-    my_tree["show"] = "headings"
-
-    # Loop thru column list for headers
-    for column in my_tree["column"]:
-        my_tree.column(column, width=110, minwidth=110)
-        my_tree.heading(column, text=column)
-
-    my_tree.tag_configure('oddrow', background="lightblue")
-    my_tree.tag_configure('evenrow', background="white")
-
-    # Put data in treeview
-    df_rows = df.round(3)
-    df_rows = df_rows.to_numpy().tolist()
+        # Create Treeview Frame
+        frame1 = Frame(n_root)
+        frame1.pack(pady=20)
 
 
-    global count
-    count = 0
-    for row in df_rows:
-        if count % 2 == 0:
-            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
-        else:
-            my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
-        count += 1
+        tree_scroll_y = Scrollbar(frame1, orient="vertical")
+        tree_scroll_y.pack(side=RIGHT, fill=Y)
+        tree_scroll_x = Scrollbar(frame1, orient="horizontal")
+        tree_scroll_x.pack(side=BOTTOM, fill=X)
 
+        my_tree = ttk.Treeview(frame1, style="Treeview", height=20, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
+        # Pack to the screen
+        my_tree.pack()
 
-    if (extra is not None):
-        frame2 = Frame(n_root, relief="solid", bd=2)
-        frame2.pack(side="bottom", fill="both", expand=True, pady=10)
+        tree_scroll_y.config(command=my_tree.yview)
+        tree_scroll_x.config(command=my_tree.xview)
 
-        my_tree_extra = ttk.Treeview(frame2)
-
-        my_tree_extra["column"] = list(extra.columns)
-        my_tree_extra["show"] = "headings"
+        my_tree["column"] = list(df.columns)
+        my_tree["show"] = "headings"
 
         # Loop thru column list for headers
-        for column in my_tree_extra["column"]:
-            my_tree_extra.column(column, width=110, minwidth=110)
-            my_tree_extra.heading(column, text=column)
+        for column in my_tree["column"]:
+            my_tree.column(column, width=110, minwidth=110)
+            my_tree.heading(column, text=column)
+
+        my_tree.tag_configure('oddrow', background="lightblue")
+        my_tree.tag_configure('evenrow', background="white")
 
         # Put data in treeview
-        df_rows = extra.to_numpy().tolist()
+        df_rows = df.round(3)
+        df_rows = df_rows.to_numpy().tolist()
+
+
+        global count
+        count = 0
         for row in df_rows:
-            my_tree_extra.insert("", "end", values=row)
+            if count % 2 == 0:
+                my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
+            else:
+                my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
+            count += 1
 
-        my_tree_extra.pack(pady=20)
 
-    # n_root.mainloop()
+        if (extra is not None):
+            frame2 = Frame(n_root, relief="solid", bd=2)
+            frame2.pack(side="bottom", fill="both", expand=True, pady=10)
 
+            my_tree_extra = ttk.Treeview(frame2)
 
-# def sql_main(server, username, passwd, database):
-#     try:
-#         ## 데이터 SQL에서 가지고 오기.
-#         def view_table():
-#             try:
-#                 selected_probeId = str(list_probeId[combo_probename.current()])[1:-1]
-#                 selected_DBtable = combo_DBtable.get()
-#
-#                 conn = pymssql.connect(server, username, passwd, database)
-#                 query = f'''
-#                         SELECT * FROM
-#                         (
-#                         SELECT a.[measSetId]
-#                         ,a.[probeId]
-#                         ,a.[beamstyleIndex]
-#                         ,a.[txFrequencyHz]
-#                         ,a.[focusRangeCm]
-#                         ,a.[numTxElements]
-#                         ,a.[txpgWaveformStyle]
-#                         ,a.[numTxCycles]
-#                         ,a.[elevAperIndex]
-#                         ,a.[IsTxAperModulationEn]
-#                         ,d.[probeName]
-#                         ,d.[probePitchCm]
-#                         ,d.[probeRadiusCm]
-#                         ,d.[probeElevAperCm0]
-#                         ,d.[probeElevFocusRangCm]
-#                         ,b.[measResId]
-#                         ,b.[zt]
-#                         ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
-#                         FROM meas_setting AS a
-#                         LEFT JOIN meas_res_summary AS b
-#                             ON a.[measSetId] = b.[measSetId]
-#                         LEFT JOIN meas_station_setup AS c
-#                             ON b.[measSSId] = c.[measSSId]
-#                         LEFT JOIN probe_geo AS d
-#                             ON a.[probeId] = d.[probeId]
-#                         where b.[isDataUsable] ='yes' and c.[measPurpose] like '%Beamstyle%' and b.[errorDataLog] = ''
-#                         ) T
-#                         where RankNo = 1
-#                         order by 1
-#                         '''
-#
-#                 ## SQL에서 읽어온 데이터를 DataFrame으로 변환하여 df로 집어넣기 / 데이터프레임에서 probeId만 추출.
-#                 Raw_data = pd.read_sql(sql=query, con=conn)
-#                 # show_table(Raw_data, database, selected_DBtable)
-#
-#                 print(Raw_data.head())
-#                 print(Raw_data.info())
-#
-#                 print(Raw_data['probeName'].value_counts(dropna=False))
-#                 AOP_data = Raw_data.dropna()
-#                 print(AOP_data.head())
-#                 print(AOP_data.info())
-#
-#                 data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
-#                                  'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-#                                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
-#                 target = AOP_data['zt'].to_numpy()
-#
-#                 machine_learning(combo_ML.get(), data, target)
-#
-#             except():
-#                 print("Error: view_table")
-#
-#         root_SQL = Tk()
-#         root_SQL.title(f"{database}")
-#         root_SQL.geometry("600x600")
-#
-#         # MS-SQL 접속
-#         conn = pymssql.connect(server, username, passwd, database)
-#
-#         query = '''
-#         SELECT probeName, probeId FROM probe_geo
-#         order by probeName, probeId
-#         '''
-#
-#         ## SQL에서 읽어온 데이터를 DataFrame으로 변환하여 df로 집어넣기 / 데이터프레임에서 probeId만 추출.
-#         df = pd.read_sql(sql=query, con=conn)
-#         df_probeId = df[['probeId']]
-#         list_probeId = df_probeId.values.tolist()
-#
-#         list_probeinfor = df.values.tolist()
-#         numprobe = len(list_probeinfor)
-#         list_probe = list()
-#         # Probelist를 probeName + probeId 생성
-#         for i in range(numprobe):
-#             list_probe.append('  |  '.join(map(str, list_probeinfor[i])))
-#
-#         label_probename = Label(root_SQL, text='Probe Name')
-#         label_probename.place(x=10, y=50)
-#
-#         # probe list를 combo-Box 만들어서 데이터베이스만들기
-#         combo_probename = ttk.Combobox(root_SQL, value=list_probe, height=0, state='readonly')
-#         # combo-Box 처음 선택되는 위치가 공란이 아니라 처음 데이터베이스 선택 옵션
-#         # combo_probename.current(0)
-#         # combo-Box 의 위치
-#         combo_probename.place(x=120, y=50)
-#
-#         label_DB_table = Label(root_SQL, text='SQL Table Name')
-#         label_DB_table.place(x=320, y=50)
-#
-#         # combo-Box 만들어서 table 선택하기 만들기.
-#         combo_DBtable = ttk.Combobox(root_SQL, value=list_M3_table, height=0, state='readonly')
-#         # combo-Box 처음 선택되는 위치가 공란이 아니라 처음 데이터베이스 선택 옵션
-#         # combo_DBtable.current(0)
-#         # combo_DBtable.bind("<<ComboboxSelected>>", print(combo_DBtable.get()))
-#         # combo-Box 의 위치
-#         combo_DBtable.place(x=420, y=50)
-#
-#         label_ML = Label(root_SQL, text='Machine Learning')
-#         label_ML.place(x=10, y=20)
-#         combo_ML = ttk.Combobox(root_SQL, value=list_ML, width=35, height=0, state='readonly')
-#         combo_ML.place(x=120, y=20)
-#
-#         btn_view = Button(root_SQL, width=10, text='View Table', command=view_table)
-#         btn_view.place(x=450, y=10)
-#
-#         conn.close()
-#
-#
-#     except():
-#         print("Error: SQL_main")
+            my_tree_extra["column"] = list(extra.columns)
+            my_tree_extra["show"] = "headings"
 
-  # DB 서버 주소 # 데이터 베이스 이름 # 접속 유저명 # 접속 유저 패스워드
-##
+            # Loop thru column list for headers
+            for column in my_tree_extra["column"]:
+                my_tree_extra.column(column, width=110, minwidth=110)
+                my_tree_extra.heading(column, text=column)
+
+            # Put data in treeview
+            df_rows = extra.to_numpy().tolist()
+            for row in df_rows:
+                my_tree_extra.insert("", "end", values=row)
+
+            my_tree_extra.pack(pady=20)
+
+        # n_root.mainloop()
+
+    except():
+        print('func_show_table')
+
 
 ## SQL 데이터베이스
 ## SQL 데이터베이스에 접속하여 데이터 load.
@@ -348,35 +223,6 @@ def func_sql_get(server_address, ID, password, database, command):
                 SELECT * FROM {selected_DBtable} WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
                 ORDER BY 1
                 '''
-
-
-            # sel_SSId = combo_SSId.get()
-                # sel_probesn = combo_probesn.get()
-                #
-                #
-                # if len(sel_SSId) > 0 and len(sel_probesn) > 0:
-                #     query = f'''
-                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId} and probeSn = {sel_probesn}
-                #     ORDER BY probeSn, measSSId, 1
-                #     '''
-                #
-                # elif len(sel_SSId) > 0 and len(sel_probesn) == 0:
-                #     query = f'''
-                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and measSSId = {sel_SSId}
-                #     ORDER BY measSSId, 1
-                #     '''
-                #
-                # elif len(sel_SSId) == 0 and len(sel_probesn) > 0:
-                #     query = f'''
-                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%' and probeSn = {sel_probesn}
-                #     ORDER BY probeSn, 1
-                #     '''
-                #
-                # else:
-                #     query = f'''
-                #     SELECT * FROM {selected_DBtable} WHERE probeName LIKE '%{selected_probename}%'
-                #     ORDER BY 1
-                #     '''
 
 
         Raw_data = pd.read_sql(sql=query, con=conn)
@@ -635,14 +481,12 @@ def func_measset_gen():
                 df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
                 df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
 
-                df = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode])        ## 2개 데이터프레임 합치기
-                df = df.reset_index(drop=True)                                      ## 데이터프레임 index reset
-                df = df.fillna(0)                                                   ## 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
+                df = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode])                                            ## 2개 데이터프레임 합치기
+                df = df.reset_index(drop=True)                                                                          ## 데이터프레임 index reset
+                df = df.fillna(0)                                                                                       ## 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
 
                 list_params =['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements']
-
-                ## groupby로 중복 count.
-                dup_count = df.groupby(by=list_params, as_index=False).count()
+                dup_count = df.groupby(by=list_params, as_index=False).count()                                          ## groupby로 중복 count.
 
                 ##  duplicated parameter check. => dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
                 ##  중복된 parameter가 있을 경우, 제거하기.
@@ -662,6 +506,15 @@ def func_measset_gen():
                 sort_dup['bsIndexTrace'] = bsIndexTrace
 
 
+                # FrequencyIndex to FrequencyHz
+                n = 0
+                FrequencyHz = []
+                for i in sort_dup['SysTxFreqIndex'].values:
+                    FrequencyHz.insert(n, func_freqidx2Hz(i))
+                    n += 1
+                sort_dup['TxFrequencyHz'] = FrequencyHz
+
+
                 ##  input parameter define.
                 sort_dup['probeId'] = selected_probeId
                 sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
@@ -679,6 +532,7 @@ def func_measset_gen():
                         profTxVoltageVolt = []
                         for str_maxV, str_ceilV, str_totalpt in zip(sort_dup['maxTxVoltageVolt'].values, sort_dup['ceilTxVoltageVolt'].values, sort_dup['totalVoltagePt'].values):
                             idx = 2
+                            ## tkinter에서 넘어오는 데이터 string.
                             maxV = float(str_maxV)
                             ceilV = float(str_ceilV)
                             totalpt = int(str_totalpt)
@@ -712,16 +566,6 @@ def func_measset_gen():
 
                 func_calc_profvolt()
                 func_zMeasNum()
-
-
-                # FrequencyIndex to FrequencyHz
-                n = 0
-                FrequencyHz = []
-                for i in sort_dup['SysTxFreqIndex'].values:
-                    FrequencyHz.insert(n, func_freqidx2Hz(i))
-                    n += 1
-                sort_dup['TxFrequencyHz'] = FrequencyHz
-
                 print(sort_dup)
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
