@@ -174,7 +174,6 @@ def func_show_table(selected_DBtable, df=None, extra=None):
         print('func_show_table')
 
 
-## SQL 데이터베이스
 ## SQL 데이터베이스에 접속하여 데이터 load.
 def func_sql_get(server_address, ID, password, database, command):
     try:
