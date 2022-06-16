@@ -7,7 +7,10 @@ from tkinter import ttk
 from functools import partial
 import configparser
 import warnings
+warnings.filterwarnings("ignore")
+
 from tkinter import filedialog
+import joblib
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_validate
@@ -583,19 +586,19 @@ def func_measset_gen():
                 if selected_ML == 'RandomForestRegressor':
 
                     from sklearn.ensemble import RandomForestRegressor
-                    rf = RandomForestRegressor(n_jobs=-1)
-                    scores = cross_validate(rf, train_input, train_target, return_train_score=True, n_jobs=-1)
+                    model = RandomForestRegressor(n_jobs=-1)
+                    scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('Random Forest - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
                     print('Random Forest - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
-                    rf.fit(train_input, train_target)
-                    print('Random Forest - Test R^2:', np.round_(rf.score(test_input, test_target), 3))
-                    prediction = np.round_(rf.predict(test_input), 2)
+                    model.fit(train_input, train_target)
+                    print('Random Forest - Test R^2:', np.round_(model.score(test_input, test_target), 3))
+                    prediction = np.round_(model.predict(test_input), 2)
 
                     df_import = pd.DataFrame()
-                    df_import = df_import.append(pd.DataFrame([np.round((rf.feature_importances_) * 100, 2)],
+                    df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
                                                               columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
                                                                        'txpgWaveformStyle',
                                                                        'numTxCycles', 'elevAperIndex',
@@ -618,17 +621,17 @@ def func_measset_gen():
                     print(train_poly.shape)
 
                     from sklearn.linear_model import LinearRegression
-                    lr = LinearRegression()
-                    scores = cross_validate(lr, train_poly, train_target, return_train_score=True, n_jobs=-1)
+                    model = LinearRegression()
+                    scores = cross_validate(model, train_poly, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('선형회귀 & polynomialFeatures - Train R^2 :', np.round_(np.mean(scores['train_score']), 3))
                     print('선형회귀 & polynomialFeatures - Train_validation R^2:',
                           np.round_(np.mean(scores['test_score']), 3))
 
-                    lr.fit(train_poly, train_target)
-                    print('선형회귀 & polynomialFeatures - Test R^2:', np.round_(lr.score(test_poly, test_target), 3))
-                    prediction = np.round_(lr.predict(test_poly), 2)
+                    model.fit(train_poly, train_target)
+                    print('선형회귀 & polynomialFeatures - Test R^2:', np.round_(model.score(test_poly, test_target), 3))
+                    prediction = np.round_(model.predict(test_poly), 2)
 
 
                 ## StandardScaler 적용 with linear regression
@@ -647,16 +650,16 @@ def func_measset_gen():
                     test_scaled = ss.transform(test_poly)
 
                     from sklearn.linear_model import LinearRegression
-                    lr = LinearRegression()
-                    scores = cross_validate(lr, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+                    model = LinearRegression()
+                    scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('선형회귀 & poly & scaling - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
                     print('선형회귀 & poly & scaling - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
-                    lr.fit(train_scaled, train_target)
-                    print('선형회귀 & poly & scaling - Test R^2:', np.round_(lr.score(test_scaled, test_target), 3))
-                    prediction = np.round_(lr.predict(test_scaled), 2)
+                    model.fit(train_scaled, train_target)
+                    print('선형회귀 & poly & scaling - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
+                    prediction = np.round_(model.predict(test_scaled), 2)
 
 
                 ## Ridge regularization(L2 regularization)
@@ -675,16 +678,16 @@ def func_measset_gen():
                     test_scaled = ss.transform(test_poly)
 
                     from sklearn.linear_model import Ridge
-                    ridge = Ridge(alpha=100)
-                    scores = cross_validate(ridge, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+                    model = Ridge(alpha=100)
+                    scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('릿지 회귀 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
                     print('릿지 회귀 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
-                    ridge.fit(train_scaled, train_target)
-                    print('릿지 회귀 - Test R^2:', np.round_(ridge.score(test_scaled, test_target), 3))
-                    prediction = ridge.predict(test_scaled)
+                    model.fit(train_scaled, train_target)
+                    print('릿지 회귀 - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
+                    prediction = model.predict(test_scaled)
 
                     ## L2 하이퍼파라미터 찾기
                     import matplotlib.pyplot as plt
@@ -694,11 +697,11 @@ def func_measset_gen():
                     alpha_list = [0.001, 0.01, 0.1, 1, 10, 100]
                     for alpha in alpha_list:
                         # 릿지모델 생성 & 훈련
-                        ridge = Ridge(alpha=alpha)
-                        ridge.fit(train_scaled, train_target)
+                        model = Ridge(alpha=alpha)
+                        model.fit(train_scaled, train_target)
                         # 훈련점수 & 테스트점수
-                        train_score.append(ridge.score(train_scaled, train_target))
-                        test_score.append(ridge.score(test_scaled, test_target))
+                        train_score.append(model.score(train_scaled, train_target))
+                        test_score.append(model.score(test_scaled, test_target))
 
                     plt.plot(np.log10(alpha_list), train_score)
                     plt.plot(np.log10(alpha_list), test_score)
@@ -710,8 +713,7 @@ def func_measset_gen():
                 elif selected_ML == 'DecisionTreeRegressor(scaled data)':
 
                     from sklearn.tree import DecisionTreeRegressor
-                    ## 
-                    dt = DecisionTreeRegressor(max_depth=10, random_state=42)
+                    model = DecisionTreeRegressor(max_depth=10, random_state=42)
 
                     from sklearn.preprocessing import StandardScaler
                     ss = StandardScaler()
@@ -719,20 +721,20 @@ def func_measset_gen():
                     train_scaled = ss.transform(train_input)
                     test_scaled = ss.transform(test_input)
 
-                    dt.fit(train_scaled, train_target)
+                    model.fit(train_scaled, train_target)
 
-                    scores = cross_validate(dt, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+                    scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
                     print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
                     # dt.fit(train_scaled, train_target)
-                    print('결정트리 - Test R^2:', np.round_(dt.score(test_scaled, test_target), 3))
-                    prediction = dt.predict(test_scaled)
+                    print('결정트리 - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
+                    prediction = model.predict(test_scaled)
 
                     df_import = pd.DataFrame()
-                    df_import = df_import.append(pd.DataFrame([np.round((dt.feature_importances_) * 100, 2)],
+                    df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
                                                               columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
                                                                        'txpgWaveformStyle',
                                                                        'numTxCycles', 'elevAperIndex',
@@ -747,7 +749,7 @@ def func_measset_gen():
                     import matplotlib.pyplot as plt
                     from sklearn.tree import plot_tree
                     plt.figure(figsize=(10, 7))
-                    plot_tree(dt, max_depth=2, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                    plot_tree(model, max_depth=2, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
                              'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
@@ -757,23 +759,23 @@ def func_measset_gen():
 
                     from sklearn.tree import DecisionTreeRegressor
 
-                    dt = DecisionTreeRegressor(max_depth=10, random_state=42)
+                    model = DecisionTreeRegressor(max_depth=10, random_state=42)
 
-                    dt.fit(train_input, train_target)
+                    model.fit(train_input, train_target)
 
-                    scores = cross_validate(dt, train_input, train_target, return_train_score=True, n_jobs=-1)
+                    scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
                     print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
                     # dt.fit(train_scaled, train_target)
-                    print('결정트리 - Test R^2:', np.round_(dt.score(test_input, test_target), 3))
-                    prediction = dt.predict(test_input)
+                    print('결정트리 - Test R^2:', np.round_(model.score(test_input, test_target), 3))
+                    prediction = model.predict(test_input)
 
 
                     df_import = pd.DataFrame()
-                    df_import = df_import.append(pd.DataFrame([np.round((dt.feature_importances_)*100, 2)], columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                    df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_)*100, 2)], columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
                                  'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']), ignore_index=True)
 
@@ -784,11 +786,14 @@ def func_measset_gen():
                     import matplotlib.pyplot as plt
                     from sklearn.tree import plot_tree
                     plt.figure(figsize=(10, 7))
-                    plot_tree(dt, max_depth=1, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                    plot_tree(model, max_depth=1, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
                              'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
 
+
+                ## 훈련된 model 저장.
+                joblib.dump(model, './model_v1_python37.pkl')
 
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
