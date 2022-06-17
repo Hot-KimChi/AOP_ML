@@ -518,6 +518,11 @@ def func_measset_gen():
 
 
                 ##  input parameter define.
+                global selected_probeId
+                selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
+                selected_probename = str(list_probenames[combo_probename.current()])
+
+
                 sort_dup['probeId'] = selected_probeId
                 sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
                 sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
@@ -526,6 +531,7 @@ def func_measset_gen():
                 sort_dup['zStartDistCm'] = 0.5
                 sort_dup['DTxFreqIndex'] = 0
                 sort_dup['dumpSwVersion'] = box_DumpSW.get()
+                sort_dup['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
 
 
                 ## function: calc_profTxVoltage 구현
@@ -568,6 +574,7 @@ def func_measset_gen():
 
                 func_calc_profvolt()
                 func_zMeasNum()
+                sort_dup = sort_dup.sort_values(by=[sort_dup.columns[1], sort_dup.columns[2], sort_dup.columns[7], sort_dup.columns[3], sort_dup.columns[6], sort_dup.columns[4]], ascending=True)
                 print(sort_dup)
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
@@ -578,7 +585,92 @@ def func_measset_gen():
                 print("Error: func_create_data")
 
 
-        def func_machine_learning(selected_ML, data, target):
+        root_gen = tkinter.Toplevel()
+        root_gen.title(f"{database}" + ' / MeasSet_generation')
+        root_gen.geometry("880x200")
+        root_gen.resizable(False, False)
+
+        frame1 = Frame(root_gen, relief="solid", bd=2)
+        frame1.pack(side="top", fill="both", expand=True)
+
+        label_probename = Label(frame1, text='Probe Name')
+        label_probename.place(x=5, y=5)
+        combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
+        combo_probename.place(x=5, y=25)
+
+        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_create_data)
+        btn_load.place(x=185, y=5)
+
+        frame2 = Frame(root_gen, relief="solid", bd=2)
+        frame2.pack(side="bottom", fill="both", expand=True)
+
+        #Labels
+        label_DumpSW = Label(frame2, text="[dumpSwVersion]")
+        label_DumpSW.grid(row=0, column=0)
+
+        label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
+        label_MaxVolt.grid(row=0, column=1)
+
+        label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
+        label_CeilVolt.grid(row=0, column=2)
+
+        label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
+        label_TotalVoltpt.grid(row=0, column=3)
+
+        label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
+        label_NumMeasVolt.grid(row=0, column=4)
+
+        #Entry boxes
+        box_DumpSW = Entry(frame2, justify='center')
+        box_DumpSW.grid(row=1, column=0)
+
+        box_MaxVolt = Entry(frame2, justify='center')
+        box_MaxVolt.grid(row=1, column=1)
+
+        box_CeilVolt = Entry(frame2, justify='center')
+        box_CeilVolt.grid(row=1, column=2)
+
+        box_TotalVoltpt = Entry(frame2, justify='center')
+        box_TotalVoltpt.grid(row=1, column=3)
+
+        box_NumMeasVolt = Entry(frame2, justify='center')
+        box_NumMeasVolt.grid(row=1, column=4)
+
+        root_gen.mainloop()
+
+    except:
+        print("Error: measset_gen")
+
+
+def func_tx_sum():
+    try:
+        filename = filedialog.askopenfilename(initialdir='.txt')
+        df_UE_Tx_sum = pd.read_csv(filename, sep='\t', encoding='cp949')
+        ## mode, BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
+        df_first = df_UE_Tx_sum.iloc[:, [2, 4, 5, 6, 7, 8, 9, 10]]
+
+        df = df_first.drop_duplicates()
+        df_D_mode = df.loc[(df['BeamStyleIndex'] == 10) & (df['ProbeNumTxCycles'] == 4)]
+        df_Others_mode = df.loc[df['BeamStyleIndex'] != 10]
+
+        df_D_mode = df_D_mode.drop_duplicates(['Mode', 'BeamStyleIndex', 'TxFreqIndex', 'TxFrequency', 'ProbeNumElevAper', 'TxpgWaveformStyle', 'TxChannelModulationEn'])
+        df_Others_mode = df_Others_mode.drop_duplicates()
+        df_final_mode = pd.concat([df_Others_mode, df_D_mode])                                                          ## 2개 데이터프레임 합치기
+        df_final_mode = df_final_mode.reset_index(drop=True)                                                            ## 데이터프레임 index reset
+        df_final_mode = df_final_mode.sort_values(
+            by=[df_final_mode.columns[0], df_final_mode.columns[1], df_final_mode.columns[2], df_final_mode.columns[4],
+                df_final_mode.columns[6]], ascending=True)
+
+        func_show_table('Tx_summary', df_final_mode)
+
+
+    except:
+        print("Error: Tx_Summary")
+
+
+def func_machine_learning():
+    try:
+        def func_modelML(selected_ML, data, target):
             try:
                 train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
 
@@ -744,14 +836,14 @@ def func_measset_gen():
 
                     func_show_table('DecisionTreeRegressor', df=df_import)
 
-
                     ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
                     import matplotlib.pyplot as plt
                     from sklearn.tree import plot_tree
                     plt.figure(figsize=(10, 7))
-                    plot_tree(model, max_depth=2, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
-                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                    plot_tree(model, max_depth=2, filled=True,
+                              feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
 
 
@@ -773,24 +865,26 @@ def func_measset_gen():
                     print('결정트리 - Test R^2:', np.round_(model.score(test_input, test_target), 3))
                     prediction = model.predict(test_input)
 
-
                     df_import = pd.DataFrame()
-                    df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_)*100, 2)], columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
-                                 'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                                 'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']), ignore_index=True)
+                    df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
+                                                              columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
+                                                                       'txpgWaveformStyle',
+                                                                       'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn',
+                                                                       'probePitchCm',
+                                                                       'probeRadiusCm', 'probeElevAperCm0',
+                                                                       'probeElevFocusRangCm']), ignore_index=True)
 
                     func_show_table('DecisionTreeRegressor', df=df_import)
-
 
                     ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
                     import matplotlib.pyplot as plt
                     from sklearn.tree import plot_tree
                     plt.figure(figsize=(10, 7))
-                    plot_tree(model, max_depth=1, filled=True, feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
-                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                    plot_tree(model, max_depth=1, filled=True,
+                              feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                                             'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                                             'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
-
 
                 ## 훈련된 model 저장.
                 joblib.dump(model, './model_v1_python37.pkl')
@@ -831,8 +925,8 @@ def func_measset_gen():
                         bad = bad + 1
 
                         df_bad = df_bad.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
-                                                    columns=['index', 'target', 'expect', 'Diff(Cm)', 'Diff(%)']),
-                                       ignore_index=True)
+                                                            columns=['index', 'target', 'expect', 'Diff(Cm)', 'Diff(%)']),
+                                               ignore_index=True)
                         # df_bad_sort_values = df_bad.sort_values(by=df_bad.columns[3], ascending=True)
                         # df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
 
@@ -854,7 +948,6 @@ def func_measset_gen():
                     else:
                         good = good + 1
 
-
                         df = df.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
                                                     columns=['index', 'target', 'expect', 'Diff(Cm)', 'Diff(%)']),
                                        ignore_index=True)
@@ -862,19 +955,18 @@ def func_measset_gen():
                         # df_sort_values = df_sort_values.reset_index(drop=True)
 
                         pass_condition = pass_condition.append(pd.DataFrame([test_input[i]],
-                                                                                columns=['txFrequencyHz',
-                                                                                         'focusRangeCm',
-                                                                                         'numTxElements',
-                                                                                         'txpgWaveformStyle',
-                                                                                         'numTxCycles',
-                                                                                         'elevAperIndex',
-                                                                                         'IsTxAperModulationEn',
-                                                                                         'probePitchCm',
-                                                                                         'probeRadiusCm',
-                                                                                         'probeElevAperCm0',
-                                                                                         'probeElevFocusRangCm']),
-                                                                   ignore_index=True)
-
+                                                                            columns=['txFrequencyHz',
+                                                                                     'focusRangeCm',
+                                                                                     'numTxElements',
+                                                                                     'txpgWaveformStyle',
+                                                                                     'numTxCycles',
+                                                                                     'elevAperIndex',
+                                                                                     'IsTxAperModulationEn',
+                                                                                     'probePitchCm',
+                                                                                     'probeRadiusCm',
+                                                                                     'probeElevAperCm0',
+                                                                                     'probeElevFocusRangCm']),
+                                                               ignore_index=True)
 
                 print()
                 print('bad:', bad)
@@ -890,62 +982,52 @@ def func_measset_gen():
                 func_show_table("pass_condition",
                                 df=merge_good_inner if len(merge_good_inner.index) > 0 else None)
 
-                # df_measset = func_create_data()
-                ## predict
-
             except():
-                print("Error: Machine_Learning")
-
+                print('error: func_modelML')
 
         def func_preprocessML():
             try:
-                global selected_probeId
-                selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 print(list_database)
-
-                # MeasSetting generation.
-                df_measset = func_create_data()
 
                 ## K2, Juniper, NX3, NX2 and FROSK
                 for i in list_database:
-
                     print(i)
                     conn = pymssql.connect(server_address, ID, password, database=i)
 
                     query = f'''
-                             SELECT * FROM
-                             (
-                             SELECT a.[measSetId]
-                             ,a.[probeId]
-                             ,a.[beamstyleIndex]
-                             ,a.[txFrequencyHz]
-                             ,a.[focusRangeCm]
-                             ,a.[numTxElements]
-                             ,a.[txpgWaveformStyle]
-                             ,a.[numTxCycles]
-                             ,a.[elevAperIndex]
-                             ,a.[IsTxAperModulationEn]
-                             ,d.[probeName]
-                             ,d.[probePitchCm]
-                             ,d.[probeRadiusCm]
-                             ,d.[probeElevAperCm0]
-                             ,d.[probeElevFocusRangCm]
---                              ,d.[probeElevFocusRangCm1]
-                             ,b.[measResId]
-                             ,b.[zt]
-                             ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
-                             FROM meas_setting AS a
-                             LEFT JOIN meas_res_summary AS b
-                                 ON a.[measSetId] = b.[measSetId]
-                             LEFT JOIN meas_station_setup AS c
-                                 ON b.[measSSId] = c.[measSSId]
-                             LEFT JOIN probe_geo AS d
-                                 ON a.[probeId] = d.[probeId]
-                             where b.[isDataUsable] ='yes' and c.[measPurpose] like '%Beamstyle%' and b.[errorDataLog] = ''
-                             ) T
-                             where RankNo = 1
-                             order by 1
-                             '''
+                                     SELECT * FROM
+                                     (
+                                     SELECT a.[measSetId]
+                                     ,a.[probeId]
+                                     ,a.[beamstyleIndex]
+                                     ,a.[txFrequencyHz]
+                                     ,a.[focusRangeCm]
+                                     ,a.[numTxElements]
+                                     ,a.[txpgWaveformStyle]
+                                     ,a.[numTxCycles]
+                                     ,a.[elevAperIndex]
+                                     ,a.[IsTxAperModulationEn]
+                                     ,d.[probeName]
+                                     ,d.[probePitchCm]
+                                     ,d.[probeRadiusCm]
+                                     ,d.[probeElevAperCm0]
+                                     ,d.[probeElevFocusRangCm]
+        --                              ,d.[probeElevFocusRangCm1]
+                                     ,b.[measResId]
+                                     ,b.[zt]
+                                     ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
+                                     FROM meas_setting AS a
+                                     LEFT JOIN meas_res_summary AS b
+                                         ON a.[measSetId] = b.[measSetId]
+                                     LEFT JOIN meas_station_setup AS c
+                                         ON b.[measSSId] = c.[measSSId]
+                                     LEFT JOIN probe_geo AS d
+                                         ON a.[probeId] = d.[probeId]
+                                     where b.[isDataUsable] ='yes' and c.[measPurpose] like '%Beamstyle%' and b.[errorDataLog] = ''
+                                     ) T
+                                     where RankNo = 1
+                                     order by 1
+                                     '''
 
                     Raw_data = pd.read_sql(sql=query, con=conn)
                     print(Raw_data['probeName'].value_counts(dropna=False))
@@ -957,102 +1039,34 @@ def func_measset_gen():
                                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
                 target = AOP_data['zt'].to_numpy()
 
-
                 # Machine Learning
-                func_machine_learning(combo_ML.get(), data, target)
-
+                func_modelML(combo_ML.get(), data, target)
 
             except:
                 print("Error: func_preprocessML")
 
 
-        root_gen = tkinter.Toplevel()
-        root_gen.title(f"{database}" + ' / MeasSet_generation')
-        root_gen.geometry("880x200")
-        root_gen.resizable(False, False)
+        root_ML = tkinter.Toplevel()
+        root_ML.title(f"{database}" + ' / Machine Learning')
+        root_ML.geometry("880x200")
+        root_ML.resizable(False, False)
 
-        frame1 = Frame(root_gen, relief="solid", bd=2)
+        frame1 = Frame(root_ML, relief="solid", bd=2)
         frame1.pack(side="top", fill="both", expand=True)
-
-        label_probename = Label(frame1, text='Probe Name')
-        label_probename.place(x=5, y=5)
-        combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
-        combo_probename.place(x=5, y=25)
 
         label_ML = Label(frame1, text='Machine Learning')
         label_ML.place(x=185, y=5)
         combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
         combo_ML.place(x=185, y=25)
 
-        ''' file select and load -> Machine Learning'''
         btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_preprocessML)
         btn_load.place(x=460, y=5)
 
-        frame2 = Frame(root_gen, relief="solid", bd=2)
-        frame2.pack(side="bottom", fill="both", expand=True)
-
-        #Labels
-        label_DumpSW = Label(frame2, text="[dumpSwVersion]")
-        label_DumpSW.grid(row=0, column=0)
-
-        label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
-        label_MaxVolt.grid(row=0, column=1)
-
-        label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
-        label_CeilVolt.grid(row=0, column=2)
-
-        label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
-        label_TotalVoltpt.grid(row=0, column=3)
-
-        label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
-        label_NumMeasVolt.grid(row=0, column=4)
-
-        #Entry boxes
-        box_DumpSW = Entry(frame2, justify='center')
-        box_DumpSW.grid(row=1, column=0)
-
-        box_MaxVolt = Entry(frame2, justify='center')
-        box_MaxVolt.grid(row=1, column=1)
-
-        box_CeilVolt = Entry(frame2, justify='center')
-        box_CeilVolt.grid(row=1, column=2)
-
-        box_TotalVoltpt = Entry(frame2, justify='center')
-        box_TotalVoltpt.grid(row=1, column=3)
-
-        box_NumMeasVolt = Entry(frame2, justify='center')
-        box_NumMeasVolt.grid(row=1, column=4)
-
-        root_gen.mainloop()
-
-    except:
-        print("Error: measset_gen")
+        root_ML.mainloop()
 
 
-def func_tx_sum():
-    try:
-        filename = filedialog.askopenfilename(initialdir='.txt')
-        df_UE_Tx_sum = pd.read_csv(filename, sep='\t', encoding='cp949')
-        ## mode, BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
-        df_first = df_UE_Tx_sum.iloc[:, [2, 4, 5, 6, 7, 8, 9, 10]]
-
-        df = df_first.drop_duplicates()
-        df_D_mode = df.loc[(df['BeamStyleIndex'] == 10) & (df['ProbeNumTxCycles'] == 4)]
-        df_Others_mode = df.loc[df['BeamStyleIndex'] != 10]
-
-        df_D_mode = df_D_mode.drop_duplicates(['Mode', 'BeamStyleIndex', 'TxFreqIndex', 'TxFrequency', 'ProbeNumElevAper', 'TxpgWaveformStyle', 'TxChannelModulationEn'])
-        df_Others_mode = df_Others_mode.drop_duplicates()
-        df_final_mode = pd.concat([df_Others_mode, df_D_mode])                                                          ## 2개 데이터프레임 합치기
-        df_final_mode = df_final_mode.reset_index(drop=True)                                                            ## 데이터프레임 index reset
-        df_final_mode = df_final_mode.sort_values(
-            by=[df_final_mode.columns[0], df_final_mode.columns[1], df_final_mode.columns[2], df_final_mode.columns[4],
-                df_final_mode.columns[6]], ascending=True)
-
-        func_show_table('Tx_summary', df_final_mode)
-
-
-    except:
-        print("Error: Tx_Summary")
+    except():
+        print("Error: Machine_Learning")
 
 
 ## Login 버튼누를 경우, func_main 실행 listbox에 있는 database로 접속.
@@ -1092,8 +1106,8 @@ def func_main():
         btn_tx_sum = Button(root_main, width=30, height=3, text='Tx Summary', command=func_tx_sum)
         btn_tx_sum.grid(row=1, column=0)
 
-        # btn_ML = Button(root_main, width=30, height=3, text='Machine Learning', command=sql_main(server_address, ID, password, database))
-        # btn_ML.grid(row=1, column=0)
+        btn_ML = Button(root_main, width=30, height=3, text='Machine Learning', command=func_machine_learning)
+        btn_ML.grid(row=1, column=1)
 
         root_main.mainloop()
 
