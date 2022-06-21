@@ -470,8 +470,8 @@ def func_measset_gen():
             try:
                 filename = filedialog.askopenfilename(initialdir='.txt')
                 df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
-                ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
-                df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]]
+                ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE, VTxIndex, elevAperIndex, SysPulserSelA
+                df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 15]]
 
                 ########################
                 ## B & M mode process ##
@@ -534,6 +534,7 @@ def func_measset_gen():
                 sort_dup['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
 
 
+
                 ## function: calc_profTxVoltage 구현
                 def func_calc_profvolt():
                     try:
@@ -575,14 +576,23 @@ def func_measset_gen():
                 func_calc_profvolt()
                 func_zMeasNum()
                 sort_dup = sort_dup.sort_values(by=[sort_dup.columns[1], sort_dup.columns[2], sort_dup.columns[7], sort_dup.columns[3], sort_dup.columns[6], sort_dup.columns[4]], ascending=True)
+
+                sort_dup = sort_dup[['measSetComments', 'probeId', 'BeamStyleIndex', 'bsIndexTrace', 'TxFrequencyHz',
+                                     'TxFocusLocCm', 'maxTxVoltageVolt', 'ceilTxVoltageVolt', 'profTxVoltageVolt',
+                                     'totalVoltagePt', 'numMeasVoltage', 'NumTxElements', 'TxpgWaveformStyle',
+                                     'ProbeNumTxCycles', 'elevAperIndex', 'zStartDistCm', 'zMeasNum',
+                                     'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
+                                     'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk']]
                 print(sort_dup)
 
-                func_show_table(selected_DBtable='meas_setting', df=sort_dup)
 
+                func_show_table(selected_DBtable='meas_setting', df=sort_dup)
+                sort_dup.to_csv(f'./{selected_probename}_measSet.csv', header=True, index=False)
                 return sort_dup
 
             except:
                 print("Error: func_create_data")
+
 
 
         root_gen = tkinter.Toplevel()
