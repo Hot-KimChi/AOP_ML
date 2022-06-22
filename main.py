@@ -587,17 +587,79 @@ def func_measset_gen():
 
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
-                sort_dup.to_csv(f'./{selected_probename}_measSet.csv', header=True, index=False)
+                LUT_count = box_DumpSW.get()
+                sort_dup.to_csv(f'./meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
+
                 return sort_dup
 
             except:
                 print("Error: func_create_data")
 
 
+        def func_insert_data():
+            try:
+                filename = filedialog.askopenfilename(initialdir='.txt')
+                data = pd.read_csv(filename)
+                df = pd.DataFrame(data)
+
+                conn = pymssql.connect(server_address, ID, password, database)
+                cursor = conn.cursor()
+
+                for row in df.itertuples():
+                    query = '''
+                            INSERT INTO meas_setting (
+                                       [measSetComments]
+                                      ,[probeId]
+                                      ,[beamstyleIndex]
+                                      ,[bsIndexTrace]
+                                      ,[txFrequencyHz]
+                                      ,[focusRangeCm]
+                                      ,[maxTxVoltageVolt]
+                                      ,[ceilTxVoltageVolt]
+                                      ,[profTxVoltageVolt]
+                                      ,[totalVoltagePt]
+                                      ,[numMeasVoltage]
+                                      ,[numTxElements]
+                                      ,[txpgWaveformStyle]
+                                      ,[numTxCycles]
+                                      ,[elevAperIndex]
+                                      ,[zStartDistCm]
+                                      ,[zMeasNum]
+                                      ,[IsTxAperModulationEn]
+                                      ,[dumpSwVersion]
+                                      ,[DTxFreqIndex]
+                                      ,[VTxIndex]
+                                      ,[IsCPAEn]
+                                      ,[TxPulseRleA]
+                                      ,[SysPulserSelA]
+                                      ,[CpaDelayOffsetClkA]
+                                      )
+                                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                                    '''
+
+                    cursor.execute(query, (row.measSetComments, row.probeId, row.BeamStyleIndex, row.bsIndexTrace,
+                                           row.TxFrequencyHz, row.TxFocusLocCm, row.maxTxVoltageVolt,
+                                           row.ceilTxVoltageVolt,
+                                           row.profTxVoltageVolt, row.totalVoltagePt, row.numMeasVoltage,
+                                           row.NumTxElements,
+                                           row.TxpgWaveformStyle, row.ProbeNumTxCycles, row.elevAperIndex,
+                                           row.zStartDistCm,
+                                           row.zMeasNum, row.IsTxChannelModulationEn, row.dumpSwVersion,
+                                           row.DTxFreqIndex,
+                                           row.VTxIndex, row.IsPresetCpaEn, row.TxPulseRle, row.SystemPulserSel,
+                                           row.CpaDelayOffsetClk)
+                                   )
+
+                conn.commit()
+                conn.close()
+
+            except():
+                print('error: func_insert_data')
+
 
         root_gen = tkinter.Toplevel()
         root_gen.title(f"{database}" + ' / MeasSet_generation')
-        root_gen.geometry("880x200")
+        root_gen.geometry("600x200")
         root_gen.resizable(False, False)
 
         frame1 = Frame(root_gen, relief="solid", bd=2)
@@ -611,6 +673,9 @@ def func_measset_gen():
         btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_create_data)
         btn_load.place(x=185, y=5)
 
+        btn_insert = Button(frame1, width=15, height=2, text='To MS-SQL', command=func_insert_data)
+        btn_insert.place(x=325, y=5)
+
         frame2 = Frame(root_gen, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True)
 
@@ -619,32 +684,32 @@ def func_measset_gen():
         label_DumpSW.grid(row=0, column=0)
 
         label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
-        label_MaxVolt.grid(row=0, column=1)
+        label_MaxVolt.grid(row=2, column=0)
 
         label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
-        label_CeilVolt.grid(row=0, column=2)
+        label_CeilVolt.grid(row=2, column=1)
 
         label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
-        label_TotalVoltpt.grid(row=0, column=3)
+        label_TotalVoltpt.grid(row=2, column=2)
 
         label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
-        label_NumMeasVolt.grid(row=0, column=4)
+        label_NumMeasVolt.grid(row=2, column=3)
 
         #Entry boxes
         box_DumpSW = Entry(frame2, justify='center')
         box_DumpSW.grid(row=1, column=0)
 
         box_MaxVolt = Entry(frame2, justify='center')
-        box_MaxVolt.grid(row=1, column=1)
+        box_MaxVolt.grid(row=3, column=0)
 
         box_CeilVolt = Entry(frame2, justify='center')
-        box_CeilVolt.grid(row=1, column=2)
+        box_CeilVolt.grid(row=3, column=1)
 
         box_TotalVoltpt = Entry(frame2, justify='center')
-        box_TotalVoltpt.grid(row=1, column=3)
+        box_TotalVoltpt.grid(row=3, column=2)
 
         box_NumMeasVolt = Entry(frame2, justify='center')
-        box_NumMeasVolt.grid(row=1, column=4)
+        box_NumMeasVolt.grid(row=3, column=3)
 
         root_gen.mainloop()
 
@@ -896,7 +961,7 @@ def func_machine_learning():
                                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
 
-                ## 훈련된 model 저장.
+                ## 훈련된 model을 저장.
                 joblib.dump(model, './model_v1_python37.pkl')
 
                 mae = mean_absolute_error(test_target, prediction)
@@ -915,7 +980,7 @@ def func_machine_learning():
                 df = pd.DataFrame()
                 pass_condition = pd.DataFrame()
 
-                #
+
                 # df_test_input = pd.DataFrame(test_input, columns=['txFrequencyHz',
                 #                                                                          'focusRangeCm',
                 #                                                                          'numTxElements',
