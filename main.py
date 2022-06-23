@@ -588,6 +588,15 @@ def func_measset_gen():
                                      'ProbeNumTxCycles', 'elevAperIndex', 'zStartDistCm', 'zMeasNum',
                                      'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
                                      'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk']]
+
+                ## predict
+                loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
+
+
+                sort_dup[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle', 'ProbeNumTxCycles',
+                          'elevAperIndex', 'IsTxChannelModulationEn']]
+                          # [['probePitchCm', 'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']]
+
                 print(sort_dup)
 
 
@@ -974,7 +983,7 @@ def func_machine_learning():
                 newpath = './Model'
                 if not os.path.exists(newpath):
                     os.makedirs(newpath)
-                joblib.dump(model, f'./Model/model_v1_python37.pkl')
+                joblib.dump(model, f'Model/RandomForest_v1_python37.pkl')
 
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
