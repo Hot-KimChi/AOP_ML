@@ -1,3 +1,4 @@
+import os
 import tkinter
 import pymssql
 import numpy as np
@@ -575,8 +576,12 @@ def func_measset_gen():
 
                 func_calc_profvolt()
                 func_zMeasNum()
+
+
+                ## sorting data
                 sort_dup = sort_dup.sort_values(by=[sort_dup.columns[1], sort_dup.columns[2], sort_dup.columns[7], sort_dup.columns[3], sort_dup.columns[6], sort_dup.columns[4]], ascending=True)
 
+                ## replace the location of data.
                 sort_dup = sort_dup[['measSetComments', 'probeId', 'BeamStyleIndex', 'bsIndexTrace', 'TxFrequencyHz',
                                      'TxFocusLocCm', 'maxTxVoltageVolt', 'ceilTxVoltageVolt', 'profTxVoltageVolt',
                                      'totalVoltagePt', 'numMeasVoltage', 'NumTxElements', 'TxpgWaveformStyle',
@@ -588,7 +593,11 @@ def func_measset_gen():
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
                 LUT_count = box_DumpSW.get()
-                sort_dup.to_csv(f'./meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
+
+                newpath = f'./{database}'
+                if not os.path.exists(newpath):
+                    os.makedirs(newpath)
+                sort_dup.to_csv(f'./{database}/meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
 
                 return sort_dup
 
@@ -962,7 +971,10 @@ def func_machine_learning():
                     plt.show()
 
                 ## 훈련된 model을 저장.
-                joblib.dump(model, './model_v1_python37.pkl')
+                newpath = './Model'
+                if not os.path.exists(newpath):
+                    os.makedirs(newpath)
+                joblib.dump(model, f'./Model/model_v1_python37.pkl')
 
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
@@ -1123,19 +1135,19 @@ def func_machine_learning():
 
         root_ML = tkinter.Toplevel()
         root_ML.title(f"{database}" + ' / Machine Learning')
-        root_ML.geometry("880x200")
+        root_ML.geometry("410x200")
         root_ML.resizable(False, False)
 
         frame1 = Frame(root_ML, relief="solid", bd=2)
         frame1.pack(side="top", fill="both", expand=True)
 
         label_ML = Label(frame1, text='Machine Learning')
-        label_ML.place(x=185, y=5)
+        label_ML.place(x=5, y=5)
         combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
-        combo_ML.place(x=185, y=25)
+        combo_ML.place(x=5, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=func_preprocessML)
-        btn_load.place(x=460, y=5)
+        btn_load = Button(frame1, width=15, height=2, text='Select & Train', command=func_preprocessML)
+        btn_load.place(x=280, y=5)
 
         root_ML.mainloop()
 
