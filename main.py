@@ -227,6 +227,12 @@ def func_sql_get(server_address, ID, password, database, command):
                 ORDER BY 1
                 '''
 
+        elif command == 4:
+            query = f'''
+            SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevFocusRangCm] FROM probe_geo WHERE probeid = {selected_probeId}
+            ORDER BY 1
+            '''
+
 
         Raw_data = pd.read_sql(sql=query, con=conn)
 
@@ -589,15 +595,24 @@ def func_measset_gen():
                                      'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
                                      'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk']]
 
-                ## predict
+                ## predict by Machine Learning model.
+                ## load modeling by pickle file.
                 loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
 
+                ## take parameters for ML from measSet_gen file.
+                est_params = sort_dup[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle',
+                                        'ProbeNumTxCycles', 'elevAperIndex', 'IsTxChannelModulationEn']]
+                est_geo = func_sql_get(server_address, ID, password, database, 4)
 
-                sort_dup[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle', 'ProbeNumTxCycles',
-                          'elevAperIndex', 'IsTxChannelModulationEn']]
-                          # [['probePitchCm', 'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']]
+                est_params[['probePitchCm']] = est_geo['probePitchCm']
+                est_params[['probeRadiusCm']] = est_geo['probeRadiusCm']
+                est_params[['probeElevAperCm0']] = est_geo['probeElevAperCm0']
+                est_params[['probeElevFocusRangCm']] = est_geo['probeElevFocusRangCm']
 
-                print(sort_dup)
+
+                zt_est = loaded_model.predict(est_params)
+                df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
+                print(zt_est)
 
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
