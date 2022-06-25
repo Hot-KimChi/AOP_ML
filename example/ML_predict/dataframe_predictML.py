@@ -68,7 +68,7 @@ def func_sql_get(server_address, ID, password, database, command):
         print("Error: func_sql_get")
 
 
-df = pd.read_csv('./meas_setting_9C2_1st_LUT.csv')
+df = pd.read_csv('meas_setting_9C2_1st_LUT.csv')
 est_geo = func_sql_get('kr001s1804srv', 'sel02776', '1qaz!QAZ', 'K2_r01_05', 4)
 
 # pitch = est_geo['probePitchCm']
@@ -85,14 +85,12 @@ est_params = df[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveform
                        'ProbeNumTxCycles', 'elevAperIndex', 'IsTxChannelModulationEn', 'probePitchCm', 'probeRadiusCm',
                  'probeElevAperCm0', 'probeElevFocusRangCm']]
 
-loaded_model = joblib.load('./RandomForest_v1_python37.pkl')
+loaded_model = joblib.load('RandomForest_v1_python37.pkl')
 zt_est = loaded_model.predict(est_params)
 print(zt_est)
 print(type(zt_est))
 df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
 
-print(df_zt_est)
-print(type(df_zt_est))
+df[['zt_est']] = round(df_zt_est, 1)
 
-df = pd.concat([est_params, df_zt_est])
 print(df)

@@ -612,7 +612,9 @@ def func_measset_gen():
 
                 zt_est = loaded_model.predict(est_params)
                 df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
-                print(zt_est)
+
+                sort_dup['zt_est'] = round(df_zt_est, 1)
+                print(sort_dup)
 
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
