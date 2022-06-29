@@ -880,7 +880,7 @@ def func_machine_learning():
                     test_scaled = ss.transform(test_poly)
 
                     from sklearn.linear_model import Ridge
-                    model = Ridge(alpha=100)
+                    model = Ridge(alpha=0.1)
                     scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
@@ -996,11 +996,12 @@ def func_machine_learning():
                                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
 
+
                 ## 훈련된 model을 저장.
                 newpath = './Model'
                 if not os.path.exists(newpath):
                     os.makedirs(newpath)
-                joblib.dump(model, f'Model/RandomForest_v1_python37.pkl')
+                joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
 
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
