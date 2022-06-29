@@ -997,7 +997,10 @@ def func_machine_learning():
                     plt.show()
 
 
-                ## 훈련된 model을 저장.
+                ## 왼쪽 공백 삭제
+                selected_ML = selected_ML.lstrip()
+
+                ## modeling file 저장 장소.
                 newpath = './Model'
                 if not os.path.exists(newpath):
                     os.makedirs(newpath)
@@ -1098,6 +1101,7 @@ def func_machine_learning():
 
             except():
                 print('error: func_modelML')
+
 
         def func_preprocessML():
             try:
