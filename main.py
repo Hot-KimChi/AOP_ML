@@ -811,8 +811,12 @@ def func_machine_learning():
                     func_show_table('RandomForestRegressor', df=df_import)
 
 
+                ##
                 elif selected_ML == 'VotingRegressor':
                     from sklearn.ensemble import VotingRegressor
+
+
+
 
 
                 ## LinearRegression 훈련하기.
