@@ -811,7 +811,18 @@ def func_machine_learning():
                     func_show_table('RandomForestRegressor', df=df_import)
 
 
+                ## gradient boosting
+                elif selected_ML == 'gradient boosting':
+                    from sklearn.ensemble import GradientBoostingRegressor
+                    gb = GradientBoostingRegressor()
+
+
+
+
+
+
                 ## VotingRegressor 훈련하기
+                ## Need to update....
                 elif selected_ML == 'VotingRegressor':
 
                     from sklearn.ensemble import VotingRegressor
@@ -833,6 +844,8 @@ def func_machine_learning():
                     train_scaled = ss.transform(train_poly)
                     test_scaled = ss.transform(test_poly)
 
+
+
                     model1 = Ridge(alpha=0.1)
                     model2 = RandomForestRegressor(n_jobs=-1)
                     model3 = KNeighborsRegressor()
@@ -840,15 +853,15 @@ def func_machine_learning():
 
                     model = VotingRegressor(estimators=[('ridge', model1), ('random', model2), ('neigh', model3)])
 
-                    scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
+                    scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('Random Forest - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
                     print('Random Forest - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
-                    model.fit(train_input, train_target)
-                    print('Random Forest - Test R^2:', np.round_(model.score(test_input, test_target), 3))
-                    prediction = np.round_(model.predict(test_input), 2)
+                    model.fit(train_scaled, train_target)
+                    print('Random Forest - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
+                    prediction = np.round_(model.predict(test_scaled), 2)
 
 
                 ## LinearRegression 훈련하기.
