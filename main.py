@@ -784,9 +784,12 @@ def func_machine_learning():
             try:
                 train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
 
+                ## 왼쪽 공백 삭제
+                selected_ML = selected_ML.lstrip()
+                print(selected_ML)
+
                 ## Random Forest 훈련하기.
                 if selected_ML == 'RandomForestRegressor':
-
                     from sklearn.ensemble import RandomForestRegressor
                     model = RandomForestRegressor(n_jobs=-1)
                     scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
@@ -811,20 +814,27 @@ def func_machine_learning():
                     func_show_table('RandomForestRegressor', df=df_import)
 
 
-                ## gradient boosting
-                elif selected_ML == 'gradient boosting':
+                ## Gradient Boosting
+                elif selected_ML == 'Gradient_Boosting':
                     from sklearn.ensemble import GradientBoostingRegressor
-                    gb = GradientBoostingRegressor()
+                    model = GradientBoostingRegressor(n_estimators=500, learning_rate=0.2)
 
 
+                ## Histogram-based Gradient Boosting
+                elif selected_ML == 'Histogram-based Gradient Boosting':
+                    from sklearn.experimental import enable_hist_gradient_boosting
+                    from sklearn.ensemble import HistGradientBoostingRegressor
+                    model = HistGradientBoostingRegressor()
 
 
+                elif selected_ML == 'XGBoost':
+                    from xgboost import XGBRegressor
+                    model = XGBRegressor(tree_method='hist')
 
 
                 ## VotingRegressor 훈련하기
                 ## Need to update....
                 elif selected_ML == 'VotingRegressor':
-
                     from sklearn.ensemble import VotingRegressor
                     from sklearn.linear_model import Ridge
                     from sklearn.ensemble import RandomForestRegressor
@@ -845,23 +855,11 @@ def func_machine_learning():
                     test_scaled = ss.transform(test_poly)
 
 
-
                     model1 = Ridge(alpha=0.1)
                     model2 = RandomForestRegressor(n_jobs=-1)
                     model3 = KNeighborsRegressor()
 
-
                     model = VotingRegressor(estimators=[('ridge', model1), ('random', model2), ('neigh', model3)])
-
-                    scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
-                    print()
-                    print(scores)
-                    print('Random Forest - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-                    print('Random Forest - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-                    model.fit(train_scaled, train_target)
-                    print('Random Forest - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
-                    prediction = np.round_(model.predict(test_scaled), 2)
 
 
                 ## LinearRegression 훈련하기.
@@ -1049,9 +1047,6 @@ def func_machine_learning():
                                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
 
-
-                ## 왼쪽 공백 삭제
-                selected_ML = selected_ML.lstrip()
 
                 ## modeling file 저장 장소.
                 newpath = './Model'
