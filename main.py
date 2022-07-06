@@ -786,17 +786,31 @@ def func_machine_learning():
 
                 ## 왼쪽 공백 삭제
                 selected_ML = selected_ML.lstrip()
-                print(selected_ML)
+
 
                 ## Random Forest 훈련하기.
                 if selected_ML == 'RandomForestRegressor':
                     from sklearn.ensemble import RandomForestRegressor
-                    model = RandomForestRegressor(n_jobs=-1)
+                    from sklearn.model_selection import GridSearchCV
+
+                    params = {'max_depth': [10, 50, 100],
+                             'min_sample_split': [2, 50, 100]}
+
+                            # max_leaf_nodes
+                            # min_samples_leaf
+                            # n_estimators
+                            # max_sample
+                            # max_features}
+
+                    model = GridSearchCV(RandomForestRegressor(params, cv=5, n_jobs=-1))
+                    # model = RandomForestRegressor(n_jobs=-1)
+                    print(model.best_params_)
                     scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
                     print('Random Forest - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
                     print('Random Forest - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
 
                     model.fit(train_input, train_target)
                     print('Random Forest - Test R^2:', np.round_(model.score(test_input, test_target), 3))
@@ -888,7 +902,7 @@ def func_machine_learning():
 
 
                 ## StandardScaler 적용 with linear regression
-                elif selected_ML == ' StandardScaler with linear regression':
+                elif selected_ML == 'StandardScaler with linear regression':
 
                     from sklearn.preprocessing import PolynomialFeatures
                     poly = PolynomialFeatures(degree=5, include_bias=False)
@@ -916,7 +930,7 @@ def func_machine_learning():
 
 
                 ## Ridge regularization(L2 regularization)
-                elif selected_ML == ' Ridge regularization(L2 regularization)':
+                elif selected_ML == 'Ridge regularization(L2 regularization)':
 
                     from sklearn.preprocessing import PolynomialFeatures
                     poly = PolynomialFeatures(degree=5, include_bias=False)
@@ -1008,7 +1022,7 @@ def func_machine_learning():
                     plt.show()
 
 
-                elif selected_ML == ' DecisionTreeRegressor(No scaled data)':
+                elif selected_ML == 'DecisionTreeRegressor(No scaled data)':
 
                     from sklearn.tree import DecisionTreeRegressor
 
