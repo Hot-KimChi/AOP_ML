@@ -787,9 +787,11 @@ class Model_ML:
         self.target = target
 
 
-    def func_split(self):
+    def func_data_split(self):
+
         train_input, test_input, train_target, test_target = train_test_split(self.data, self.target, test_size=0.2)
 
+        return(train_input, test_input, train_target, test_target)
 
 
 

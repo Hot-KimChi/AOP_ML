@@ -787,24 +787,41 @@ def func_machine_learning():
                 ## 왼쪽 공백 삭제
                 selected_ML = selected_ML.lstrip()
 
-
                 ## Random Forest 훈련하기.
                 if selected_ML == 'RandomForestRegressor':
                     from sklearn.ensemble import RandomForestRegressor
                     from sklearn.model_selection import GridSearchCV
+                    from sklearn.model_selection import RandomizedSearchCV
+                    from scipy.stats import uniform, randint
 
-                    params = {'max_depth': [10, 50, 100],
-                             'min_sample_split': [2, 50, 100]}
 
-                            # max_leaf_nodes
-                            # min_samples_leaf
-                            # n_estimators
-                            # max_sample
-                            # max_features}
+                    ## Hyperparameter setting.
+                    n_estimators = randint(20, 100)                 ## number of trees in the random forest
+                    max_features = ['auto', 'sqrt']                 ## number of features in consideration at every split
+                    max_depth = [int(x) for x in
+                                 np.linspace(10, 120, num=12)]      ## maximum number of levels allowed in each decision tree
+                    min_samples_split = [2, 6, 10]                  ## minimum sample number to split a node
+                    # min_samples_leaf = [1, 3, 4]                  ## minimum sample number that can be stored in a leaf node
+                    # bootstrap = [True, False]                     ## method used to sample data points
 
-                    model = GridSearchCV(RandomForestRegressor(params, cv=5, n_jobs=-1))
-                    # model = RandomForestRegressor(n_jobs=-1)
-                    print(model.best_params_)
+
+                    random_grid = {'n_estimators': n_estimators,
+                                   'max_features': max_features,
+                                   'max_depth': max_depth,
+                                   'min_samples_split': min_samples_split}
+
+                                   # 'min_samples_leaf': min_samples_leaf,
+                                   # 'bootstrap': bootstrap}
+
+                    # RandomizedSearchCV에서 fit이 완료.
+                    # rf = RandomForestRegressor()
+                    # model = RandomizedSearchCV(estimator = rf, param_distributions = random_grid,
+                    #                             n_iter = 300, cv = 5, verbose=2, n_jobs = -1)
+
+
+                    ## After hyperparameter value find, adapt these ones.
+                    model = RandomForestRegressor(max_depth=40, max_features='sqrt', min_samples_split=2, n_estimators=90, n_jobs=-1)
+
                     scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
@@ -813,6 +830,7 @@ def func_machine_learning():
 
 
                     model.fit(train_input, train_target)
+                    # print(model.best_params_)
                     print('Random Forest - Test R^2:', np.round_(model.score(test_input, test_target), 3))
                     prediction = np.round_(model.predict(test_input), 2)
 

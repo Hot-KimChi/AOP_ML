@@ -782,13 +782,17 @@ def func_machine_learning():
     try:
         def func_modelML(selected_ML, data, target):
             try:
+                ## 왼쪽 공백 삭제
+                selected_ML = selected_ML.lstrip()
+
                 train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
 
                 ## Random Forest 훈련하기.
                 if selected_ML == 'RandomForestRegressor':
+                    print(selected_ML)
 
                     from sklearn.ensemble import RandomForestRegressor
-                    model = RandomForestRegressor(n_jobs=-1)
+                    model = RandomForestRegressor(max_depth=40, max_features='sqrt', min_samples_split=2, n_estimators=90, n_jobs=-1)
                     scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
                     print()
                     print(scores)
@@ -1037,14 +1041,13 @@ def func_machine_learning():
                     plt.show()
 
 
-                ## 왼쪽 공백 삭제
-                selected_ML = selected_ML.lstrip()
 
-                ## modeling file 저장 장소.
-                newpath = './Model'
-                if not os.path.exists(newpath):
-                    os.makedirs(newpath)
-                joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
+
+                # ## modeling file 저장 장소.
+                # newpath = './Model'
+                # if not os.path.exists(newpath):
+                #     os.makedirs(newpath)
+                # joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
 
 
                 scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
@@ -1204,10 +1207,14 @@ def func_machine_learning():
                     AOP_data = Raw_data.dropna()
                     AOP_data = AOP_data.append(AOP_data, ignore_index=True)
 
-                data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
-                                 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                                 'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
+                data = AOP_data[['focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
+                                 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
+                                 'probeElevFocusRangCm']].to_numpy()
                 target = AOP_data['zt'].to_numpy()
+
+
+                AOP_data.to_csv('sample.csv', index=False)
+
 
                 import seaborn as sns
                 import matplotlib.pyplot as plt
@@ -1219,7 +1226,7 @@ def func_machine_learning():
                 plt.show()
 
                 # Machine Learning
-                # func_modelML(combo_ML.get(), data, target)
+                func_modelML(combo_ML.get(), data, target)
 
             except:
                 print("Error: func_preprocessML")
