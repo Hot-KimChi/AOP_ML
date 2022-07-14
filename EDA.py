@@ -909,7 +909,7 @@ def func_machine_learning():
 
 
                 ## Ridge regularization(L2 regularization)
-                elif selected_ML == ' Ridge regularization(L2 regularization)':
+                elif selected_ML == 'Ridge regularization(L2 regularization)':
 
                     from sklearn.preprocessing import PolynomialFeatures
                     poly = PolynomialFeatures(degree=5, include_bias=False)
@@ -1050,21 +1050,21 @@ def func_machine_learning():
                 # joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
 
 
-                scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
-                print()
-                print(scores)
-                print(f'{selected_ML} - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-                print(f'{selected_ML} - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-                model.fit(train_input, train_target)
-                print(f'{selected_ML} - Test R^2:', np.round_(model.score(test_input, test_target), 3))
-                prediction = np.round_(model.predict(test_input), 2)
-
-                mae = mean_absolute_error(test_target, prediction)
-                print('|(타깃 - 예측값)|:', mae)
-
-                Diff = np.round_(prediction - test_target, 2)
-                Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
+                # scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
+                # print()
+                # print(scores)
+                # print(f'{selected_ML} - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                # print(f'{selected_ML} - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+                #
+                # model.fit(train_input, train_target)
+                # print(f'{selected_ML} - Test R^2:', np.round_(model.score(test_input, test_target), 3))
+                # prediction = np.round_(model.predict(test_input), 2)
+                #
+                # mae = mean_absolute_error(test_target, prediction)
+                # print('|(타깃 - 예측값)|:', mae)
+                #
+                # Diff = np.round_(prediction - test_target, 2)
+                # Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
 
 
                 bad = 0

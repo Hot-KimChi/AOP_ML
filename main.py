@@ -3,6 +3,8 @@ import tkinter
 import pymssql
 import numpy as np
 import pandas as pd
+
+
 from tkinter import *
 from tkinter import ttk
 from functools import partial
@@ -782,6 +784,37 @@ def func_machine_learning():
     try:
         def func_modelML(selected_ML, data, target):
             try:
+                def func_feature_import():
+                    try:
+                        df_import = pd.DataFrame()
+                        df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
+                                                                  columns=['txFrequencyHz', 'focusRangeCm',
+                                                                           'numTxElements',
+                                                                           'txpgWaveformStyle',
+                                                                           'numTxCycles', 'elevAperIndex',
+                                                                           'IsTxAperModulationEn', 'probePitchCm',
+                                                                           'probeRadiusCm', 'probeElevAperCm0',
+                                                                           'probeElevFocusRangCm']), ignore_index=True)
+
+                        func_show_table(f'{selected_ML}', df=df_import)
+
+                        importances = model.feature_importances_
+                        indices = np.argsort(importances)[::-1]
+                        x = np.arange(len(importances))
+
+                        import matplotlib.pyplot as plt
+                        plt.title('Feature Importance')
+                        plt.bar(x, importances[indices], align='center')
+                        labels = df_import.columns
+
+                        plt.xticks(x, labels[indices], rotation=90)
+                        plt.xlim([-1, len(importances)])
+                        plt.tight_layout()
+                        plt.show()
+
+                    except():
+                        print('func_feature_import')
+
                 train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
 
                 ## 왼쪽 공백 삭제
@@ -821,29 +854,6 @@ def func_machine_learning():
 
                     ## After hyperparameter value find, adapt these ones.
                     model = RandomForestRegressor(max_depth=40, max_features='sqrt', min_samples_split=2, n_estimators=90, n_jobs=-1)
-
-                    scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
-                    print()
-                    print(scores)
-                    print('Random Forest - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-                    print('Random Forest - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-
-                    model.fit(train_input, train_target)
-                    # print(model.best_params_)
-                    print('Random Forest - Test R^2:', np.round_(model.score(test_input, test_target), 3))
-                    prediction = np.round_(model.predict(test_input), 2)
-
-                    df_import = pd.DataFrame()
-                    df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
-                                                              columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
-                                                                       'txpgWaveformStyle',
-                                                                       'numTxCycles', 'elevAperIndex',
-                                                                       'IsTxAperModulationEn', 'probePitchCm',
-                                                                       'probeRadiusCm', 'probeElevAperCm0',
-                                                                       'probeElevFocusRangCm']), ignore_index=True)
-
-                    func_show_table('RandomForestRegressor', df=df_import)
 
 
                 ## Gradient Boosting
@@ -897,33 +907,26 @@ def func_machine_learning():
                 ## LinearRegression 훈련하기.
                 elif selected_ML == 'LinearRegression':
 
-                    ## PolynomialFeatures 훈련.
-                    from sklearn.preprocessing import PolynomialFeatures
-                    poly = PolynomialFeatures(degree=5, include_bias=False)
-                    poly.fit(train_input)
-                    train_poly = poly.transform(train_input)
-                    test_poly = poly.transform(test_input)
-                    print(train_poly.shape)
+                    from sklearn.preprocessing import StandardScaler
+                    ss = StandardScaler()
+                    ss.fit(train_input)
+                    train_scaled = ss.transform(train_input)
+                    test_scaled = ss.transform(test_input)
 
                     from sklearn.linear_model import LinearRegression
                     model = LinearRegression()
-                    scores = cross_validate(model, train_poly, train_target, return_train_score=True, n_jobs=-1)
-                    print()
-                    print(scores)
-                    print('선형회귀 & polynomialFeatures - Train R^2 :', np.round_(np.mean(scores['train_score']), 3))
-                    print('선형회귀 & polynomialFeatures - Train_validation R^2:',
-                          np.round_(np.mean(scores['test_score']), 3))
 
-                    model.fit(train_poly, train_target)
-                    print('선형회귀 & polynomialFeatures - Test R^2:', np.round_(model.score(test_poly, test_target), 3))
-                    prediction = np.round_(model.predict(test_poly), 2)
+
+                    ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
+                    train_input = train_scaled
+                    test_input = test_scaled
 
 
                 ## StandardScaler 적용 with linear regression
-                elif selected_ML == 'StandardScaler with linear regression':
+                elif selected_ML == 'PolynomialFeatures with linear regression':
 
                     from sklearn.preprocessing import PolynomialFeatures
-                    poly = PolynomialFeatures(degree=5, include_bias=False)
+                    poly = PolynomialFeatures(degree=3, include_bias=False)
                     poly.fit(train_input)
                     train_poly = poly.transform(train_input)
                     test_poly = poly.transform(test_input)
@@ -936,22 +939,17 @@ def func_machine_learning():
 
                     from sklearn.linear_model import LinearRegression
                     model = LinearRegression()
-                    scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
-                    print()
-                    print(scores)
-                    print('선형회귀 & poly & scaling - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-                    print('선형회귀 & poly & scaling - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
-                    model.fit(train_scaled, train_target)
-                    print('선형회귀 & poly & scaling - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
-                    prediction = np.round_(model.predict(test_scaled), 2)
+                    ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
+                    train_input = train_scaled
+                    test_input = test_scaled
 
 
                 ## Ridge regularization(L2 regularization)
                 elif selected_ML == 'Ridge regularization(L2 regularization)':
 
                     from sklearn.preprocessing import PolynomialFeatures
-                    poly = PolynomialFeatures(degree=5, include_bias=False)
+                    poly = PolynomialFeatures(degree=3, include_bias=False)
                     poly.fit(train_input)
                     train_poly = poly.transform(train_input)
                     test_poly = poly.transform(test_input)
@@ -964,18 +962,13 @@ def func_machine_learning():
 
                     from sklearn.linear_model import Ridge
                     model = Ridge(alpha=0.1)
-                    scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
-                    print()
-                    print(scores)
-                    print('릿지 회귀 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-                    print('릿지 회귀 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
-                    model.fit(train_scaled, train_target)
-                    print('릿지 회귀 - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
-                    prediction = model.predict(test_scaled)
+                    ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
+                    train_input = train_scaled
+                    test_input = test_scaled
+
 
                     ## L2 하이퍼파라미터 찾기
-                    import matplotlib.pyplot as plt
                     train_score = []
                     test_score = []
 
@@ -1043,31 +1036,10 @@ def func_machine_learning():
                 elif selected_ML == 'DecisionTreeRegressor(No scaled data)':
 
                     from sklearn.tree import DecisionTreeRegressor
-
                     model = DecisionTreeRegressor(max_depth=10, random_state=42)
-
                     model.fit(train_input, train_target)
-                    #
-                    # scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
-                    # print()
-                    # print(scores)
-                    # print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-                    # print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-                    #
-                    # # dt.fit(train_scaled, train_target)
-                    # print('결정트리 - Test R^2:', np.round_(model.score(test_input, test_target), 3))
-                    # prediction = model.predict(test_input)
 
-                    df_import = pd.DataFrame()
-                    df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
-                                                              columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
-                                                                       'txpgWaveformStyle',
-                                                                       'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn',
-                                                                       'probePitchCm',
-                                                                       'probeRadiusCm', 'probeElevAperCm0',
-                                                                       'probeElevFocusRangCm']), ignore_index=True)
-
-                    func_show_table('DecisionTreeRegressor', df=df_import)
+                    func_feature_import()
 
                     ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
                     import matplotlib.pyplot as plt
@@ -1078,6 +1050,7 @@ def func_machine_learning():
                                              'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                                              'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
                     plt.show()
+
 
 
                 ## modeling file 저장 장소.
@@ -1097,8 +1070,15 @@ def func_machine_learning():
                 print(f'{selected_ML} - Test R^2:', np.round_(model.score(test_input, test_target), 3))
                 prediction = np.round_(model.predict(test_input), 2)
 
+                if selected_ML == 'RandomForestRegressor':
+                    func_feature_import()
+                else:
+                    pass
+
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
+
+
 
                 Diff = np.round_(prediction - test_target, 2)
                 Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
