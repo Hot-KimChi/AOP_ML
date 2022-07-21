@@ -3,7 +3,7 @@ import tkinter
 import pymssql
 import numpy as np
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 from tkinter import *
 from tkinter import ttk
@@ -973,6 +973,7 @@ def func_machine_learning():
                     test_score = []
 
                     alpha_list = [0.001, 0.01, 0.1, 1, 10, 100]
+                    import matplotlib.pyplot as plt
                     for alpha in alpha_list:
                         # 릿지모델 생성 & 훈련
                         model = Ridge(alpha=alpha)
