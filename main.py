@@ -1053,6 +1053,119 @@ def func_machine_learning():
                     plt.show()
 
 
+                elif selected_ML == 'DL_ANN':
+                    import tensorflow as tf
+                    from tensorflow import keras
+
+                    from sklearn.preprocessing import StandardScaler
+                    ss = StandardScaler()
+                    ss.fit(train_input)
+                    train_scaled = ss.transform(train_input)
+                    test_scaled = ss.transform(test_input)
+
+
+                    def func_build_model():
+                        dense1 = keras.layers.Dense(64, activation='relu', input_shape=(11,))
+                        dense2 = keras.layers.Dense(64, activation='relu')
+                        dense3 = keras.layers.Dense(1)
+
+                        model = keras.Sequential([dense1, dense2, dense3])
+
+                        optimizer = tf.keras.optimizers.RMSprop(0.001)
+
+                        model.compile(loss='mse',
+                                      optimizer=optimizer,
+                                      metrics=['mae', 'mse'])
+                        return model
+
+                    model = func_build_model()
+                    print(model.summary())
+
+                    example_batch = train_scaled[:10]
+                    example_result = model.predict(example_batch)
+                    print('example_batch 형태:', example_batch.shape)
+
+
+                    import matplotlib.pyplot as plt
+
+                    def plot_history(history):
+                        hist = pd.DataFrame(history.history)
+                        hist['epoch'] = history.epoch
+
+                        plt.figure(figsize=(8, 12))
+
+                        plt.subplot(2, 1, 1)
+                        plt.xlabel('Epoch')
+                        plt.ylabel('Mean Abs Error [Cm]')
+                        plt.plot(hist['epoch'], hist['mae'],
+                                 label='Train Error')
+                        plt.plot(hist['epoch'], hist['val_mae'],
+                                 label='Val Error')
+                        plt.ylim([0, 1.25])
+                        plt.legend()
+
+                        plt.subplot(2, 1, 2)
+                        plt.xlabel('Epoch')
+                        plt.ylabel('Mean Square Error [$Cm^2$]')
+                        plt.plot(hist['epoch'], hist['mse'],
+                                 label='Train Error')
+                        plt.plot(hist['epoch'], hist['val_mse'],
+                                 label='Val Error')
+                        plt.ylim([0, 2])
+                        plt.legend()
+                        plt.show()
+
+                    ## 모델 훈련.
+                    ## 에포크가 끝날 때마다 점(.)을 출력해 훈련 진행 과정을 표시합니다
+                    class PrintDot(keras.callbacks.Callback):
+                        def on_epoch_end(self, epoch, logs):
+                            if epoch % 100 == 0: print('')
+                            print('.', end='')
+
+                    EPOCHS = 1000
+
+                    model = func_build_model()
+
+                    # patience 매개변수는 성능 향상을 체크할 에포크 횟수입니다
+                    early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
+                    history = model.fit(train_scaled, train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
+                                        callbacks=[early_stop, PrintDot()])
+
+                    hist = pd.DataFrame(history.history)
+                    hist['epoch'] = history.epoch
+                    print(hist.tail())
+
+                    plot_history(history)
+
+                    loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+                    print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
+
+
+                    ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
+                    test_predictions = model.predict(test_scaled).flatten()
+                    print(test_predictions)
+                    print(test_target)
+
+                    import matplotlib.pyplot as plt
+                    plt.scatter(test_target, test_predictions)
+
+                    plt.xlabel('True Values [Cm]')
+                    plt.ylabel('Predictions [Cm]')
+                    plt.axis('equal')
+                    plt.axis('square')
+                    plt.xlim([0, plt.xlim()[1]])
+                    plt.ylim([0, plt.ylim()[1]])
+                    _ = plt.plot([-100, 100], [-100, 100])
+                    plt.show()
+
+
+                    ## 오차의 분표확인.
+                    error = test_predictions - test_target
+                    plt.hist(error, bins=25)
+                    plt.xlabel('Prediction Error [Cm]')
+                    _ = plt.ylabel('Count')
+                    plt.show()
+
 
                 ## modeling file 저장 장소.
                 newpath = './Model'
