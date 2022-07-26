@@ -589,14 +589,6 @@ def func_measset_gen():
                 ## sorting data
                 sort_dup = sort_dup.sort_values(by=[sort_dup.columns[1], sort_dup.columns[2], sort_dup.columns[7], sort_dup.columns[3], sort_dup.columns[6], sort_dup.columns[4]], ascending=True)
 
-                ## replace the location of data.
-                sort_dup = sort_dup[['measSetComments', 'probeId', 'BeamStyleIndex', 'bsIndexTrace', 'TxFrequencyHz',
-                                     'TxFocusLocCm', 'maxTxVoltageVolt', 'ceilTxVoltageVolt', 'profTxVoltageVolt',
-                                     'totalVoltagePt', 'numMeasVoltage', 'NumTxElements', 'TxpgWaveformStyle',
-                                     'ProbeNumTxCycles', 'elevAperIndex', 'zStartDistCm', 'zMeasNum',
-                                     'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
-                                     'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk']]
-
                 ## predict by Machine Learning model.
                 ## load modeling by pickle file.
                 loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
@@ -616,7 +608,37 @@ def func_measset_gen():
                 df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
 
                 sort_dup['zt_est'] = round(df_zt_est, 1)
-                print(sort_dup)
+
+
+                ## replace the location of data.
+                sorting_lists = ['measSetComments', 'probeId', 'BeamStyleIndex', 'bsIndexTrace', 'TxFrequencyHz',
+                                     'TxFocusLocCm', 'maxTxVoltageVolt', 'ceilTxVoltageVolt', 'profTxVoltageVolt',
+                                     'totalVoltagePt', 'numMeasVoltage', 'NumTxElements', 'TxpgWaveformStyle',
+                                     'ProbeNumTxCycles', 'elevAperIndex', 'zStartDistCm', 'zMeasNum',
+                                     'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
+                                     'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk', 'zt_est']
+                df_intensity = sort_dup[sorting_lists]
+                print(df_intensity)
+
+
+                ## Power condition and Temperature condition 생성.
+                ## 필요없는 column 삭제.
+                df_drop = sort_dup.drop(columns=['TxFocusLocCm', 'NumTxElements'])
+
+                ## 중복된 데이터의 삭제.
+                list_params = ['BeamStyleIndex', 'IsTxChannelModulationEn', 'TxFrequencyHz', 'TxpgWaveformStyle',
+                               'ProbeNumTxCycles', 'TxPulseRle']
+                df_drop_ORG = df_drop.drop_duplicates(list_params)
+
+                df_power = df_drop_ORG
+                df_temperature = df_drop_ORG
+
+                df_power['measSetComments'] = f'Beamstyle_{selected_probename}_Power'
+                df_power['TxFocusLocCm'] = sort_dup['TxFocusLocCm'].max()
+                df_power[['NumTxElements']] = int(round(1/est_geo['probePitchCm']))
+                df_power['zt_est'] = 0
+                df_power = df_power[sorting_lists]
+                print(df_power)
 
 
                 func_show_table(selected_DBtable='meas_setting', df=sort_dup)
@@ -1065,8 +1087,8 @@ def func_machine_learning():
 
 
                     def func_build_model():
-                        dense1 = keras.layers.Dense(64, activation='relu', input_shape=(11,))
-                        dense2 = keras.layers.Dense(64, activation='relu')
+                        dense1 = keras.layers.Dense(100, activation='relu', input_shape=(11,), name='hidden')
+                        dense2 = keras.layers.Dense(10, activation='relu')
                         dense3 = keras.layers.Dense(1)
 
                         model = keras.Sequential([dense1, dense2, dense3])
