@@ -618,7 +618,6 @@ def func_measset_gen():
                                      'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
                                      'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk', 'zt_est']
                 df_intensity = sort_dup[sorting_lists]
-                print(df_intensity)
 
 
                 ## Power condition and Temperature condition 생성.
@@ -633,23 +632,34 @@ def func_measset_gen():
                 df_power = df_drop_ORG
                 df_temperature = df_drop_ORG
 
+
+                df_temperature['measSetComments'] = f'Beamstyle_{selected_probename}_Temperature'
+                df_temperature['TxFocusLocCm'] = sort_dup['TxFocusLocCm'].max()
+                df_temperature['NumTxElements'] = sort_dup['NumTxElements'].max()
+                df_temperature['zt_est'] = 0
+                df_temperature = df_temperature[sorting_lists]
+
+
                 df_power['measSetComments'] = f'Beamstyle_{selected_probename}_Power'
                 df_power['TxFocusLocCm'] = sort_dup['TxFocusLocCm'].max()
-                df_power[['NumTxElements']] = int(round(1/est_geo['probePitchCm']))
+                df_power[['NumTxElements']] = int(round(1 / est_geo['probePitchCm']))
                 df_power['zt_est'] = 0
                 df_power = df_power[sorting_lists]
-                print(df_power)
 
 
-                func_show_table(selected_DBtable='meas_setting', df=sort_dup)
+                df_merge = pd.concat([df_intensity, df_temperature, df_power])
+                print(df_merge)
+
+
+                func_show_table(selected_DBtable='meas_setting', df=df_merge)
                 LUT_count = box_DumpSW.get()
 
                 newpath = f'./{database}'
                 if not os.path.exists(newpath):
                     os.makedirs(newpath)
-                sort_dup.to_csv(f'./{database}/meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
+                df_merge.to_csv(f'./{database}/meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
 
-                return sort_dup
+                return df_merge
 
             except:
                 print("Error: func_create_data")
