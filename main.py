@@ -499,6 +499,7 @@ def func_measset_gen():
                 list_params =['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements']
                 dup_count = df.groupby(by=list_params, as_index=False).count()                                          ## groupby로 중복 count.
 
+
                 ##  duplicated parameter check. => dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
                 ##  중복된 parameter가 있을 경우, 제거하기.
                 drop_dup = df.drop_duplicates(list_params)
@@ -508,10 +509,12 @@ def func_measset_gen():
                 ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
                 bsIndexTrace = []
                 for beam, cnt in zip(sort_dup['BeamStyleIndex'], dup_count['BeamStyleIndex']):
-                    if beam == 0 and cnt == 2:
+                    if beam == 0 and cnt >= 2:
                         bsIndexTrace.append(15)
-                    elif beam == 1 and cnt == 2:
+                    elif beam == 1 and cnt >= 2:
                         bsIndexTrace.append(20)
+                    elif beam == 5 and cnt >= 2:
+                        bsIndexTrace.append(10)
                     else:
                         bsIndexTrace.append(0)
                 sort_dup['bsIndexTrace'] = bsIndexTrace
