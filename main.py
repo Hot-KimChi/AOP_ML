@@ -529,24 +529,25 @@ def func_measset_gen():
                 sort_dup['TxFrequencyHz'] = FrequencyHz
 
 
-                ## Cal_cycle for RLE code
+                ## Calc_cycle for RLE code
                 def func_cnt_cycle():
 
                     list_cycle = []
                     for i in range(len(sort_dup['TxpgWaveformStyle'])):
 
                         if sort_dup['TxpgWaveformStyle'][i] == 0:
-                            rle = sort_dup['TxPulseRle'].str.split(":").tolist()[i]
-                            flt = list(map(float, rle))
-                            abs = np.abs(flt)
+                            rle = sort_dup['TxPulseRle'].str.split(":")[i]
+                            list_flt = list(map(float, rle))
+                            ## floatList = [float(x) for x in list_option]
+                            abs_value = np.abs(list_flt)
 
-                            cal = []
-                            for value in abs:
+                            calc = []
+                            for value in abs_value:
                                 if 1 < value:
-                                    cal.append(round(value - 1, 4))
+                                    calc.append(round(value - 1, 4))
                                 else:
-                                    cal.append(value)
-                            cycle = round(sum(cal), 2)
+                                    calc.append(value)
+                            cycle = round(sum(calc), 2)
                             list_cycle.append(cycle)
 
                         else:
@@ -554,7 +555,6 @@ def func_measset_gen():
                             list_cycle.append(cycle)
 
                     return list_cycle
-
 
                 list_cycle = func_cnt_cycle()
 
