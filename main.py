@@ -520,13 +520,43 @@ def func_measset_gen():
                 sort_dup['bsIndexTrace'] = bsIndexTrace
 
 
-                # FrequencyIndex to FrequencyHz
+                ## FrequencyIndex to FrequencyHz
                 n = 0
                 FrequencyHz = []
                 for i in sort_dup['SysTxFreqIndex'].values:
                     FrequencyHz.insert(n, func_freqidx2Hz(i))
                     n += 1
                 sort_dup['TxFrequencyHz'] = FrequencyHz
+
+
+                ## Cal_cycle for RLE code
+                def func_cnt_cycle():
+
+                    list_cycle = []
+                    for i in range(len(sort_dup['TxpgWaveformStyle'])):
+
+                        if sort_dup['TxpgWaveformStyle'][i] == 0:
+                            rle = sort_dup['TxPulseRle'].str.split(":").tolist()[i]
+                            flt = list(map(float, rle))
+                            abs = np.abs(flt)
+
+                            cal = []
+                            for value in abs:
+                                if 1 < value:
+                                    cal.append(round(value - 1, 4))
+                                else:
+                                    cal.append(value)
+                            cycle = round(sum(cal), 2)
+                            list_cycle.append(cycle)
+
+                        else:
+                            cycle = sort_dup['ProbeNumTxCycles'][i]
+                            list_cycle.append(cycle)
+
+                    return list_cycle
+
+
+                list_cycle = func_cnt_cycle()
 
 
                 ##  input parameter define.
@@ -540,6 +570,7 @@ def func_measset_gen():
                 sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
                 sort_dup['totalVoltagePt'] = box_TotalVoltpt.get()
                 sort_dup['numMeasVoltage'] = box_NumMeasVolt.get()
+                sort_dup['ProbeNumTxCycles'] = list_cycle
                 sort_dup['zStartDistCm'] = 0.5
                 sort_dup['DTxFreqIndex'] = 0
                 sort_dup['dumpSwVersion'] = box_DumpSW.get()
@@ -632,6 +663,18 @@ def func_measset_gen():
                                'ProbeNumTxCycles', 'TxPulseRle']
                 df_drop_ORG = df_drop.drop_duplicates(list_params)
 
+                # def func_cnt_cycle():
+                #
+                #     list_rle = []
+                #     for wf in df_drop_ORG['TxpgWaveformStyle']:
+                #         if wf == 0:
+                #             list_rle.append(df_drop_ORG['TxPulseRle'].split(":"))
+                #
+                #         else:
+                #             list_rle.append(0)
+                #     print(list_rle)
+                #
+                # func_cnt_cycle()
                 df_power = df_drop_ORG
                 df_temperature = df_drop_ORG
 
