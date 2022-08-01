@@ -34,7 +34,7 @@ def func_cnt_cycle():
     for i in range(len(data['TxpgWaveformStyle'])):
 
         if data['TxpgWaveformStyle'][i] == 0:
-            rle = data['TxPulseRle'].str.split(":").tolist()[i]
+            rle = data['TxPulseRle'].str.split(":")[i]
             flt = list(map(float, rle))
             abs = np.abs(flt)
 

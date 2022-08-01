@@ -538,6 +538,7 @@ def func_measset_gen():
                         if sort_dup['TxpgWaveformStyle'][i] == 0:
                             rle = sort_dup['TxPulseRle'].str.split(":")[i]
                             list_flt = list(map(float, rle))
+                            ## 아래 code도 가능.
                             ## floatList = [float(x) for x in list_option]
                             abs_value = np.abs(list_flt)
 
