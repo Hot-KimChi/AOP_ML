@@ -1132,7 +1132,7 @@ def func_machine_learning():
                     plt.show()
 
 
-                elif selected_ML == 'DL_ANN':
+                elif selected_ML == 'DL_DNN':
                     import tensorflow as tf
                     from tensorflow import keras
 
@@ -1244,6 +1244,51 @@ def func_machine_learning():
                     plt.xlabel('Prediction Error [Cm]')
                     _ = plt.ylabel('Count')
                     plt.show()
+
+
+                elif selected_ML == 'DNN_hongong':
+                    import tensorflow as tf
+                    from tensorflow import keras
+                    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+                    from sklearn.preprocessing import StandardScaler
+                    ss = StandardScaler()
+                    ss.fit(train_input)
+                    train_scaled = ss.transform(train_input)
+                    test_scaled = ss.transform(test_input)
+
+                    def model_fn(a_layer=None):
+                        model = keras.Sequential()
+                        model.add(keras.layers.Flatten(input_shape=(11, )))
+                        model.add(keras.layers.Dense(100, activation='relu', name='hidden'))
+
+                        if a_layer:
+                            model.add(a_layer)
+
+                        model.add(keras.layers.Dense(1, name='output'))
+
+                        return model
+
+                    model = model_fn(keras.layers.Dropout(0.3))
+                    model.summary()
+                    model.compile(optimizer='adam', loss='mse', metrics='accuracy')
+
+
+                    checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
+                    early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+
+                    history = model.fit(train_scaled, train_target, epochs=100, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
+
+                    print(early_stopping_cb.stopped_epoch)
+
+                    import matplotlib.pyplot as plt
+                    plt.plot(history.history['loss'])
+                    plt.plot(history.history['val_loss'])
+                    plt.xlabel('epoch')
+                    plt.ylabel('loss')
+                    plt.legend(['train', 'val'])
+                    plt.show()
+
 
 
                 ## modeling file 저장 장소.
