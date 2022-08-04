@@ -1480,7 +1480,7 @@ def func_machine_learning():
                     AOP_data = Raw_data.dropna()
                     AOP_data = AOP_data.append(AOP_data, ignore_index=True)
 
-                AOP_data.to_csv('AOP_data.csv')
+                # AOP_data.to_csv('AOP_data.csv')
 
                 data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
                                  'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
