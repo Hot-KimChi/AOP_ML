@@ -894,6 +894,7 @@ def func_machine_learning():
                     except():
                         print('func_feature_import')
 
+
                 train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
 
                 ## 왼쪽 공백 삭제
@@ -1246,10 +1247,16 @@ def func_machine_learning():
                     plt.show()
 
 
-                elif selected_ML == 'DNN_hongong':
+                elif selected_ML == 'DNN_HonGong':
                     import tensorflow as tf
                     from tensorflow import keras
                     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+                    import seaborn as sns
+                    import matplotlib.pyplot as plt
+                    plt.title('distport for zt')
+                    sns.distplot(train_target['zt'])
+                    plt.show()
 
                     from sklearn.preprocessing import StandardScaler
                     ss = StandardScaler()
@@ -1288,6 +1295,17 @@ def func_machine_learning():
                     plt.ylabel('loss')
                     plt.legend(['train', 'val'])
                     plt.show()
+
+                    import numpy as np
+                    model = keras.models.load_model('best-model.h5')
+                    print('test evaluate:', model.evaluate(test_scaled, test_target))
+
+                    test_label = model.predict(test_scaled)
+                    df = pd.DataFrame(test_label, test_target)
+                    print('추출')
+                    df.to_csv('test_est.csv')
+
+
 
 
 
@@ -1461,6 +1479,8 @@ def func_machine_learning():
                     print(Raw_data['probeName'].value_counts(dropna=False))
                     AOP_data = Raw_data.dropna()
                     AOP_data = AOP_data.append(AOP_data, ignore_index=True)
+
+                AOP_data.to_csv('AOP_data.csv')
 
                 data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
                                  'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
