@@ -30,6 +30,13 @@ pd.set_option('display.max_colwidth', None)
 AOP_data = pd.read_csv('AOP_data.csv')
 print(AOP_data.head())
 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.title('distport for zt')
+sns.distplot(AOP_data['zt'])
+plt.show()
+
 data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
                                  'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
@@ -159,13 +166,6 @@ def DNN_HonGong():
     from tensorflow import keras
 
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-
-    plt.title('distport for zt')
-    sns.distplot(train_target['zt'])
-    plt.show()
 
     from sklearn.preprocessing import StandardScaler
 
