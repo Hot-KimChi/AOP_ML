@@ -170,7 +170,7 @@ def DNN_HonGong(data=None, target=None):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
     train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
-    print(train_target.shape)
+
     from sklearn.preprocessing import StandardScaler
 
     # ss = StandardScaler()
@@ -178,27 +178,24 @@ def DNN_HonGong(data=None, target=None):
     # train_scaled = ss.transform(train_input)
     # test_scaled = ss.transform(test_input)
 
-
     scalerInput = StandardScaler().fit(train_input)
-    train_target_shape = train_target.reshape(-1, 1)
-    print(train_target_shape.shape)
-
-    scalerTarget = StandardScaler().fit(train_target_shape)
-
     train_scaled = scalerInput.transform(train_input)
-    train_target_scaled = scalerTarget.transform(train_target)
     test_scaled = scalerInput.transform(test_input)
-    test_target_scaled = scalerTarget.transform(test_target)
 
+    # scalerTarget = StandardScaler().fit(train_target)
+    # train_target = scalerTarget.transform(train_target)
+    # test_target = scalerTarget.transform(test_target)
 
-    # ss.fit(train_target)
-    # train_target_scaled = ss.transform(train_target)
-    # test_target_scaled = ss.transform(test_target)
+    import numpy as np
+    mean = np.mean(train_target, axis=0)
+    std = np.std(train_target, axis=0)
+    print(mean, std)
+    train_target_scaled = (train_target-mean)/std
+    test_target_scaled = (test_target-mean)/std
+    print(train_target_scaled.shape)
 
 
     train_scaled, val_scaled, train_target, val_target = train_test_split(train_scaled, train_target_scaled, test_size=0.2)
-
-
 
 
     def model_fn(a_layer=None):
@@ -218,16 +215,15 @@ def DNN_HonGong(data=None, target=None):
     model.summary()
 
     rmsprop = keras.optimizers.RMSprop()
-    model.compile(optimizer=rmsprop, loss='mse', metrics='accuracy')
-    history = model.fit(train_scaled, train_target, epochs=100, validation_data=(val_scaled, val_target))
-    # checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
-    # early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+    model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
+    # history = model.fit(train_scaled, train_target, epochs=100, validation_data=(val_scaled, val_target))
+    checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
+    early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
 
-    # history = model.fit(train_scaled, train_target, epochs=100, validation_split=0.3,
-    #                     callbacks=[checkpoint_cb, early_stopping_cb])
-    # print(early_stopping_cb.stopped_epoch)
-
-
+    history = model.fit(train_scaled, train_target, epochs=200, validation_split=0.2,
+                        callbacks=[checkpoint_cb, early_stopping_cb])
+    print()
+    print('num of early_stopping:', early_stopping_cb.stopped_epoch)
 
 
     import matplotlib.pyplot as plt
@@ -238,21 +234,22 @@ def DNN_HonGong(data=None, target=None):
     plt.legend(['train', 'val'])
     plt.show()
 
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
+    plt.plot(history.history['mae'])
+    plt.plot(history.history['val_mae'])
     plt.xlabel('epoch')
-    plt.ylabel('accuracy')
+    plt.ylabel('mae')
     plt.legend(['train', 'val'])
     plt.show()
 
-    import numpy as np
 
     model = keras.models.load_model('best-model.h5')
+    print()
     print('test evaluate:', model.evaluate(test_scaled, test_target))
 
     test_label = model.predict(test_scaled)
     df = pd.DataFrame(test_label, test_target)
-    print('추출')
+    print()
+    print('csv 추출:')
     df.to_csv('test_est.csv')
 
 
