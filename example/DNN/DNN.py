@@ -38,16 +38,16 @@ sns.distplot(AOP_data['zt'])
 plt.show()
 
 data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
-                                 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
-                                 'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
+                 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                 'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
 target = AOP_data['zt'].to_numpy()
 
-train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
 
-def DL_DNN():
+def DL_DNN(data=None, target=None):
     import tensorflow as tf
     from tensorflow import keras
 
+    train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
     from sklearn.preprocessing import StandardScaler
 
     ss = StandardScaler()
@@ -67,6 +67,7 @@ def DL_DNN():
         model.compile(loss='mse',
                       optimizer=optimizer,
                       metrics=['mae', 'mse'])
+
         return model
 
 
@@ -132,8 +133,9 @@ def DL_DNN():
 
     plot_history(history)
 
-    loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
-    print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
+    print('evaluate:', model.evaluate(test_scaled, test_target, verbose=2))
+    # loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+    # print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
     ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
     test_predictions = model.predict(test_scaled).flatten()
@@ -161,18 +163,42 @@ def DL_DNN():
     plt.show()
 
 
-def DNN_HonGong():
+def DNN_HonGong(data=None, target=None):
     import tensorflow as tf
     from tensorflow import keras
 
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+    train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
+    print(train_target.shape)
     from sklearn.preprocessing import StandardScaler
 
-    ss = StandardScaler()
-    ss.fit(train_input)
-    train_scaled = ss.transform(train_input)
-    test_scaled = ss.transform(test_input)
+    # ss = StandardScaler()
+    # ss.fit(train_input)
+    # train_scaled = ss.transform(train_input)
+    # test_scaled = ss.transform(test_input)
+
+
+    scalerInput = StandardScaler().fit(train_input)
+    train_target_shape = train_target.reshape(-1, 1)
+    print(train_target_shape.shape)
+
+    scalerTarget = StandardScaler().fit(train_target_shape)
+
+    train_scaled = scalerInput.transform(train_input)
+    train_target_scaled = scalerTarget.transform(train_target)
+    test_scaled = scalerInput.transform(test_input)
+    test_target_scaled = scalerTarget.transform(test_target)
+
+
+    # ss.fit(train_target)
+    # train_target_scaled = ss.transform(train_target)
+    # test_target_scaled = ss.transform(test_target)
+
+
+    train_scaled, val_scaled, train_target, val_target = train_test_split(train_scaled, train_target_scaled, test_size=0.2)
+
+
 
 
     def model_fn(a_layer=None):
@@ -190,22 +216,32 @@ def DNN_HonGong():
 
     model = model_fn(keras.layers.Dropout(0.3))
     model.summary()
-    model.compile(optimizer='adam', loss='mse', metrics='accuracy')
 
-    checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
-    early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+    rmsprop = keras.optimizers.RMSprop()
+    model.compile(optimizer=rmsprop, loss='mse', metrics='accuracy')
+    history = model.fit(train_scaled, train_target, epochs=100, validation_data=(val_scaled, val_target))
+    # checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
+    # early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
 
-    history = model.fit(train_scaled, train_target, epochs=100, validation_split=0.2,
-                        callbacks=[checkpoint_cb, early_stopping_cb])
+    # history = model.fit(train_scaled, train_target, epochs=100, validation_split=0.3,
+    #                     callbacks=[checkpoint_cb, early_stopping_cb])
+    # print(early_stopping_cb.stopped_epoch)
 
-    print(early_stopping_cb.stopped_epoch)
+
+
 
     import matplotlib.pyplot as plt
-
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.xlabel('epoch')
     plt.ylabel('loss')
+    plt.legend(['train', 'val'])
+    plt.show()
+
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.xlabel('epoch')
+    plt.ylabel('accuracy')
     plt.legend(['train', 'val'])
     plt.show()
 
@@ -221,5 +257,5 @@ def DNN_HonGong():
 
 
 if __name__ == '__main__':
-    # DL_DNN()
-    DNN_HonGong()
+    # DL_DNN(data=data, target=target)
+    DNN_HonGong(data=data, target=target)
