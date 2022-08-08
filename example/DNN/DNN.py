@@ -182,17 +182,22 @@ def DNN_HonGong(data=None, target=None):
     train_scaled = scalerInput.transform(train_input)
     test_scaled = scalerInput.transform(test_input)
 
-    # scalerTarget = StandardScaler().fit(train_target)
-    # train_target = scalerTarget.transform(train_target)
-    # test_target = scalerTarget.transform(test_target)
+    ## 2D shape 형성로 변경
+    train_target = train_target.reshape(-1, 1)
+    test_target = test_target.reshape(-1, 1)
 
-    import numpy as np
-    mean = np.mean(train_target, axis=0)
-    std = np.std(train_target, axis=0)
-    print(mean, std)
-    train_target_scaled = (train_target-mean)/std
-    test_target_scaled = (test_target-mean)/std
-    print(train_target_scaled.shape)
+
+    scalerTarget = StandardScaler().fit(train_target)
+    train_target_scaled = scalerTarget.transform(train_target)
+    test_target_scaled = scalerTarget.transform(test_target)
+
+    # import numpy as np
+    # mean = np.mean(train_target, axis=0)
+    # std = np.std(train_target, axis=0)
+    # print(mean, std)
+    # train_target_scaled = (train_target-mean)/std
+    # test_target_scaled = (test_target-mean)/std
+    # print(train_target_scaled.shape)
 
 
     train_scaled, val_scaled, train_target, val_target = train_test_split(train_scaled, train_target_scaled, test_size=0.2)
@@ -213,6 +218,7 @@ def DNN_HonGong(data=None, target=None):
 
     model = model_fn(keras.layers.Dropout(0.3))
     model.summary()
+
 
     rmsprop = keras.optimizers.RMSprop()
     model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
@@ -244,13 +250,22 @@ def DNN_HonGong(data=None, target=None):
 
     model = keras.models.load_model('best-model.h5')
     print()
-    print('test evaluate:', model.evaluate(test_scaled, test_target))
+    print('<test evaluate>')
+    print('test evaluate:', model.evaluate(test_scaled, test_target_scaled))
+
 
     test_label = model.predict(test_scaled)
-    df = pd.DataFrame(test_label, test_target)
+
+    test_label = scalerTarget.inverse_transform(test_label)
+
+    print('모양:', test_label.shape, test_target.shape)
+    print(test_target[:5])
+    df = pd.DataFrame(x for x in zip(test_label, test_target))
+
     print()
-    print('csv 추출:')
+    print('<csv 추출>')
     df.to_csv('test_est.csv')
+
 
 
 if __name__ == '__main__':
