@@ -255,17 +255,14 @@ def DNN_HonGong(data=None, target=None):
 
 
     test_label = model.predict(test_scaled)
-
     test_label = scalerTarget.inverse_transform(test_label)
-
     print('모양:', test_label.shape, test_target.shape)
-    print(test_target[:5])
+
     df = pd.DataFrame(x for x in zip(test_label, test_target))
 
     print()
     print('<csv 추출>')
     df.to_csv('test_est.csv')
-
 
 
 if __name__ == '__main__':
