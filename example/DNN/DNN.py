@@ -266,5 +266,5 @@ def DNN_HonGong(data=None, target=None):
 
 
 if __name__ == '__main__':
-    # DL_DNN(data=data, target=target)
-    DNN_HonGong(data=data, target=target)
+    DL_DNN(data=data, target=target)
+    # DNN_HonGong(data=data, target=target)
