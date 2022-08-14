@@ -226,6 +226,7 @@ def DNN_HonGong(data=None, target=None):
     checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
     early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
 
+
     history = model.fit(train_scaled, train_target, epochs=200, validation_split=0.2,
                         callbacks=[checkpoint_cb, early_stopping_cb])
     print()
