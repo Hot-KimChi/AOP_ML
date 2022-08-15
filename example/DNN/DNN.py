@@ -1,18 +1,11 @@
 import os
-import tkinter
-import pymssql
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from tkinter import *
-from tkinter import ttk
 from functools import partial
-import configparser
 import warnings
 warnings.filterwarnings("ignore")
-
-from tkinter import filedialog
 import joblib
 
 from sklearn.model_selection import train_test_split
