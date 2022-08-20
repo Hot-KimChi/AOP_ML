@@ -67,11 +67,10 @@ def DL_DNN(data=None, target=None):
     model = func_build_model()
     print(model.summary())
 
+    ## 10개 sample만 출력하기.
     example_batch = train_scaled[:10]
     example_result = model.predict(example_batch)
     print('example_batch 형태:', example_batch.shape)
-
-    import matplotlib.pyplot as plt
 
 
     def plot_history(history):
