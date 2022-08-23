@@ -74,6 +74,8 @@ def DL_DNN(data=None, target=None):
 
 
     def plot_history(history):
+        import matplotlib.pyplot as plt
+
         hist = pd.DataFrame(history.history)
         hist['epoch'] = history.epoch
 
@@ -259,5 +261,5 @@ def DNN_HonGong(data=None, target=None):
 
 
 if __name__ == '__main__':
-    # DL_DNN(data=data, target=target)
-    DNN_HonGong(data=data, target=target)
+    DL_DNN(data=data, target=target)
+    # DNN_HonGong(data=data, target=target)
