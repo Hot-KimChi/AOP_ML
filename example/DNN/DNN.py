@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from tensorflow import keras
 import matplotlib.pyplot as plt
 
 from functools import partial
@@ -34,6 +35,44 @@ data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveform
                  'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                  'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
 target = AOP_data['zt'].to_numpy()
+
+
+## 모델 훈련.
+## 에포크가 끝날 때마다 점(.)을 출력해 훈련 진행 과정을 표시합니다
+class PrintDot(keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs):
+        if epoch % 100 == 0: print('')
+        print('.', end='')
+
+
+def plot_history(history):
+    import matplotlib.pyplot as plt
+
+    hist = pd.DataFrame(history.history)
+    hist['epoch'] = history.epoch
+
+    plt.figure(figsize=(8, 12))
+
+    plt.subplot(2, 1, 1)
+    plt.xlabel('Epoch')
+    plt.ylabel('Mean Abs Error [Cm]')
+    plt.plot(hist['epoch'], hist['mae'],
+             label='Train Error')
+    plt.plot(hist['epoch'], hist['val_mae'],
+             label='Val Error')
+    plt.ylim([0, 1.25])
+    plt.legend()
+
+    plt.subplot(2, 1, 2)
+    plt.xlabel('Epoch')
+    plt.ylabel('Mean Square Error [$Cm^2$]')
+    plt.plot(hist['epoch'], hist['mse'],
+             label='Train Error')
+    plt.plot(hist['epoch'], hist['val_mse'],
+             label='Val Error')
+    plt.ylim([0, 2])
+    plt.legend()
+    plt.show()
 
 
 def DL_DNN(data=None, target=None):
@@ -71,44 +110,6 @@ def DL_DNN(data=None, target=None):
     example_batch = train_scaled[:10]
     example_result = model.predict(example_batch)
     print('example_batch 형태:', example_batch.shape)
-
-
-    def plot_history(history):
-        import matplotlib.pyplot as plt
-
-        hist = pd.DataFrame(history.history)
-        hist['epoch'] = history.epoch
-
-        plt.figure(figsize=(8, 12))
-
-        plt.subplot(2, 1, 1)
-        plt.xlabel('Epoch')
-        plt.ylabel('Mean Abs Error [Cm]')
-        plt.plot(hist['epoch'], hist['mae'],
-                 label='Train Error')
-        plt.plot(hist['epoch'], hist['val_mae'],
-                 label='Val Error')
-        plt.ylim([0, 1.25])
-        plt.legend()
-
-        plt.subplot(2, 1, 2)
-        plt.xlabel('Epoch')
-        plt.ylabel('Mean Square Error [$Cm^2$]')
-        plt.plot(hist['epoch'], hist['mse'],
-                 label='Train Error')
-        plt.plot(hist['epoch'], hist['val_mse'],
-                 label='Val Error')
-        plt.ylim([0, 2])
-        plt.legend()
-        plt.show()
-
-
-    ## 모델 훈련.
-    ## 에포크가 끝날 때마다 점(.)을 출력해 훈련 진행 과정을 표시합니다
-    class PrintDot(keras.callbacks.Callback):
-        def on_epoch_end(self, epoch, logs):
-            if epoch % 100 == 0: print('')
-            print('.', end='')
 
 
     EPOCHS = 1000
@@ -176,25 +177,16 @@ def DNN_HonGong(data=None, target=None):
     train_scaled = scalerInput.transform(train_input)
     test_scaled = scalerInput.transform(test_input)
 
-    ## 2D shape 형성로 변경
-    train_target = train_target.reshape(-1, 1)
-    test_target = test_target.reshape(-1, 1)
+    # ## 2D shape 형성로 변경
+    # train_target = train_target.reshape(-1, 1)
+    # test_target = test_target.reshape(-1, 1)
+    #
+    #
+    # scalerTarget = StandardScaler().fit(train_target)
+    # train_target_scaled = scalerTarget.transform(train_target)
+    # test_target_scaled = scalerTarget.transform(test_target)
 
-
-    scalerTarget = StandardScaler().fit(train_target)
-    train_target_scaled = scalerTarget.transform(train_target)
-    test_target_scaled = scalerTarget.transform(test_target)
-
-    # import numpy as np
-    # mean = np.mean(train_target, axis=0)
-    # std = np.std(train_target, axis=0)
-    # print(mean, std)
-    # train_target_scaled = (train_target-mean)/std
-    # test_target_scaled = (test_target-mean)/std
-    # print(train_target_scaled.shape)
-
-
-    train_scaled, val_scaled, train_target, val_target = train_test_split(train_scaled, train_target_scaled, test_size=0.2)
+    train_scaled, val_scaled, train_target, val_target = train_test_split(train_scaled, train_target, test_size=0.2)
 
 
     def model_fn(a_layer=None):
@@ -214,14 +206,14 @@ def DNN_HonGong(data=None, target=None):
     model.summary()
 
 
-    rmsprop = keras.optimizers.RMSprop()
+    rmsprop = keras.optimizers.RMSprop(0.001)
     model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
     # history = model.fit(train_scaled, train_target, epochs=100, validation_data=(val_scaled, val_target))
     checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
     early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
 
 
-    history = model.fit(train_scaled, train_target, epochs=200, validation_split=0.2,
+    history = model.fit(train_scaled, train_target, epochs=1000, validation_split=0.2,
                         callbacks=[checkpoint_cb, early_stopping_cb])
     print()
     print('num of early_stopping:', early_stopping_cb.stopped_epoch)
@@ -246,20 +238,35 @@ def DNN_HonGong(data=None, target=None):
     model = keras.models.load_model('best-model.h5')
     print()
     print('<test evaluate>')
-    print('test evaluate:', model.evaluate(test_scaled, test_target_scaled))
+    print('test evaluate:', model.evaluate(test_scaled, test_target))
 
 
-    test_label = model.predict(test_scaled)
-    test_label = scalerTarget.inverse_transform(test_label)
-    print('모양:', test_label.shape, test_target.shape)
+    test_predictions = model.predict(test_scaled).flatten()
 
-    df = pd.DataFrame(x for x in zip(test_label, test_target))
+    print(test_predictions)
+    print(test_target)
 
-    print()
-    print('<csv 추출>')
-    df.to_csv('test_est.csv')
+    import matplotlib.pyplot as plt
+
+    plt.scatter(test_target, test_predictions)
+
+    plt.xlabel('True Values [Cm]')
+    plt.ylabel('Predictions [Cm]')
+    plt.axis('equal')
+    plt.axis('square')
+    plt.xlim([0, plt.xlim()[1]])
+    plt.ylim([0, plt.ylim()[1]])
+    _ = plt.plot([-10, 10], [-10, 10])
+    plt.show()
+
+    ## 오차의 분표확인.
+    error = test_predictions - test_target
+    plt.hist(error, bins=25)
+    plt.xlabel('Prediction Error [Cm]')
+    _ = plt.ylabel('Count')
+    plt.show()
 
 
 if __name__ == '__main__':
-    DL_DNN(data=data, target=target)
-    # DNN_HonGong(data=data, target=target)
+    # DL_DNN(data=data, target=target)
+    DNN_HonGong(data=data, target=target)
