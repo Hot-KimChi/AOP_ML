@@ -147,7 +147,7 @@ def DL_DNN(data=None, target=None):
     plt.axis('square')
     plt.xlim([0, plt.xlim()[1]])
     plt.ylim([0, plt.ylim()[1]])
-    _ = plt.plot([-100, 100], [-100, 100])
+    _ = plt.plot([-10, 10], [-10, 10])
     plt.show()
 
     ## 오차의 분표확인.
@@ -268,5 +268,5 @@ def DNN_HonGong(data=None, target=None):
 
 
 if __name__ == '__main__':
-    # DL_DNN(data=data, target=target)
-    DNN_HonGong(data=data, target=target)
+    DL_DNN(data=data, target=target)
+    # DNN_HonGong(data=data, target=target)
