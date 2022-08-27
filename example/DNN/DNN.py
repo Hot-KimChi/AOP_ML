@@ -128,9 +128,10 @@ def DL_DNN(data=None, target=None):
 
     plot_history(history)
 
-    print('evaluate:', model.evaluate(test_scaled, test_target, verbose=2))
-    # loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
-    # print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
+    print()
+    loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+    print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
+
 
     ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
     test_predictions = model.predict(test_scaled).flatten()
@@ -186,14 +187,16 @@ def DNN_HonGong(data=None, target=None):
     # train_target_scaled = scalerTarget.transform(train_target)
     # test_target_scaled = scalerTarget.transform(test_target)
 
-    train_scaled, val_scaled, train_target, val_target = train_test_split(train_scaled, train_target, test_size=0.2)
+    # train_scaled, val_scaled, train_target, val_target = train_test_split(train_scaled, train_target, test_size=0.2)
 
 
     def model_fn(a_layer=None):
         model = keras.Sequential()
-        model.add(keras.layers.Flatten(input_shape=(11,)))
-        model.add(keras.layers.Dense(100, activation='relu', name='hidden'))
+        model.add(keras.layers.Flatten(input_shape=(11,), name='input'))
+        model.add(keras.layers.Dense(100, activation='relu', name='hidden_1'))
+        model.add(keras.layers.Dense(10, activation='relu', name='hidden_2'))
 
+        ## add layer algorithm.
         if a_layer:
             model.add(a_layer)
 
@@ -202,21 +205,28 @@ def DNN_HonGong(data=None, target=None):
         return model
 
 
+    ## to build model fn.
+    ## to prevent overfitting for ML algorithm(mothed: dropout).
     model = model_fn(keras.layers.Dropout(0.3))
-    model.summary()
+
+    print(model.summary())
 
 
     rmsprop = keras.optimizers.RMSprop(0.001)
     model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
     # history = model.fit(train_scaled, train_target, epochs=100, validation_data=(val_scaled, val_target))
     checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
-    early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
+    early_stopping_cb = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
 
     history = model.fit(train_scaled, train_target, epochs=1000, validation_split=0.2,
                         callbacks=[checkpoint_cb, early_stopping_cb])
     print()
     print('num of early_stopping:', early_stopping_cb.stopped_epoch)
+
+    hist = pd.DataFrame(history.history)
+    hist['epoch'] = history.epoch
+    print(hist.tail())
 
 
     import matplotlib.pyplot as plt
@@ -238,7 +248,8 @@ def DNN_HonGong(data=None, target=None):
     model = keras.models.load_model('best-model.h5')
     print()
     print('<test evaluate>')
-    print('test evaluate:', model.evaluate(test_scaled, test_target))
+    loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+    print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
 
     test_predictions = model.predict(test_scaled).flatten()
@@ -269,4 +280,4 @@ def DNN_HonGong(data=None, target=None):
 
 if __name__ == '__main__':
     DL_DNN(data=data, target=target)
-    # DNN_HonGong(data=data, target=target)
+    DNN_HonGong(data=data, target=target)

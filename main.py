@@ -1143,7 +1143,7 @@ def func_machine_learning():
                     train_scaled = ss.transform(train_input)
                     test_scaled = ss.transform(test_input)
 
-                    ## 아래부터 수정작업.
+
                     def func_build_model():
                         dense1 = keras.layers.Dense(100, activation='relu', input_shape=(11,), name='hidden')
                         dense2 = keras.layers.Dense(10, activation='relu')
