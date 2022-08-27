@@ -119,7 +119,8 @@ def DL_DNN(data=None, target=None):
     # patience 매개변수는 성능 향상을 체크할 에포크 횟수입니다
     early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
     history = model.fit(train_scaled, train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
-                        callbacks=[early_stop, PrintDot()])
+                        callbacks=[early_stop])
+    # callbacks = [early_stop, PrintDot()])
 
     hist = pd.DataFrame(history.history)
     hist['epoch'] = history.epoch
@@ -207,7 +208,8 @@ def DNN_HonGong(data=None, target=None):
 
     ## to build model fn.
     ## to prevent overfitting for ML algorithm(mothed: dropout).
-    model = model_fn(keras.layers.Dropout(0.3))
+    # model = model_fn(keras.layers.Dropout(0.3))
+    model = model_fn()
 
     print(model.summary())
 

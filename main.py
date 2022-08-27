@@ -1250,11 +1250,11 @@ def func_machine_learning():
                 elif selected_ML == 'DNN_HonGong':
                     import tensorflow as tf
                     from tensorflow import keras
-                    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+                    # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
                     import seaborn as sns
                     import matplotlib.pyplot as plt
-                    plt.title('distport for zt')
+                    plt.title('Distport for zt')
                     sns.distplot(train_target['zt'])
                     plt.show()
 
@@ -1266,9 +1266,11 @@ def func_machine_learning():
 
                     def model_fn(a_layer=None):
                         model = keras.Sequential()
-                        model.add(keras.layers.Flatten(input_shape=(11, )))
-                        model.add(keras.layers.Dense(100, activation='relu', name='hidden'))
+                        model.add(keras.layers.Flatten(input_shape=(11, ), name='input'))
+                        model.add(keras.layers.Dense(100, activation='relu', name='hidden1'))
+                        model.add(keras.layers.Dense(10, activation='relu', name='hidden2'))
 
+                        ## add layer algorithm
                         if a_layer:
                             model.add(a_layer)
 
@@ -1276,17 +1278,26 @@ def func_machine_learning():
 
                         return model
 
-                    model = model_fn(keras.layers.Dropout(0.3))
-                    model.summary()
-                    model.compile(optimizer='adam', loss='mse', metrics='accuracy')
+                    ## To build model fn
+                    ## To prevent overfitting for ML algorithm(method: dropout)
+                    # model = model_fn(keras.layers.Dropout(0.3))
+                    model = model_fn()
+                    print(model.summary())
 
+                    rmsprop = keras.optimizers.RMSprop(0.001)
+                    model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
 
                     checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
-                    early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+                    early_stopping_cb = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+                    history = model.fit(train_scaled, train_target, epochs=1000, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
 
-                    history = model.fit(train_scaled, train_target, epochs=100, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
+                    print()
+                    print('#Num of early_stopping:', early_stopping_cb.stopped_epoch)
 
-                    print(early_stopping_cb.stopped_epoch)
+                    hist = pd.DataFrame(history.history)
+                    hist['epoch'] = history.epoch
+                    print(hist.tail())
+
 
                     import matplotlib.pyplot as plt
                     plt.plot(history.history['loss'])
@@ -1296,17 +1307,46 @@ def func_machine_learning():
                     plt.legend(['train', 'val'])
                     plt.show()
 
+                    plt.plot(history.history['mae'])
+                    plt.plot(history.history['val_mae'])
+                    plt.xlabel('epoch')
+                    plt.ylabel('mae')
+                    plt.legend(['train', 'val'])
+                    plt.show()
+
+
                     import numpy as np
                     model = keras.models.load_model('best-model.h5')
-                    print('test evaluate:', model.evaluate(test_scaled, test_target))
+                    print()
+                    print('<Test evaluate>')
+                    loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+                    print('Test evaluate:', model.evaluate(test_scaled, test_target))
+                    print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
-                    test_label = model.predict(test_scaled)
-                    df = pd.DataFrame(test_label, test_target)
+                    test_prediction = model.predict(test_scaled).flatten()
+                    df = pd.DataFrame(test_prediction, test_target)
                     print('추출')
                     df.to_csv('test_est.csv')
 
+                    import matplotlib.pyplot as plt
 
+                    plt.scatter(test_target, test_prediction)
 
+                    plt.xlabel('True Values [Cm]')
+                    plt.ylabel('Predictions [Cm]')
+                    plt.axis('equal')
+                    plt.axis('square')
+                    plt.xlim([0, plt.xlim()[1]])
+                    plt.ylim([0, plt.ylim()[1]])
+                    _ = plt.plot([-10, 10], [-10, 10])
+                    plt.show()
+
+                    ## 오차의 분표확인.
+                    Error = test_prediction - test_target
+                    plt.hist(Error, bins=25)
+                    plt.xlabel('Prediction Error [Cm]')
+                    _ = plt.ylabel('Count')
+                    plt.show()
 
 
                 ## modeling file 저장 장소.
