@@ -1252,11 +1252,11 @@ def func_machine_learning():
                     from tensorflow import keras
                     # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-                    import seaborn as sns
-                    import matplotlib.pyplot as plt
-                    plt.title('Distport for zt')
-                    sns.distplot(train_target['zt'])
-                    plt.show()
+                    # import seaborn as sns
+                    # import matplotlib.pyplot as plt
+                    # plt.title('Distport for zt')
+                    # sns.distplot(train_target['zt'])
+                    # plt.show()
 
                     from sklearn.preprocessing import StandardScaler
                     ss = StandardScaler()
@@ -1266,7 +1266,7 @@ def func_machine_learning():
 
                     def model_fn(a_layer=None):
                         model = keras.Sequential()
-                        model.add(keras.layers.Flatten(input_shape=(11, ), name='input'))
+                        model.add(keras.layers.Flatten(input_shape=(11,), name='input'))
                         model.add(keras.layers.Dense(100, activation='relu', name='hidden1'))
                         model.add(keras.layers.Dense(10, activation='relu', name='hidden2'))
 
@@ -1277,6 +1277,7 @@ def func_machine_learning():
                         model.add(keras.layers.Dense(1, name='output'))
 
                         return model
+
 
                     ## To build model fn
                     ## To prevent overfitting for ML algorithm(method: dropout)
