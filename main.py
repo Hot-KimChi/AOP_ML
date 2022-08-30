@@ -908,31 +908,29 @@ def func_machine_learning():
                     from scipy.stats import uniform, randint
 
 
-                    ## Hyperparameter setting.
-                    n_estimators = randint(20, 100)                 ## number of trees in the random forest
-                    max_features = ['auto', 'sqrt']                 ## number of features in consideration at every split
-                    max_depth = [int(x) for x in
-                                 np.linspace(10, 120, num=12)]      ## maximum number of levels allowed in each decision tree
-                    min_samples_split = [2, 6, 10]                  ## minimum sample number to split a node
-                    # min_samples_leaf = [1, 3, 4]                  ## minimum sample number that can be stored in a leaf node
-                    # bootstrap = [True, False]                     ## method used to sample data points
-
-
-                    random_grid = {'n_estimators': n_estimators,
-                                   'max_features': max_features,
-                                   'max_depth': max_depth,
-                                   'min_samples_split': min_samples_split}
-
-                                   # 'min_samples_leaf': min_samples_leaf,
-                                   # 'bootstrap': bootstrap}
-
-                    # RandomizedSearchCV에서 fit이 완료.
+                    ## hyperparameter 세팅 시, 진행.
+                    # n_estimators = randint(20, 100)                 ## number of trees in the random forest
+                    # max_features = ['auto', 'sqrt']                 ## number of features in consideration at every split
+                    # max_depth = [int(x) for x in
+                    #              np.linspace(10, 120, num=12)]      ## maximum number of levels allowed in each decision tree
+                    # min_samples_split = [2, 6, 10]                  ## minimum sample number to split a node
+                    # # min_samples_leaf = [1, 3, 4]                  ## minimum sample number that can be stored in a leaf node
+                    # # bootstrap = [True, False]                     ## method used to sample data points
+                    #
+                    # random_grid = {'n_estimators': n_estimators,
+                    #                'max_features': max_features,
+                    #                'max_depth': max_depth,
+                    #                'min_samples_split': min_samples_split}
+                    #
+                    #                # 'min_samples_leaf': min_samples_leaf,
+                    #                # 'bootstrap': bootstrap}
+                    ## RandomizedSearchCV에서 fit이 완료.
                     # rf = RandomForestRegressor()
                     # model = RandomizedSearchCV(estimator = rf, param_distributions = random_grid,
                     #                             n_iter = 300, cv = 5, verbose=2, n_jobs = -1)
 
 
-                    ## After hyperparameter value find, adapt these ones.
+                    # After hyperparameter value find, adapt these ones.
                     model = RandomForestRegressor(max_depth=40, max_features='sqrt', min_samples_split=2, n_estimators=90, n_jobs=-1)
 
 
@@ -1324,15 +1322,17 @@ def func_machine_learning():
                     print('Test evaluate:', model.evaluate(test_scaled, test_target))
                     print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
-                    test_prediction = model.predict(test_scaled).flatten()
-                    df = pd.DataFrame(test_prediction, test_target)
-                    print('추출')
+
+                    prediction = model.predict(test_scaled).flatten()
+
+                    import numpy as np
+                    prediction = np.round_(prediction, 2)
+                    df = pd.DataFrame(prediction, test_target)
+                    print('[csv 파일 추출 완료]')
                     df.to_csv('test_est.csv')
 
                     import matplotlib.pyplot as plt
-
-                    plt.scatter(test_target, test_prediction)
-
+                    plt.scatter(test_target, prediction)
                     plt.xlabel('True Values [Cm]')
                     plt.ylabel('Predictions [Cm]')
                     plt.axis('equal')
@@ -1343,39 +1343,43 @@ def func_machine_learning():
                     plt.show()
 
                     ## 오차의 분표확인.
-                    Error = test_prediction - test_target
+                    Error = prediction - test_target
                     plt.hist(Error, bins=25)
                     plt.xlabel('Prediction Error [Cm]')
                     _ = plt.ylabel('Count')
                     plt.show()
 
 
-                ## modeling file 저장 장소.
-                newpath = './Model'
-                if not os.path.exists(newpath):
-                    os.makedirs(newpath)
-                joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
-
-
-                scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
-                print()
-                print(scores)
-                print(f'{selected_ML} - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
-                print(f'{selected_ML} - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
-
-                model.fit(train_input, train_target)
-                print(f'{selected_ML} - Test R^2:', np.round_(model.score(test_input, test_target), 3))
-                prediction = np.round_(model.predict(test_input), 2)
-
-                if selected_ML == 'RandomForestRegressor':
-                    func_feature_import()
-                else:
+                if "DNN" in selected_ML:
                     pass
+
+                else:
+                    ## modeling file 저장 장소.
+                    newpath = './Model'
+                    if not os.path.exists(newpath):
+                        os.makedirs(newpath)
+                    joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
+
+
+                    scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
+                    print()
+                    print(scores)
+                    import numpy as np
+                    print(f'{selected_ML} - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                    print(f'{selected_ML} - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                    model.fit(train_input, train_target)
+                    print(f'{selected_ML} - Test R^2:', np.round_(model.score(test_input, test_target), 3))
+                    prediction = np.round_(model.predict(test_input), 2)
+
+                    if selected_ML == 'RandomForestRegressor':
+                        func_feature_import()
+                    else:
+                        pass
+
 
                 mae = mean_absolute_error(test_target, prediction)
                 print('|(타깃 - 예측값)|:', mae)
-
-
 
                 Diff = np.round_(prediction - test_target, 2)
                 Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
@@ -1411,7 +1415,7 @@ def func_machine_learning():
                         bad = bad + 1
 
                         df_bad = df_bad.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
-                                                            columns=['index', 'target', 'expect', 'Diff(Cm)', 'Diff(%)']),
+                                                            columns=['index', '측정값(Cm)', '예측값(Cm)', 'Diff(Cm)', 'Diff(%)']),
                                                ignore_index=True)
                         # df_bad_sort_values = df_bad.sort_values(by=df_bad.columns[3], ascending=True)
                         # df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
