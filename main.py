@@ -1250,6 +1250,8 @@ def func_machine_learning():
                     from tensorflow import keras
                     # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+                    ## -------------------- ##
+                    ## 아래 distplot Error 확인
                     # import seaborn as sns
                     # import matplotlib.pyplot as plt
                     # plt.title('Distport for zt')
