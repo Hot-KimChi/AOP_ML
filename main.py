@@ -1250,13 +1250,12 @@ def func_machine_learning():
                     from tensorflow import keras
                     # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-                    ## -------------------- ##
-                    ## 아래 distplot Error 확인
-                    # import seaborn as sns
-                    # import matplotlib.pyplot as plt
-                    # plt.title('Distport for zt')
-                    # sns.distplot(train_target['zt'])
-                    # plt.show()
+                    # train_target 분포 확인.
+                    import seaborn as sns
+                    import matplotlib.pyplot as plt
+                    plt.title('Distport for zt')
+                    sns.distplot(train_target)
+                    plt.show()
 
                     from sklearn.preprocessing import StandardScaler
                     ss = StandardScaler()
@@ -1327,8 +1326,9 @@ def func_machine_learning():
 
                     prediction = model.predict(test_scaled).flatten()
 
+
                     import numpy as np
-                    prediction = np.round_(prediction, 2)
+                    prediction = np.around(prediction, 2)
                     df = pd.DataFrame(prediction, test_target)
                     print('[csv 파일 추출 완료]')
                     df.to_csv('test_est.csv')
