@@ -1329,7 +1329,7 @@ def func_machine_learning():
 
                     import numpy as np
                     # prediction = np.around(prediction, 2)
-                    prediction = '{:.2f}'.format(prediction)
+                    prediction = {:.2f}.format(prediction)
                     df = pd.DataFrame(prediction, test_target)
                     print('[csv 파일 추출 완료]')
                     df.to_csv('test_est.csv')
