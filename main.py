@@ -1327,7 +1327,7 @@ def func_machine_learning():
                     prediction = model.predict(test_scaled).flatten()
 
 
-                    import numpy as np
+                    ## np.round_ error check. => why does works for this sequence?
                     prediction = np.around(prediction, 2)
                     # prediction = {:.2f}.format(prediction)
                     df = pd.DataFrame(prediction, test_target)
