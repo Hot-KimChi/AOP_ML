@@ -1413,6 +1413,7 @@ def func_machine_learning():
                 #
                 # func_show_table('test_input', df=df_test_input)
 
+
                 for i in range(len(Diff)):
                     if abs(Diff[i]) > 1:
                         bad = bad + 1
