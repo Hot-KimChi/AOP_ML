@@ -541,7 +541,6 @@ def func_measset_gen():
                 sort_dup['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
 
 
-
                 ## function: calc_profTxVoltage 구현
                 def func_calc_profvolt():
                     try:
