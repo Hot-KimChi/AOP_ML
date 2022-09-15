@@ -27,6 +27,9 @@ pd.set_option('display.max_colwidth', None)
 
 # warnings.simplefilter(action='ignore', category=FutureWarning)
 
+## verification report 추가하기.
+
+
 def func_freqidx2Hz(idx):
     try:
         frequencyTable = [1000000,
