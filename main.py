@@ -253,11 +253,11 @@ def func_verify_report():
         SELECT * FROM 
         (
         SELECT TOP (100) PERCENT 
-        dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, dbo.Tx_summary.CurrentState,dbo.Tx_summary.BeamStyleIndex, 
-        dbo.Tx_summary.TxFrequency, dbo.Tx_summary.ElevAperIndex, dbo.Tx_summary.NumTxCycles, dbo.WCS.NumTxCycles AS WCS_Cycle, dbo.Tx_summary.TxpgWaveformStyle, 
-        dbo.Tx_summary.TxChannelModulationEn, dbo.Tx_summary.Compounding, dbo.SSR_table.WCSId, dbo.SSR_table.SSRId, dbo.SSR_table.reportTerm_1, dbo.SSR_table.XP_Value_1, 
-        dbo.SSR_table.reportValue_1, dbo.SSR_table.Difference_1, dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, dbo.SSR_table.reportValue_2, 
-        dbo.SSR_table.Difference_2, ROW_NUMBER() over (partition by num order by reportvalue_1 desc) as RankNo, dbo.meas_res_summary.isDataUsable
+            dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, dbo.Tx_summary.CurrentState,dbo.Tx_summary.BeamStyleIndex, 
+            dbo.Tx_summary.TxFrequency, dbo.Tx_summary.ElevAperIndex, dbo.Tx_summary.NumTxCycles, dbo.WCS.NumTxCycles AS WCS_Cycle, dbo.Tx_summary.TxpgWaveformStyle, 
+            dbo.Tx_summary.TxChannelModulationEn, dbo.Tx_summary.Compounding, dbo.SSR_table.WCSId, dbo.SSR_table.SSRId, dbo.SSR_table.reportTerm_1, dbo.SSR_table.XP_Value_1, 
+            dbo.SSR_table.reportValue_1, dbo.SSR_table.Difference_1, dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, dbo.SSR_table.reportValue_2, 
+            dbo.SSR_table.Difference_2, ROW_NUMBER() over (partition by num order by reportvalue_1 desc) as RankNo, dbo.meas_res_summary.isDataUsable
         
         FROM dbo.Tx_summary 
         
