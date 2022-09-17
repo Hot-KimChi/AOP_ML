@@ -249,7 +249,8 @@ def func_sql_get(server_address, ID, password, database, command):
 ## Verification Report to SQL
 def func_verify_report():
     try:
-        '''
+
+       '''
         SELECT * FROM 
         (
         SELECT TOP (100) PERCENT 
