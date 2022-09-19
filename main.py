@@ -247,10 +247,13 @@ def func_sql_get(server_address, ID, password, database, command):
 
 
 ## Verification Report to SQL
-def func_verify_report():
+def func_verify_report(server_address, ID, password, database):
     try:
+        conn = pymssql.connect(server_address, ID, password, database)
+        cursor = conn.cursor()
 
-       '''
+        query = f'''
+        
         SELECT * FROM 
         (
         SELECT TOP (100) PERCENT 
@@ -277,8 +280,14 @@ def func_verify_report():
         ) T
         where RankNo = 1 and ProbeName = '14L4'
         order by num
+        
         '''
 
+        Raw_data = pd.read_sql(sql=query, con=conn)
+        print(Raw_data)
+
+        return Raw_data
+        conn.close()
 
     except():
         print("Error: func_verify_report")
@@ -872,7 +881,7 @@ def func_measset_gen():
         print("Error: measset_gen")
 
 
-def func_tx_sum():
+def func_tx_summ():
     try:
         filename = filedialog.askopenfilename(initialdir='.txt')
         df_UE_Tx_sum = pd.read_csv(filename, sep='\t', encoding='cp949')
@@ -1639,11 +1648,14 @@ def func_main():
         btn_sum = Button(root_main, width=30, height=3, text='SQL Viewer', command=func_viewer_database)
         btn_sum.grid(row=0, column=1)
 
-        btn_tx_sum = Button(root_main, width=30, height=3, text='Tx Summary', command=func_tx_sum)
+        btn_tx_sum = Button(root_main, width=30, height=3, text='Tx Summary', command=func_tx_summ)
         btn_tx_sum.grid(row=1, column=0)
 
-        btn_ML = Button(root_main, width=30, height=3, text='Machine Learning', command=func_machine_learning)
+        btn_ML = Button(root_main, width=30, height=3, text='Verification Report', command=func_verify_report)
         btn_ML.grid(row=1, column=1)
+
+        btn_ML = Button(root_main, width=30, height=3, text='Machine Learning', command=func_machine_learning)
+        btn_ML.grid(row=2, column=0)
 
         root_main.mainloop()
 
