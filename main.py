@@ -247,7 +247,7 @@ def func_sql_get(server_address, ID, password, database, command):
 
 
 ## Verification Report to SQL
-def func_verify_report(server_address, ID, password, database):
+def func_verify_report():
     try:
         conn = pymssql.connect(server_address, ID, password, database)
         cursor = conn.cursor()
@@ -278,7 +278,7 @@ def func_verify_report(server_address, ID, password, database):
         --where reportTerm_2 = 'Ispta.3'  
         where isDataUsable = 'yes' AND reportTerm_1 = 'MI' or reportTerm_1 IS NULL
         ) T
-        where RankNo = 1 and ProbeName = '14L4'
+        where RankNo = 1 and ProbeName = 'P8'
         order by num
         
         '''
