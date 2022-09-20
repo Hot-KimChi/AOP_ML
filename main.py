@@ -249,6 +249,9 @@ def func_sql_get(server_address, ID, password, database, command):
 ## Verification Report to SQL
 def func_verify_report():
     try:
+        ## measSSId에서 데이터 multy selection 후 아래 실행.
+        ## summary report 역시 multy selection 진행.
+
         conn = pymssql.connect(server_address, ID, password, database)
         cursor = conn.cursor()
 
