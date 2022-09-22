@@ -236,6 +236,12 @@ def func_sql_get(server_address, ID, password, database, command):
             ORDER BY 1
             '''
 
+        elif command == 5:
+            query = f'''
+            SELECT * FROM Tx_summary WHERE probeid = {selected_probeId}
+            ORDER BY 1
+            '''
+
 
         Raw_data = pd.read_sql(sql=query, con=conn)
 
@@ -249,20 +255,16 @@ def func_sql_get(server_address, ID, password, database, command):
 ## Verification Report to SQL
 def func_verify_report():
     try:
-        conn = pymssql.connect(server_address, ID, password, database)
-        cursor = conn.cursor()
 
         ## summary report 역시 multy selection 진행.
-        query = f'''
-        
-        SELECT * FROM
-        
-        '''
+        df = func_sql_get(server_address, ID, password, database, 5)
+
+
 
         ## measSSId에서 데이터 multy selection 후 아래 실행.
 
-
-
+        conn = pymssql.connect(server_address, ID, password, database)
+        cursor = conn.cursor()
 
         query = f'''
         
@@ -322,7 +324,6 @@ def func_viewer_database():
                             selectedItem = my_tree.focus()
                             # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
                             sel_param_click = my_tree.item(selectedItem).get('values')[0]
-
 
                         # tree_scroll_y = Scrollbar(frame2, orient="vertical")
                         # tree_scroll_y.pack(side=RIGHT, fill=Y)
