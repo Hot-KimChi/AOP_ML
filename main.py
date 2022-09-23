@@ -326,8 +326,10 @@ def func_viewer_database():
                             print(selectedItem)
 
                             # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
-                            sel_param_click = my_tree.item(selectedItem).get('values')[0]
-                            print(sel_param_click)
+                            # sel_param_click = my_tree.item(selectedItem).get('values')[0]
+                            for i in selectedItem:
+                                sel_param_click.append(my_tree.item(i).get('values')[0])
+                                print(sel_param_click)
 
                         # tree_scroll_y = Scrollbar(frame2, orient="vertical")
                         # tree_scroll_y.pack(side=RIGHT, fill=Y)
