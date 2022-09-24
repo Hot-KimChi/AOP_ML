@@ -209,9 +209,10 @@ def func_sql_get(server_address, ID, password, database, command):
         elif command == 2:
             if selected_DBtable == 'SSR_table':
                 query = f'''
-                SELECT * FROM {selected_DBtable} WHERE measSSId = {sel_param_click}
+                SELECT * FROM {selected_DBtable} WHERE measSSId IN {str_sel_param}
                 ORDER BY measSSId, 1
                 '''
+                print(query)
             else:
                 query = f'''
                 SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
@@ -321,15 +322,17 @@ def func_viewer_database():
 
                         def func_click_item(event):
                             ## multiple selection
-                            global sel_param_click
+                            global sel_param_click, str_sel_param
                             selectedItem = my_tree.selection()
                             print(selectedItem)
 
                             # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
                             # sel_param_click = my_tree.item(selectedItem).get('values')[0]
+                            sel_param_click = []
                             for i in selectedItem:
                                 sel_param_click.append(my_tree.item(i).get('values')[0])
-                                print(sel_param_click)
+                            str_sel_param = '(' + ''.join(str(x) for x in sel_param_click) + ')'
+                            print(str_sel_param)
 
                         # tree_scroll_y = Scrollbar(frame2, orient="vertical")
                         # tree_scroll_y.pack(side=RIGHT, fill=Y)
