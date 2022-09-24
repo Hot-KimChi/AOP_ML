@@ -331,7 +331,7 @@ def func_viewer_database():
                             sel_param_click = []
                             for i in selectedItem:
                                 sel_param_click.append(my_tree.item(i).get('values')[0])
-                            str_sel_param = '(' + ''.join(str(x) for x in sel_param_click) + ')'
+                            str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
                             print(str_sel_param)
 
                         # tree_scroll_y = Scrollbar(frame2, orient="vertical")
