@@ -258,6 +258,7 @@ def func_verify_report():
     try:
 
         ## summary report 역시 multy selection 진행.
+        ## selected_probeId
         df = func_sql_get(server_address, ID, password, database, 5)
 
 
