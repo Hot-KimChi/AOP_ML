@@ -231,12 +231,14 @@ def func_sql_get(server_address, ID, password, database, command):
                 ORDER BY 1
                 '''
 
+        # probe_geo database load.
         elif command == 4:
             query = f'''
             SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevFocusRangCm] FROM probe_geo WHERE probeid = {selected_probeId}
             ORDER BY 1
             '''
 
+        # Tx_summary database load.
         elif command == 5:
             query = f'''
             SELECT * FROM Tx_summary WHERE probeid = {selected_probeId}
@@ -256,6 +258,36 @@ def func_sql_get(server_address, ID, password, database, command):
 ## Verification Report to SQL
 def func_verify_report():
     try:
+        df = func_sql_get(server_address, ID, password, database, 5)
+
+        def func_verify_SW():
+            try:
+                pass
+            except():
+                print("Error: func_verify_SW")
+
+        def func_on_selected(event):
+
+            def func_sel_update(event):
+                global sel_data
+                sel_data = combo_sel_datas.get()
+                table = func_sql_get(server_address, ID, password, database, 3)
+                func_tree_update(df=table, selected_input=sel_data)
+
+            global selected_param
+            # parameter 중 한개를 선정하게 되면 filter 기능.
+            selected_param = event.widget.get()
+            list_datas = df[f'{selected_param}'].values.tolist()
+            # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
+            set_datas = set(list_datas)
+            filtered_datas = list(set_datas)
+
+            label_sel_data = Label(frame2, text='Selection')
+            label_sel_data.place(x=5, y=25)
+
+            combo_sel_datas = ttk.Combobox(frame2, value=filtered_datas, height=0, state='readonly')
+            combo_sel_datas.place(x=115, y=25)
+            combo_sel_datas.bind('<<ComboboxSelected>>', func_sel_update)
 
         ## summary report 역시 multy selection 진행.
         ## selected_probeId
@@ -279,9 +311,9 @@ def func_verify_report():
         label_DB_table.place(x=5, y=25)
         combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
         combo_DBtable.place(x=115, y=25)
-        #
-        # btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
-        # btn_view.place(x=350, y=5)
+
+        btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
+        btn_view.place(x=350, y=5)
 
         # if combo_DBtable == 'SSR_table':
         #     combo_list = ttk.Combobox(frame2, value=df.columns, height=0, state='readonly')
@@ -307,54 +339,54 @@ def func_verify_report():
 
         root_verify.mainloop()
 
-
-
-
-        df = func_sql_get(server_address, ID, password, database, 5)
-
-
-
-        ## measSSId에서 데이터 multy selection 후 아래 실행.
-
-        conn = pymssql.connect(server_address, ID, password, database)
-        cursor = conn.cursor()
-
-        query = f'''
-        
-        SELECT * FROM 
-        (
-        SELECT TOP (100) PERCENT 
-            dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, dbo.Tx_summary.CurrentState,dbo.Tx_summary.BeamStyleIndex, 
-            dbo.Tx_summary.TxFrequency, dbo.Tx_summary.ElevAperIndex, dbo.Tx_summary.NumTxCycles, dbo.WCS.NumTxCycles AS WCS_Cycle, dbo.Tx_summary.TxpgWaveformStyle, 
-            dbo.Tx_summary.TxChannelModulationEn, dbo.Tx_summary.Compounding, dbo.SSR_table.WCSId, dbo.SSR_table.SSRId, dbo.SSR_table.reportTerm_1, dbo.SSR_table.XP_Value_1, 
-            dbo.SSR_table.reportValue_1, dbo.SSR_table.Difference_1, dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, dbo.SSR_table.reportValue_2, 
-            dbo.SSR_table.Difference_2, ROW_NUMBER() over (partition by num order by reportvalue_1 desc) as RankNo, dbo.meas_res_summary.isDataUsable
-        
-        FROM dbo.Tx_summary 
-        
-        LEFT OUTER JOIN dbo.WCS 
-            ON dbo.Tx_summary.ProbeID = dbo.WCS.probeId AND dbo.Tx_summary.BeamStyleIndex = dbo.WCS.Mode AND dbo.Tx_summary.TxFreqIndex = dbo.WCS.TxFrequencyIndex AND 
-            dbo.Tx_summary.ElevAperIndex = dbo.WCS.ElevAperIndex AND dbo.Tx_summary.TxpgWaveformStyle = dbo.WCS.WaveformStyle AND 
-            dbo.Tx_summary.TxChannelModulationEn = dbo.WCS.ChModulationEn AND dbo.Tx_summary.CurrentState = dbo.WCS.CurrentState
-        LEFT OUTER JOIN dbo.meas_res_summary 
-            ON dbo.WCS.wcsID = dbo.meas_res_summary.VerifyID
-        LEFT OUTER JOIN dbo.SSR_table 
-            ON dbo.WCS.wcsID = dbo.SSR_table.WCSId AND dbo.SSR_table.measSSId IN (896, 902, 905, 906)
-                    
-        --where reportTerm_1 = 'MI' or reportTerm_1 IS NULL
-        --where reportTerm_2 = 'Ispta.3'  
-        where isDataUsable = 'yes' AND reportTerm_1 = 'MI' or reportTerm_1 IS NULL
-        ) T
-        where RankNo = 1 and ProbeName = 'P8'
-        order by num
-        
-        '''
-
-        Raw_data = pd.read_sql(sql=query, con=conn)
-        print(Raw_data)
-
-        return Raw_data
-        conn.close()
+        #
+        #
+        #
+        # df = func_sql_get(server_address, ID, password, database, 5)
+        #
+        #
+        #
+        # ## measSSId에서 데이터 multy selection 후 아래 실행.
+        #
+        # conn = pymssql.connect(server_address, ID, password, database)
+        # cursor = conn.cursor()
+        #
+        # query = f'''
+        #
+        # SELECT * FROM
+        # (
+        # SELECT TOP (100) PERCENT
+        #     dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, dbo.Tx_summary.CurrentState,dbo.Tx_summary.BeamStyleIndex,
+        #     dbo.Tx_summary.TxFrequency, dbo.Tx_summary.ElevAperIndex, dbo.Tx_summary.NumTxCycles, dbo.WCS.NumTxCycles AS WCS_Cycle, dbo.Tx_summary.TxpgWaveformStyle,
+        #     dbo.Tx_summary.TxChannelModulationEn, dbo.Tx_summary.Compounding, dbo.SSR_table.WCSId, dbo.SSR_table.SSRId, dbo.SSR_table.reportTerm_1, dbo.SSR_table.XP_Value_1,
+        #     dbo.SSR_table.reportValue_1, dbo.SSR_table.Difference_1, dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, dbo.SSR_table.reportValue_2,
+        #     dbo.SSR_table.Difference_2, ROW_NUMBER() over (partition by num order by reportvalue_1 desc) as RankNo, dbo.meas_res_summary.isDataUsable
+        #
+        # FROM dbo.Tx_summary
+        #
+        # LEFT OUTER JOIN dbo.WCS
+        #     ON dbo.Tx_summary.ProbeID = dbo.WCS.probeId AND dbo.Tx_summary.BeamStyleIndex = dbo.WCS.Mode AND dbo.Tx_summary.TxFreqIndex = dbo.WCS.TxFrequencyIndex AND
+        #     dbo.Tx_summary.ElevAperIndex = dbo.WCS.ElevAperIndex AND dbo.Tx_summary.TxpgWaveformStyle = dbo.WCS.WaveformStyle AND
+        #     dbo.Tx_summary.TxChannelModulationEn = dbo.WCS.ChModulationEn AND dbo.Tx_summary.CurrentState = dbo.WCS.CurrentState
+        # LEFT OUTER JOIN dbo.meas_res_summary
+        #     ON dbo.WCS.wcsID = dbo.meas_res_summary.VerifyID
+        # LEFT OUTER JOIN dbo.SSR_table
+        #     ON dbo.WCS.wcsID = dbo.SSR_table.WCSId AND dbo.SSR_table.measSSId IN (896, 902, 905, 906)
+        #
+        # --where reportTerm_1 = 'MI' or reportTerm_1 IS NULL
+        # --where reportTerm_2 = 'Ispta.3'
+        # where isDataUsable = 'yes' AND reportTerm_1 = 'MI' or reportTerm_1 IS NULL
+        # ) T
+        # where RankNo = 1 and ProbeName = 'P8'
+        # order by num
+        #
+        # '''
+        #
+        # Raw_data = pd.read_sql(sql=query, con=conn)
+        # print(Raw_data)
+        #
+        # return Raw_data
+        # conn.close()
 
     except():
         print("Error: func_verify_report")
