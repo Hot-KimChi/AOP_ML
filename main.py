@@ -259,6 +259,57 @@ def func_verify_report():
 
         ## summary report 역시 multy selection 진행.
         ## selected_probeId
+
+        root_verify = tkinter.Toplevel()
+        root_verify.title(f"{database}" + ' / Verify_Report')
+        root_verify.geometry("1720x800")
+        root_verify.resizable(False, False)
+
+        frame1 = Frame(root_verify, relief="solid", bd=2)
+        frame1.pack(side="top", fill="both", expand=True)
+        frame2 = Frame(root_verify, relief="solid", bd=2)
+        frame2.pack(side="bottom", fill="both", expand=True)
+
+        label_probename = Label(frame1, text='Probe Name')
+        label_probename.place(x=5, y=5)
+        combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
+        combo_probename.place(x=115, y=5)
+
+        label_DB_table = Label(frame1, text='Software Version')
+        label_DB_table.place(x=5, y=25)
+        combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
+        combo_DBtable.place(x=115, y=25)
+        #
+        # btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
+        # btn_view.place(x=350, y=5)
+
+        # if combo_DBtable == 'SSR_table':
+        #     combo_list = ttk.Combobox(frame2, value=df.columns, height=0, state='readonly')
+        #     combo_list.place(x=115, y=5)
+        #     # combo_probename = ttk.Combobox(frame2, value=list_probe, height=0, state='readonly')
+        #     # combo_probename.place(x=115, y=5)
+
+        # Add some style
+        style = ttk.Style()
+        # Pick a theme
+        style.theme_use("default")
+
+        # Configure our treeview colors
+        style.configure("Treeview",
+                        background="#D3D3D3",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#D3D3D3"
+                        )
+        # Change selected color
+        style.map('Treeview',
+                  background=[('selected', '#347083')])
+
+        root_verify.mainloop()
+
+
+
+
         df = func_sql_get(server_address, ID, password, database, 5)
 
 
@@ -321,6 +372,7 @@ def func_viewer_database():
                 def func_tree_update(df=None, selected_input=None):
                     try:
 
+                        ## tree table안에 있는 데이터를 선택해서 제일 앞에 있는 데이터를 (x1, x2, x3) 형태로 변수 update.
                         def func_click_item(event):
                             ## multiple selection
                             global sel_param_click, str_sel_param
@@ -407,6 +459,7 @@ def func_viewer_database():
                 selected_probename = str(list_probenames[combo_probename.current()])
                 selected_DBtable = combo_DBtable.get()
 
+                ## selected_probeId에 선택 & 선택된 DBtable에서 데이터 가져오기.
                 df = func_sql_get(server_address, ID, password, database, 0)
 
                 ''' 선택한 table treeview update'''
