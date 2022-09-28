@@ -258,6 +258,7 @@ def func_sql_get(server_address, ID, password, database, command):
 ## Verification Report to SQL
 def func_verify_report():
     try:
+        #
         df = func_sql_get(server_address, ID, password, database, 5)
 
         def func_verify_SW():
