@@ -255,19 +255,31 @@ def func_sql_get(server_address, ID, password, database, command):
         print("Error: func_sql_get")
 
 
+def func_SQL_value(df=None, param=None):
+    try:
+        global selected_param
+        # parameter 중 한개를 선정하게 되면 filter 기능.
+        selected_param = param
+        print(selected_param)
+        list_datas = df['Software_version'].values.tolist()
+        # list_datas = df[f'{selected_param}'].values.tolist()
+        # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
+        set_datas = set(list_datas)
+        filtered_datas = list(set_datas)
+
+        return filtered_datas
+
+    except():
+        print("Error: func_SQL_value")
+
+
 ## Verification Report to SQL
 def func_verify_report():
     try:
-        #
-        df = func_sql_get(server_address, ID, password, database, 5)
-
-        def func_verify_SW():
-            try:
-                pass
-            except():
-                print("Error: func_verify_SW")
 
         def func_on_selected(event):
+
+            df = func_sql_get(server_address, ID, password, database, 5)
 
             def func_sel_update(event):
                 global sel_data
@@ -290,12 +302,42 @@ def func_verify_report():
             combo_sel_datas.place(x=115, y=25)
             combo_sel_datas.bind('<<ComboboxSelected>>', func_sel_update)
 
+            # btn_filter = Button(frame2, width=15, height=2, text='filter', command=func_tree_update)
+            # btn_filter.place(x=380, y=5)
+
+        ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
+        label_filter = Label(frame2, text='filter Column')
+        label_filter.place(x=5, y=5)
+
+        combo_list_columns = ttk.Combobox(frame2, value=list_params, height=0, state='readonly')
+        combo_list_columns.place(x=115, y=5)
+        combo_list_columns.bind('<<ComboboxSelected>>', func_on_selected)
+
+        # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
+        # probeSN = str(df['probeSn'].sort_values().unique())[1:-1]
+        #
+        # label_SSId = Label(frame2, text='SSId')
+        # label_SSId.place(x=5, y=5)
+        # combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0) #, state='readonly')
+        # combo_SSId.place(x=115, y=5)
+        #
+        # label_probesn = Label(frame2, text='probeSN')
+        # label_probesn.place(x=5, y=25)
+        # combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
+        # combo_probesn.place(x=115, y=25)
+
+        btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
+        btn_view.place(x=350, y=5)
+
+
+
+
         ## summary report 역시 multy selection 진행.
         ## selected_probeId
 
         root_verify = tkinter.Toplevel()
         root_verify.title(f"{database}" + ' / Verify_Report')
-        root_verify.geometry("1720x800")
+        root_verify.geometry("1720x1000")
         root_verify.resizable(False, False)
 
         frame1 = Frame(root_verify, relief="solid", bd=2)
@@ -303,24 +345,7 @@ def func_verify_report():
         frame2 = Frame(root_verify, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True)
 
-        label_probename = Label(frame1, text='Probe Name')
-        label_probename.place(x=5, y=5)
-        combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
-        combo_probename.place(x=115, y=5)
 
-        label_DB_table = Label(frame1, text='Software Version')
-        label_DB_table.place(x=5, y=25)
-        combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
-        combo_DBtable.place(x=115, y=25)
-
-        btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
-        btn_view.place(x=350, y=5)
-
-        # if combo_DBtable == 'SSR_table':
-        #     combo_list = ttk.Combobox(frame2, value=df.columns, height=0, state='readonly')
-        #     combo_list.place(x=115, y=5)
-        #     # combo_probename = ttk.Combobox(frame2, value=list_probe, height=0, state='readonly')
-        #     # combo_probename.place(x=115, y=5)
 
         # Add some style
         style = ttk.Style()
@@ -340,13 +365,7 @@ def func_verify_report():
 
         root_verify.mainloop()
 
-        #
-        #
-        #
-        # df = func_sql_get(server_address, ID, password, database, 5)
-        #
-        #
-        #
+
         # ## measSSId에서 데이터 multy selection 후 아래 실행.
         #
         # conn = pymssql.connect(server_address, ID, password, database)
@@ -577,7 +596,7 @@ def func_viewer_database():
 
         root_view = tkinter.Toplevel()
         root_view.title(f"{database}" + ' / Viewer')
-        root_view.geometry("1720x800")
+        root_view.geometry("1720x1000")
         root_view.resizable(False, False)
 
         frame1 = Frame(root_view, relief="solid", bd=2)
