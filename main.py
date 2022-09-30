@@ -295,10 +295,10 @@ def func_verify_report():
             set_datas = set(list_datas)
             filtered_datas = list(set_datas)
 
-            label_sel_data = Label(frame2, text='Selection')
+            label_sel_data = Label(frame1, text='Selection')
             label_sel_data.place(x=5, y=25)
 
-            combo_sel_datas = ttk.Combobox(frame2, value=filtered_datas, height=0, state='readonly')
+            combo_sel_datas = ttk.Combobox(frame1, value=filtered_datas, height=0, state='readonly')
             combo_sel_datas.place(x=115, y=25)
             combo_sel_datas.bind('<<ComboboxSelected>>', func_sel_update)
 
@@ -306,7 +306,7 @@ def func_verify_report():
             # btn_filter.place(x=380, y=5)
 
         ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
-        label_filter = Label(frame2, text='filter Column')
+        label_filter = Label(frame1, text='filter Column')
         label_filter.place(x=5, y=5)
 
         combo_list_columns = ttk.Combobox(frame2, value=list_params, height=0, state='readonly')
