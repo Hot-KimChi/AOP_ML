@@ -277,61 +277,6 @@ def func_SQL_value(df=None, param=None):
 def func_verify_report():
     try:
 
-        def func_on_selected(event):
-
-            df = func_sql_get(server_address, ID, password, database, 5)
-
-            def func_sel_update(event):
-                global sel_data
-                sel_data = combo_sel_datas.get()
-                table = func_sql_get(server_address, ID, password, database, 3)
-                func_tree_update(df=table, selected_input=sel_data)
-
-            global selected_param
-            # parameter 중 한개를 선정하게 되면 filter 기능.
-            selected_param = event.widget.get()
-            list_datas = df[f'{selected_param}'].values.tolist()
-            # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
-            set_datas = set(list_datas)
-            filtered_datas = list(set_datas)
-
-            label_sel_data = Label(frame1, text='Selection')
-            label_sel_data.place(x=5, y=25)
-
-            combo_sel_datas = ttk.Combobox(frame1, value=filtered_datas, height=0, state='readonly')
-            combo_sel_datas.place(x=115, y=25)
-            combo_sel_datas.bind('<<ComboboxSelected>>', func_sel_update)
-
-            # btn_filter = Button(frame2, width=15, height=2, text='filter', command=func_tree_update)
-            # btn_filter.place(x=380, y=5)
-
-        ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
-        label_filter = Label(frame1, text='filter Column')
-        label_filter.place(x=5, y=5)
-
-        combo_list_columns = ttk.Combobox(frame2, value=list_params, height=0, state='readonly')
-        combo_list_columns.place(x=115, y=5)
-        combo_list_columns.bind('<<ComboboxSelected>>', func_on_selected)
-
-        # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
-        # probeSN = str(df['probeSn'].sort_values().unique())[1:-1]
-        #
-        # label_SSId = Label(frame2, text='SSId')
-        # label_SSId.place(x=5, y=5)
-        # combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0) #, state='readonly')
-        # combo_SSId.place(x=115, y=5)
-        #
-        # label_probesn = Label(frame2, text='probeSN')
-        # label_probesn.place(x=5, y=25)
-        # combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
-        # combo_probesn.place(x=115, y=25)
-
-        btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
-        btn_view.place(x=350, y=5)
-
-
-
-
         ## summary report 역시 multy selection 진행.
         ## selected_probeId
 
@@ -344,7 +289,6 @@ def func_verify_report():
         frame1.pack(side="top", fill="both", expand=True)
         frame2 = Frame(root_verify, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True)
-
 
 
         # Add some style
