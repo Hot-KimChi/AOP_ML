@@ -290,7 +290,6 @@ def func_verify_report():
         frame2 = Frame(root_verify, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True)
 
-
         # Add some style
         style = ttk.Style()
         # Pick a theme
