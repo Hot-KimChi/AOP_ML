@@ -255,10 +255,11 @@ def func_sql_get(server_address, ID, password, database, command):
         print("Error: func_sql_get")
 
 
+## SQL data get from database.
 def func_SQL_value(df=None, param=None):
     try:
         global selected_param
-        # parameter 중 한개를 선정하게 되면 filter 기능.
+        # parameter 중 한 개를 선정하게 되면 filter 기능.
         selected_param = param
         print(selected_param)
         list_datas = df['Software_version'].values.tolist()
