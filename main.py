@@ -276,7 +276,11 @@ def func_SQL_value(df=None, param=None):
 
 ## Verification Report to SQL
 def func_verify_report():
+
+    def __init__(self):
+
     try:
+
 
         ## summary report 역시 multy selection 진행.
         ## selected_probeId
