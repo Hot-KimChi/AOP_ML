@@ -314,6 +314,7 @@ def func_verify_report():
         root_verify.mainloop()
 
 
+
         # ## measSSId에서 데이터 multy selection 후 아래 실행.
         #
         # conn = pymssql.connect(server_address, ID, password, database)
