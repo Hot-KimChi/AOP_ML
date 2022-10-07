@@ -276,87 +276,80 @@ def func_SQL_value(df=None, param=None):
 
 ## Verification Report to SQL
 def func_verify_report():
+        ## summary report 역시 multy selection 진행.
+        ## selected_probeId
 
-    def __init__(self):
+        root_verify = tkinter.Toplevel()
+        root_verify.title(f"{database}" + ' / Verify_Report')
+        root_verify.geometry("1720x1000")
+        root_verify.resizable(False, False)
 
-        try:
+        frame1 = Frame(root_verify, relief="solid", bd=2)
+        frame1.pack(side="top", fill="both", expand=True)
+        frame2 = Frame(root_verify, relief="solid", bd=2)
+        frame2.pack(side="bottom", fill="both", expand=True)
 
-            ## summary report 역시 multy selection 진행.
-            ## selected_probeId
+        # Add some style
+        style = ttk.Style()
+        # Pick a theme
+        style.theme_use("default")
 
-            root_verify = tkinter.Toplevel()
-            root_verify.title(f"{database}" + ' / Verify_Report')
-            root_verify.geometry("1720x1000")
-            root_verify.resizable(False, False)
+        # Configure our treeview colors
+        style.configure("Treeview",
+                        background="#D3D3D3",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#D3D3D3"
+                        )
+        # Change selected color
+        style.map('Treeview',
+                  background=[('selected', '#347083')])
 
-            frame1 = Frame(root_verify, relief="solid", bd=2)
-            frame1.pack(side="top", fill="both", expand=True)
-            frame2 = Frame(root_verify, relief="solid", bd=2)
-            frame2.pack(side="bottom", fill="both", expand=True)
-
-            # Add some style
-            style = ttk.Style()
-            # Pick a theme
-            style.theme_use("default")
-
-            # Configure our treeview colors
-            style.configure("Treeview",
-                            background="#D3D3D3",
-                            foreground="black",
-                            rowheight=25,
-                            fieldbackground="#D3D3D3"
-                            )
-            # Change selected color
-            style.map('Treeview',
-                      background=[('selected', '#347083')])
-
-            root_verify.mainloop()
+        root_verify.mainloop()
 
 
-            # ## measSSId에서 데이터 multy selection 후 아래 실행.
-            #
-            # conn = pymssql.connect(server_address, ID, password, database)
-            # cursor = conn.cursor()
-            #
-            # query = f'''
-            #
-            # SELECT * FROM
-            # (
-            # SELECT TOP (100) PERCENT
-            #     dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, dbo.Tx_summary.CurrentState,dbo.Tx_summary.BeamStyleIndex,
-            #     dbo.Tx_summary.TxFrequency, dbo.Tx_summary.ElevAperIndex, dbo.Tx_summary.NumTxCycles, dbo.WCS.NumTxCycles AS WCS_Cycle, dbo.Tx_summary.TxpgWaveformStyle,
-            #     dbo.Tx_summary.TxChannelModulationEn, dbo.Tx_summary.Compounding, dbo.SSR_table.WCSId, dbo.SSR_table.SSRId, dbo.SSR_table.reportTerm_1, dbo.SSR_table.XP_Value_1,
-            #     dbo.SSR_table.reportValue_1, dbo.SSR_table.Difference_1, dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, dbo.SSR_table.reportValue_2,
-            #     dbo.SSR_table.Difference_2, ROW_NUMBER() over (partition by num order by reportvalue_1 desc) as RankNo, dbo.meas_res_summary.isDataUsable
-            #
-            # FROM dbo.Tx_summary
-            #
-            # LEFT OUTER JOIN dbo.WCS
-            #     ON dbo.Tx_summary.ProbeID = dbo.WCS.probeId AND dbo.Tx_summary.BeamStyleIndex = dbo.WCS.Mode AND dbo.Tx_summary.TxFreqIndex = dbo.WCS.TxFrequencyIndex AND
-            #     dbo.Tx_summary.ElevAperIndex = dbo.WCS.ElevAperIndex AND dbo.Tx_summary.TxpgWaveformStyle = dbo.WCS.WaveformStyle AND
-            #     dbo.Tx_summary.TxChannelModulationEn = dbo.WCS.ChModulationEn AND dbo.Tx_summary.CurrentState = dbo.WCS.CurrentState
-            # LEFT OUTER JOIN dbo.meas_res_summary
-            #     ON dbo.WCS.wcsID = dbo.meas_res_summary.VerifyID
-            # LEFT OUTER JOIN dbo.SSR_table
-            #     ON dbo.WCS.wcsID = dbo.SSR_table.WCSId AND dbo.SSR_table.measSSId IN (896, 902, 905, 906)
-            #
-            # --where reportTerm_1 = 'MI' or reportTerm_1 IS NULL
-            # --where reportTerm_2 = 'Ispta.3'
-            # where isDataUsable = 'yes' AND reportTerm_1 = 'MI' or reportTerm_1 IS NULL
-            # ) T
-            # where RankNo = 1 and ProbeName = 'P8'
-            # order by num
-            #
-            # '''
-            #
-            # Raw_data = pd.read_sql(sql=query, con=conn)
-            # print(Raw_data)
-            #
-            # return Raw_data
-            # conn.close()
+        ## measSSId에서 데이터 multy selection 후 아래 실행.
 
-    except():
-        print("Error: func_verify_report")
+        # conn = pymssql.connect(server_address, ID, password, database)
+        # cursor = conn.cursor()
+        #
+        # query = f'''
+        #
+        # SELECT * FROM
+        # (
+        # SELECT TOP (100) PERCENT
+        #     dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, dbo.Tx_summary.CurrentState,dbo.Tx_summary.BeamStyleIndex,
+        #     dbo.Tx_summary.TxFrequency, dbo.Tx_summary.ElevAperIndex, dbo.Tx_summary.NumTxCycles, dbo.WCS.NumTxCycles AS WCS_Cycle, dbo.Tx_summary.TxpgWaveformStyle,
+        #     dbo.Tx_summary.TxChannelModulationEn, dbo.Tx_summary.Compounding, dbo.SSR_table.WCSId, dbo.SSR_table.SSRId, dbo.SSR_table.reportTerm_1, dbo.SSR_table.XP_Value_1,
+        #     dbo.SSR_table.reportValue_1, dbo.SSR_table.Difference_1, dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, dbo.SSR_table.reportValue_2,
+        #     dbo.SSR_table.Difference_2, ROW_NUMBER() over (partition by num order by reportvalue_1 desc) as RankNo, dbo.meas_res_summary.isDataUsable
+        #
+        # FROM dbo.Tx_summary
+        #
+        # LEFT OUTER JOIN dbo.WCS
+        #     ON dbo.Tx_summary.ProbeID = dbo.WCS.probeId AND dbo.Tx_summary.BeamStyleIndex = dbo.WCS.Mode AND dbo.Tx_summary.TxFreqIndex = dbo.WCS.TxFrequencyIndex AND
+        #     dbo.Tx_summary.ElevAperIndex = dbo.WCS.ElevAperIndex AND dbo.Tx_summary.TxpgWaveformStyle = dbo.WCS.WaveformStyle AND
+        #     dbo.Tx_summary.TxChannelModulationEn = dbo.WCS.ChModulationEn AND dbo.Tx_summary.CurrentState = dbo.WCS.CurrentState
+        # LEFT OUTER JOIN dbo.meas_res_summary
+        #     ON dbo.WCS.wcsID = dbo.meas_res_summary.VerifyID
+        # LEFT OUTER JOIN dbo.SSR_table
+        #     ON dbo.WCS.wcsID = dbo.SSR_table.WCSId AND dbo.SSR_table.measSSId IN (896, 902, 905, 906)
+        #
+        # --where reportTerm_1 = 'MI' or reportTerm_1 IS NULL
+        # --where reportTerm_2 = 'Ispta.3'
+        # where isDataUsable = 'yes' AND reportTerm_1 = 'MI' or reportTerm_1 IS NULL
+        # ) T
+        # where RankNo = 1 and ProbeName = 'P8'
+        # order by num
+        #
+        # '''
+        #
+        # Raw_data = pd.read_sql(sql=query, con=conn)
+        # print(Raw_data)
+        #
+        # return Raw_data
+        # conn.close()
+
 
 
 ## root 제목 DB 변경 --> SQL 접속
