@@ -276,7 +276,10 @@ def func_SQL_value(df=None, param=None):
 
 ## Verification Report to SQL
 def func_verify_report():
-        ## summary report 역시 multy selection 진행.
+        ## summary report 역시 multiple selection 진행.
+        ## 1) 위쪽에는 selected probeID & software version 선택 시, Tx_summary 보여주고
+        ## 2) 아래에는 WCS 데이터가 있는지 여부 확인
+        ## 3) submit 진행 시, SSR_table에서 데이터 load 및 추출.
         ## selected_probeId
 
         root_verify = tkinter.Toplevel()
