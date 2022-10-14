@@ -282,6 +282,7 @@ def func_verify_report():
     ## 2) 아래에는 WCS 데이터가 있는지 여부 확인
     ## 3) submit 진행 시, SSR_table에서 데이터 load 및 추출.
     ## selected_probeId
+
     try:
         global iteration
         iteration = 0
