@@ -375,7 +375,7 @@ def func_verify_report():
                 iteration += 1
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 selected_probename = str(list_probenames[combo_probename.current()])
-                selected_DBtable = combo_DBtable.get()
+                selected_DBtable = 'dbo.Tx_summary'
 
                 ## selected_probeId에 선택 & 선택된 DBtable에서 데이터 가져오기.
                 df = func_sql_get(server_address, ID, password, database, 0)
@@ -434,7 +434,7 @@ def func_verify_report():
                 global selected_probeId, selected_DBtable, selected_probename
                 selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
                 selected_probename = str(list_probenames[combo_probename.current()])
-                selected_DBtable = combo_DBtable.get()
+                selected_DBtable = 'dbo.Tx_summary'
 
                 df = func_sql_get(server_address, ID, password, database, 2)
                 func_show_table(selected_DBtable, df=df)
@@ -456,11 +456,6 @@ def func_verify_report():
         label_probename.place(x=5, y=5)
         combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
         combo_probename.place(x=115, y=5)
-
-        label_DB_table = Label(frame1, text='SQL Table Name')
-        label_DB_table.place(x=5, y=25)
-        combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
-        combo_DBtable.place(x=115, y=25)
 
         btn_view = Button(frame1, width=15, height=2, text='Detail from SQL', command=func_1st_load)
         btn_view.place(x=350, y=5)
