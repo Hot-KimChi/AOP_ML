@@ -256,7 +256,7 @@ def func_sql_get(server_address, ID, password, database, command):
 
 
 ## SQL data get from database.
-def func_SQL_value(df=None, param=None):
+def func_SQL_value_filter(df=None, param=None):
     try:
         global selected_param
         # parameter 중 한 개를 선정하게 되면 filter 기능.
