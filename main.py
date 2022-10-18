@@ -256,10 +256,9 @@ def func_sql_get(server_address, ID, password, database, command):
 
 
 ## SQL data get from database.
+## parameter 중 한 개를 선정하게 되면 filter 기능.
 def func_SQL_value_filter(df=None, param=None):
     try:
-        global selected_param
-        # parameter 중 한 개를 선정하게 되면 filter 기능.
         selected_param = param
         print(selected_param)
         list_datas = df['Software_version'].values.tolist()
@@ -295,21 +294,19 @@ def func_verify_report():
 
                         ## tree table안에 있는 데이터를 선택해서 제일 앞에 있는 데이터를 (x1, x2, x3) 형태로 변수 update.
                         def func_click_item(event):
+
                             ## multiple selection
                             global sel_param_click, str_sel_param
                             selectedItem = my_tree.selection()
 
-                            # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
+                            # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
+                            # ex) first column 추출.
                             # sel_param_click = my_tree.item(selectedItem).get('values')[0]
                             sel_param_click = []
                             for i in selectedItem:
                                 sel_param_click.append(my_tree.item(i).get('values')[0])
                             str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
 
-                        # tree_scroll_y = Scrollbar(frame2, orient="vertical")
-                        # tree_scroll_y.pack(side=RIGHT, fill=Y)
-                        # tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-                        # tree_scroll_x.pack(side=BOTTOM, fill=X)
 
                         if iteration == 1 and selected_input == None:
                             global my_tree, tree_scroll_y, tree_scroll_x
