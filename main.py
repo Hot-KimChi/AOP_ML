@@ -386,7 +386,6 @@ def func_verify_report():
                 ''' SQL DB에서 받은 데이터의 선택된 column(ex: meas_person_name)에서 선택된 datas(HIS, others)를 추출하는 algorithm'''
 
                 def func_on_selected(event):
-
                     def func_sel_update(event):
                         global sel_data
                         sel_data = combo_sel_datas.get()
