@@ -275,8 +275,6 @@ def func_SQL_value_filter(df=None, param=None):
 
 ## Verification Report to SQL
 def func_verify_report():
-
-
     ## summary report 역시 multiple selection 진행.
     ## 1) 위쪽에는 selected probeID & software version 선택 시, Tx_summary 보여주고
     ## 2) 아래에는 WCS 데이터가 있는지 여부 확인
@@ -293,7 +291,7 @@ def func_verify_report():
                 def func_tree_update(df=None, selected_input=None):
                     try:
 
-                        ## tree table안에 있는 데이터를 선택해서 제일 앞에 있는 데이터를 (x1, x2, x3) 형태로 변수 update.
+                        ## tree table안에 있는 데이터 중 선택한 제일 앞에 컬럼 데이터를 (x1, x2, x3) 형태로 변수 update.
                         def func_click_item(event):
 
                             ## multiple selection
