@@ -193,7 +193,7 @@ def func_sql_get(server_address, ID, password, database, command):
             if selected_DBtable == 'SSR_table':
                 query = f'''
                 SELECT * FROM meas_station_setup WHERE probeId = {selected_probeId}
-                ORDER BY 1
+                ORDER BY 1 desc
                 '''
             else:
                 query = f'''
@@ -275,6 +275,7 @@ def func_SQL_value_filter(df=None, param=None):
 
 ## Verification Report to SQL
 def func_verify_report():
+
 
     ## summary report 역시 multiple selection 진행.
     ## 1) 위쪽에는 selected probeID & software version 선택 시, Tx_summary 보여주고
