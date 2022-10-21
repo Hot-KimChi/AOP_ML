@@ -281,7 +281,6 @@ def func_verify_report():
     ## 3) submit 진행 시, SSR_table에서 데이터 load 및 추출.
     ## selected_probeId
 
-
     try:
         global iteration
         iteration = 0
@@ -295,13 +294,10 @@ def func_verify_report():
                         ## tree table안에 있는 데이터 중 선택한 제일 앞에 컬럼 데이터를 (x1, x2, x3) 형태로 변수 update.
                         def func_click_item(event):
 
-                            ## multiple selection
-                            global sel_param_click, str_sel_param
+                            # global sel_param_click, str_sel_param
                             selectedItem = my_tree.selection()
 
-                            # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출.
-                            # ex) first column 추출.
-                            # sel_param_click = my_tree.item(selectedItem).get('values')[0]
+                            # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. --> ex) first column 추출.
                             sel_param_click = []
                             for i in selectedItem:
                                 sel_param_click.append(my_tree.item(i).get('values')[0])
@@ -349,6 +345,7 @@ def func_verify_report():
 
                         my_tree.tag_configure('oddrow', background="lightblue")
                         my_tree.tag_configure('evenrow', background="white")
+
 
                         # Put data in treeview
                         df_rows = df.round(3)
