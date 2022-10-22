@@ -346,7 +346,6 @@ def func_verify_report():
                         my_tree.tag_configure('oddrow', background="lightblue")
                         my_tree.tag_configure('evenrow', background="white")
 
-
                         # Put data in treeview
                         df_rows = df.round(3)
                         df_rows = df_rows.to_numpy().tolist()
