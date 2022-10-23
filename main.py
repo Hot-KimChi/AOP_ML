@@ -338,6 +338,7 @@ def func_verify_report():
                         my_tree["column"] = list(df.columns)
                         my_tree["show"] = "headings"
 
+
                         # Loop thru column list for headers
                         for column in my_tree["column"]:
                             my_tree.column(column, width=100, minwidth=100)
@@ -345,6 +346,7 @@ def func_verify_report():
 
                         my_tree.tag_configure('oddrow', background="lightblue")
                         my_tree.tag_configure('evenrow', background="white")
+
 
                         # Put data in treeview
                         df_rows = df.round(3)
