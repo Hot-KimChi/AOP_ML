@@ -755,6 +755,7 @@ def func_viewer_database():
         print("Error: func_viewer_database")
 
 
+## 수정 필요. --> 10L4 Error 발생
 def func_measset_gen():
     try:
         def func_create_data():
