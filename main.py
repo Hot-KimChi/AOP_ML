@@ -756,7 +756,7 @@ def func_viewer_database():
 
 
 ## 수정 필요. --> 10L4 Error 발생(Beamstyle)
-## UE 데이터 파라미터, 순서로 가져갈지 아니면 이름으로 가져갈지 확인 필요.
+## UE 데이터 파라미터, 순서로 가져갈지 아니면 이름으로 가져갈지 확인 필요. --> 미팅 필요
 def func_measset_gen():
     try:
         def func_create_data():
