@@ -177,7 +177,7 @@ def func_show_table(selected_DBtable, df=None, extra=None):
 
         # n_root.mainloop()
 
-    except():
+    except:
         print('func_show_table')
 
 
