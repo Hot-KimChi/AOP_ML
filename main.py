@@ -780,6 +780,7 @@ def func_measset_gen():
                 df = df.reset_index(drop=True)                                                                          ## 데이터프레임 index reset
                 df = df.fillna(0)                                                                                       ## 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
 
+                ## 중복된 parameter count 하기 위하여 groupby 진행.
                 list_params =['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements']
                 dup_count = df.groupby(by=list_params, as_index=False).count()                                          ## groupby로 중복 count.
 
@@ -802,7 +803,7 @@ def func_measset_gen():
                     else:
                         bsIndexTrace.append(0)
                 sort_dup['bsIndexTrace'] = bsIndexTrace
-
+                
 
                 ## FrequencyIndex to FrequencyHz
                 n = 0
