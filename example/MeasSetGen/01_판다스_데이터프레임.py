@@ -53,9 +53,9 @@ class MeasSetgen(object):
         sort_params = ['SUBMODEINDEX'] + group_params
         df_sort = df_drop_dup.sort_values(by=sort_params, ascending=True).reset_index()
          
-        df_output = df_sort
+        df = df_sort
         
-        return df_output
+        return df
         
         
     def fn_bsIdx(self, df):
@@ -75,37 +75,29 @@ class MeasSetgen(object):
         
         return df       
         
-    def func_freqidx2Hz(idx):
+    def fn_freqidx2Hz(idx):
         try:
             frequencyTable = [1000000, 1111100, 1250000, 1333300, 1428600, 1538500, 1666700, 1818200, 2000000, 2222200,
                               2500000, 2666700, 2857100, 3076900, 3333300, 3636400, 3809500, 4000000, 4210500, 4444400,
                               4705900, 5000000, 5333300, 5714300, 6153800, 6666700, 7272700, 8000000, 8888900, 10000000,
                               11428600, 13333333, 16000000, 20000000, 26666667, 11428600, 11428600, 11428600, 11428600, 11428600,
-                            11428600,
-                            11428600,
-                            11428600,
-                            11428600,
-                            11428600,
-                            11428600,
-                            11428600,
-                            11428600,
-                            11428600]
+                              11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600] 
             FreqIndex = idx
             freqHz = frequencyTable[FreqIndex]
 
             return freqHz
 
         except:
-            print("Error: func_freqidx2Hz")
+            print("Error: fn_freqidx2Hz")
                 
         
-        ## FrequencyIndex to FrequencyHz
-        n = 0
-        FrequencyHz = []
-        for i in df_sort['SYSTXFREQINDEX'].values:
-            FrequencyHz.insert(n, func_freqidx2Hz(i))
-            n += 1
-        df_sort['TxFrequencyHz'] = FrequencyHz
+    ## FrequencyIndex to FrequencyHz
+    n = 0
+    FrequencyHz = []
+    for i in df_sort['SYSTXFREQINDEX'].values:
+        FrequencyHz.insert(n, func_freqidx2Hz(i))
+        n += 1
+    df_sort['TxFrequencyHz'] = FrequencyHz
 
 
 
