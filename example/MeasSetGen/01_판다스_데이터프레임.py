@@ -102,9 +102,6 @@ class MeasSetgen(object):
 
 
 
-
-
-
 if __name__ == '__main__':
     cl_measset = MeasSetgen()
     df = cl_measset.fn_merge_df()
