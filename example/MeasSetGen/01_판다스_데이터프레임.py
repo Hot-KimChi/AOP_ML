@@ -82,6 +82,7 @@ class MeasSetgen(object):
                               11428600, 13333333, 16000000, 20000000, 26666667, 11428600, 11428600, 11428600, 11428600, 11428600,
                               11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600] 
             
+            
             FrequencyHz = []
             for i in df['SYSTXFREQINDEX'].values:
                 FrequencyHz.append(frequencyTable[i])
