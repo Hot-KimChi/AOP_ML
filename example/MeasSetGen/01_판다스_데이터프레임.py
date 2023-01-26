@@ -21,6 +21,8 @@ class MeasSetgen(object):
         ## list_param, 즉 선택한 parameter만 데이터프레임.
         self.df_selected = self.data.loc[:, list_param]
         
+        self.fn_merge_df()
+        
         
     def fn_merge_df(self):
         
@@ -50,16 +52,14 @@ class MeasSetgen(object):
         sort_params = ['SUBMODEINDEX'] + group_params
         df_sort = df_drop_dup.sort_values(by=sort_params, ascending=True).reset_index()
          
-        df = df_sort
-        
-        return df
+        self.df = df_sort
         
         
-    def fn_bsIdx(self, df):
+    def fn_bsIdx(self):
         
         bsIndexTrace = []
         
-        for subidx, cnt in zip(df['SUBMODEINDEX'], df['Count']):
+        for subidx, cnt in zip(self.df['SUBMODEINDEX'], self.df['Count']):
             if subidx == 0 and cnt >= 2:
                 bsIndexTrace.append(15)
             elif subidx == 1 and cnt >= 2:
@@ -69,12 +69,11 @@ class MeasSetgen(object):
             else:
                 bsIndexTrace.append(0)
         
-        df['bsIndexTrace'] = bsIndexTrace
-        
-        return df       
+        self.df['bsIndexTrace'] = bsIndexTrace
+           
         
     ## FrequencyIndex to FrequencyHz    
-    def fn_freqidx2Hz(self, df):
+    def fn_freqidx2Hz(self):
         try:
             frequencyTable = [1000000, 1111100, 1250000, 1333300, 1428600, 1538500, 1666700, 1818200, 2000000, 2222200,
                               2500000, 2666700, 2857100, 3076900, 3333300, 3636400, 3809500, 4000000, 4210500, 4444400,
@@ -84,13 +83,13 @@ class MeasSetgen(object):
             
             
             FrequencyHz = []
-            for i in df['SYSTXFREQINDEX'].values:
+            for i in self.df['SYSTXFREQINDEX'].values:
                 FrequencyHz.append(frequencyTable[i])
             
-            df['TxFrequencyHz'] = FrequencyHz
-                            
-            return df
-
+            self.df['TxFrequencyHz'] = FrequencyHz
+            
+            return self.df
+            
         except:
             print("Error: fn_freqidx2Hz")
         
@@ -104,9 +103,8 @@ class MeasSetgen(object):
 
 
 if __name__ == '__main__':
-    cls_measset = MeasSetgen()
-    df = cls_measset.fn_merge_df()
-    df = cls_measset.fn_bsIdx(df)
-    df = cls_measset.fn_freqidx2Hz(df)
+    cl_measset = MeasSetgen()
+    cl_measset.fn_bsIdx()
+    df = cl_measset.fn_freqidx2Hz()
 
-    df.to_csv('./example/MeasSetGen/csv_files/check_20230123.csv')
+    df.to_csv('./example/MeasSetGen/csv_files/check_20230126.csv')
