@@ -38,15 +38,20 @@ class MeasSetgen(object):
         df_total = df_total.reset_index(drop=True)                                                                          
         df_total = df_total.fillna(0)
                 
-        ## groupby 로 중복 count / df_total에 count해서 집어넣기
-        self.group_params =['ISTXCHANNELMODULATIONEN', 'SYSTXFREQINDEX', 'TXPGWAVEFORMSTYLE', 'PROBENUMTXCYCLES', 'TXPULSERLE', 'ELEVAPERINDEX', 'TXFOCUSLOCCM', 'NUMTXELEMENTS']
-        dup_count = df_total.groupby(by=self.group_params, as_index=False).count()    
-        df_total['Count'] = dup_count['BEAMSTYLEINDEX']
+        ## groupby count 를 위해 parameter setting 
+        self.group_params =['ISTXCHANNELMODULATIONEN', 'PROBENUMTXCYCLES', 'SYSTXFREQINDEX', 'TXPGWAVEFORMSTYLE', 'TXPULSERLE', 'ELEVAPERINDEX', 'TXFOCUSLOCCM', 'NUMTXELEMENTS']
+        
+        ## 중복된 column 갯수 세기 --> 중복된 열 삭제됨.
+        dup_count = df_total.groupby(self.group_params, as_index=False).size()
+        
+        ## 중복된 열 제거, 위쪽에 갯수와 동일하게 하기 위해, 동일하게 정열.                
+        ## 중복된 열 갯수를 df_total에 집어넣기.
+        df_total = df_total.drop_duplicates(subset = self.group_params, keep='first')
+        df_total = df_total.sort_values(by=self.group_params, ascending=True).reset_index()
+        df_total['Count'] = dup_count['size']
+        
+        self.df = df_total
                 
-        ## 중복된 parameter가 있을 경우, 제거하기.
-        self.df = df_total.drop_duplicates(self.group_params)
-    
-
     
     def fn_findOrgIdx(self):
         
@@ -122,7 +127,7 @@ class MeasSetgen(object):
         
         ## data-out
         df = df_sort
-        df.to_csv('./example/MeasSetGen/csv_files/check_20230127.csv')    
+        df.to_csv('./example/MeasSetGen/csv_files/check_20230127_.csv')    
         
 
 if __name__ == '__main__':
