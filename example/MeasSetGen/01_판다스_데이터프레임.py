@@ -1,10 +1,11 @@
 import pandas as pd
+import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
 
 from tkinter import filedialog
 
-class MeasSetgen(object):
+class MeasSetGen(object):
     
     def __init__(self) -> None:
         ### 데이터 파일 읽어오기.
@@ -71,7 +72,7 @@ class MeasSetgen(object):
             elif mode == 'M' and subidx == 1:
                 orgindex.append(20)
         
-        self.df['OrgIndex'] = orgindex
+        self.df['OrgBeamstyleIdx'] = orgindex
         
     
     ## bsIndexTrace algorithm    
@@ -79,7 +80,7 @@ class MeasSetgen(object):
         
         bsIndexTrace = []
         
-        for orgidx, cnt in zip(self.df['OrgIndex'], self.df['Count']):
+        for orgidx, cnt in zip(self.df['OrgBeamstyleIdx'], self.df['Count']):
             if orgidx == 0 and cnt >= 2:
                 bsIndexTrace.append(15)
             elif orgidx == 1 and cnt >= 2:
@@ -110,7 +111,6 @@ class MeasSetgen(object):
                         
         except:
             print("Error: fn_freqidx2Hz")
-        
     
     # n = 0
     # FrequencyHz = []
@@ -119,23 +119,53 @@ class MeasSetgen(object):
     #     n += 1
     # df_sort['TxFrequencyHz'] = FrequencyHz
     
+    
+    ## Calc_cycle for RLE code
+    def fn_cnt_cycle(self):
+
+        list_cycle = []
+        for i in range(len(self.df['TXPGWAVEFORMSTYLE'])):
+            if self.df['TXPGWAVEFORMSTYLE'][i] == 0:
+                rle = self.df['TXPULSERLE'].str.split(":")[i]
+                list_flt = list(map(float, rle))
+                ## 아래 code도 가능.
+                ## floatList = [float(x) for x in list_option]
+                abs_value = np.abs(list_flt)
+
+                calc = []
+                for value in abs_value:
+                    if 1 < value:
+                        calc.append(round(value-1, 4))
+                    else:
+                        calc.append(value)
+                cycle = round(sum(calc), 2)
+                list_cycle.append(cycle)
+
+            else:
+                cycle = self.df['PROBENUMTXCYCLES'][i]
+                list_cycle.append(cycle)
+        
+        self.df['ProbeNumTxCycles'] = list_cycle
+    
+    
     def fn_dataout(self):
         
         ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
-        sort_params = ['OrgIndex'] + self.group_params
+        sort_params = ['OrgBeamstyleIdx'] + self.group_params
         df_sort = self.df.sort_values(by=sort_params, ascending=True).reset_index()
         
         ## data-out
         df = df_sort
-        df.to_csv('./example/MeasSetGen/csv_files/check_20230127_.csv')    
+        df.to_csv('./example/MeasSetGen/csv_files/check_20230128.csv')    
         
 
 if __name__ == '__main__':
-    cl_measset = MeasSetgen()
+    cl_measset = MeasSetGen()
     cl_measset.fn_merge_df()
     cl_measset.fn_findOrgIdx()
     cl_measset.fn_bsIdx()
     cl_measset.fn_freqidx2Hz()
+    cl_measset.fn_cnt_cycle()
     cl_measset.fn_dataout()
 
     
