@@ -704,19 +704,15 @@ def func_viewer_database():
             def __init__(self) -> None:
                 ### 데이터 파일 읽어오기.
                 self.selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
-                selected_probename = str(list_probenames[combo_probename.current()])
-
-
-                sort_dup['probeId'] = selected_probeId
-                sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
-                sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
-                sort_dup['totalVoltagePt'] = box_TotalVoltpt.get()
-                sort_dup['numMeasVoltage'] = box_NumMeasVolt.get()
-                sort_dup['ProbeNumTxCycles'] = list_cycle
-                sort_dup['zStartDistCm'] = 0.5
-                sort_dup['DTxFreqIndex'] = 0
-                sort_dup['dumpSwVersion'] = box_DumpSW.get()
-                sort_dup['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
+                self.selected_probename = str(list_probenames[combo_probename.current()])
+                self.MaxVolt = box_MaxVolt.get()
+                self.CeilVolt = box_CeilVolt.get()
+                self.TotalVoltPt = box_TotalVoltpt.get()
+                self.NumMeasVolt = box_NumMeasVolt.get()
+                self.zStartDistCm = 0.5
+                self.DTxFreqIdx = 0
+                self.dumpSwVersion = box_DumpSW.get()
+                self.measSetComments = f'Beamstyle_{self.selected_probename}_Intensity'
                 
                 self.data = filedialog.askopenfilename(initialdir='.txt')
                 self.data = pd.read_csv(self.data, sep='\t', encoding='cp949')
@@ -730,8 +726,8 @@ def func_viewer_database():
                 
                 ## list_param, 즉 선택한 parameter만 데이터프레임.
                 self.df_selected = self.data.loc[:, list_param]
-                
-                
+            
+            
             def fn_merge_df(self):
                 
                 df = self.df_selected
@@ -761,7 +757,7 @@ def func_viewer_database():
                 df_total['Count'] = dup_count['size']
                 
                 self.df = df_total
-                        
+            
             
             def fn_findOrgIdx(self):
                 
@@ -782,7 +778,7 @@ def func_viewer_database():
                         orgindex.append(20)
                 
                 self.df['OrgBeamstyleIdx'] = orgindex
-                
+            
             
             ## bsIndexTrace algorithm    
             def fn_bsIdx(self):
@@ -800,8 +796,8 @@ def func_viewer_database():
                         bsIndexTrace.append(0)
                 
                 self.df['bsIndexTrace'] = bsIndexTrace
-                
-                
+            
+            
             ## FrequencyIndex to FrequencyHz    
             def fn_freqidx2Hz(self):
                 try:
@@ -860,27 +856,6 @@ def func_viewer_database():
                 df = df_sort
                 df.to_csv('./example/MeasSetGen/csv_files/check_20230128.csv')    
         
-
-
-
-                ##  input parameter define.
-                global selected_probeId
-                selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
-                selected_probename = str(list_probenames[combo_probename.current()])
-
-
-                sort_dup['probeId'] = selected_probeId
-                sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
-                sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
-                sort_dup['totalVoltagePt'] = box_TotalVoltpt.get()
-                sort_dup['numMeasVoltage'] = box_NumMeasVolt.get()
-                sort_dup['ProbeNumTxCycles'] = list_cycle
-                sort_dup['zStartDistCm'] = 0.5
-                sort_dup['DTxFreqIndex'] = 0
-                sort_dup['dumpSwVersion'] = box_DumpSW.get()
-                sort_dup['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
-
-
 
                 ## function: calc_profTxVoltage 구현
                 def func_calc_profvolt():
