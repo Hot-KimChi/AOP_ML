@@ -717,6 +717,8 @@ def func_viewer_database():
                 self.data = filedialog.askopenfilename(initialdir='.txt')
                 self.data = pd.read_csv(self.data, sep='\t', encoding='cp949')
                 
+            
+            def fn_select(self):
                 ## columns name to 대문자.
                 self.data.columns = [x.upper() for x in self.data.columns]
                 
@@ -725,12 +727,27 @@ def func_viewer_database():
                             'SYSTEMPULSERSEL', 'VTXINDEX']
                 
                 ## list_param, 즉 선택한 parameter만 데이터프레임.
-                self.df_selected = self.data.loc[:, list_param]
+                self.df = self.data.loc[:, list_param]
+                
+                self.df['probeId'] = self.selected_probeId
+                self.df['probeName'] = self.selected_probename
+                self.df['maxTxVoltageVolt'] = self.MaxVolt
+                self.df['ceilTxVoltageVolt'] = self.CeilVolt
+                self.df['totalVoltagePt'] = self.TotalVoltPt
+                self.df['numMeasVoltage'] = self.NumMeasVolt
+                self.df['zStartDistCm'] = self.zStartDistCm
+                self.df['DTxFreqIndex'] = self.DTxFreqIdx
+                self.df['dumpSwVersion'] = self.dumpSwVersion
+            
+             sort_dup['DTxFreqIndex'] = 0
+                sort_dup['dumpSwVersion'] = box_DumpSW.get()
+                sort_dup['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
+            
             
             
             def fn_merge_df(self):
                 
-                df = self.df_selected
+                df = self.df
                 
                 ##### B & M mode process #####
                 df_B_mode = df.loc[(df['MODE'] == 'B')]
@@ -846,6 +863,24 @@ def func_viewer_database():
                 self.df['ProbeNumTxCycles'] = list_cycle
             
             
+             ## function: calc_profTxVoltage 구현
+            def fn_calc_profvolt(self):
+                try:
+                    profTxVoltageVolt = []
+                    for str_maxV, str_ceilV, str_totalpt in zip(self.df['maxTxVoltageVolt'].values, self.df['ceilTxVoltageVolt'].values, self.df['totalVoltagePt'].values):
+                        idx = 2
+                        ## tkinter에서 넘어오는 데이터 string.
+                        maxV = float(str_maxV)
+                        ceilV = float(str_ceilV)
+                        totalpt = int(str_totalpt)
+
+                        profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt-1-idx)/(totalpt-1)), 2))
+                    sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
+
+                except:
+                    print('error: func_profvolt')
+            
+            
             def fn_dataout(self):
                 
                 ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
@@ -857,48 +892,30 @@ def func_viewer_database():
                 df.to_csv('./example/MeasSetGen/csv_files/check_20230128.csv')    
         
 
-                ## function: calc_profTxVoltage 구현
-                def func_calc_profvolt():
-                    try:
-                        profTxVoltageVolt = []
-                        for str_maxV, str_ceilV, str_totalpt in zip(sort_dup['maxTxVoltageVolt'].values, sort_dup['ceilTxVoltageVolt'].values, sort_dup['totalVoltagePt'].values):
-                            idx = 2
-                            ## tkinter에서 넘어오는 데이터 string.
-                            maxV = float(str_maxV)
-                            ceilV = float(str_ceilV)
-                            totalpt = int(str_totalpt)
-
-                            profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt-1-idx)/(totalpt-1)), 2))
-                        sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
-
-                    except():
-                        print('error: func_profvolt')
+           
 
 
-                ## function: calc zMeasNum 구현
-                def func_zMeasNum():
-                    try:
-                        zStartDistCm = 0.5
-                        zMeasNum = []
-                        for focus in sort_dup['TxFocusLocCm']:
-                            if (focus <= 3):
-                                zMeasNum.append((5 - zStartDistCm) * 10)
-                            elif (focus <= 6):
-                                zMeasNum.append((8 - zStartDistCm) * 10)
-                            elif (focus <= 9):
-                                zMeasNum.append((12 - zStartDistCm) * 10)
-                            else:
-                                zMeasNum.append((14 - zStartDistCm) * 10)
-                        sort_dup['zMeasNum'] = zMeasNum
+            ## function: calc zMeasNum 구현
+            def fn_zMeasNum():
+                try:
+                    zStartDistCm = 0.5
+                    zMeasNum = []
+                    for focus in sort_dup['TxFocusLocCm']:
+                        if (focus <= 3):
+                            zMeasNum.append((5 - zStartDistCm) * 10)
+                        elif (focus <= 6):
+                            zMeasNum.append((8 - zStartDistCm) * 10)
+                        elif (focus <= 9):
+                            zMeasNum.append((12 - zStartDistCm) * 10)
+                        else:
+                            zMeasNum.append((14 - zStartDistCm) * 10)
+                    sort_dup['zMeasNum'] = zMeasNum
 
-                    except():
-                        print('error: func_zMeaNum')
-
-
-                func_calc_profvolt()
-                func_zMeasNum()
+                except:
+                    print('error: func_zMeaNum')
 
 
+                
                 ## sorting data
                 sort_dup = sort_dup.sort_values(by=[sort_dup.columns[1], sort_dup.columns[2], sort_dup.columns[7], sort_dup.columns[3], sort_dup.columns[6], sort_dup.columns[4]], ascending=True)
 
