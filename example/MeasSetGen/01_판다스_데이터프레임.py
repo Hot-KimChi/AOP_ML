@@ -153,7 +153,8 @@ class TopMain(tkinter.Tk):
         btn_login = Button(self, width=10, height=2, text='Login', command=self.fn_Menu)
         btn_login.place(x=180, y=10)
 
-        # root.mainloop()
+        self.mainloop()
+        
         
     def fn_Menu(self):
         global database, list_probeIds, list_probe, list_probenames
@@ -200,7 +201,7 @@ class TopMain(tkinter.Tk):
 
         window_Menu.mainloop()
     
-class MeasSetGen(tkinter.Tk):
+class MeasSetGen(object):
     
     def __init__(self):
         super().__init__()
@@ -221,11 +222,11 @@ class MeasSetGen(tkinter.Tk):
         combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
         combo_probename.place(x=5, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=self.fn_loadfile)
-        btn_load.place(x=185, y=5)
+        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=self._fn_gen_sequence)
+        btn_load.place(x=200, y=5)
 
         btn_insert = Button(frame1, width=15, height=2, text='To MS-SQL', command=self.fn_dataout)
-        btn_insert.place(x=325, y=5)
+        btn_insert.place(x=350, y=5)
 
         frame2 = Frame(window_gen, relief="solid", bd=2)
         frame2.pack(side="bottom", fill="both", expand=True)
@@ -261,7 +262,21 @@ class MeasSetGen(tkinter.Tk):
 
         box_NumMeasVolt = Entry(frame2, justify='center')
         box_NumMeasVolt.grid(row=3, column=3)
+        
+        window_gen.mainloop()
 
+    
+    def _fn_gen_sequence(self):
+        self.fn_loadfile()
+        self.fn_merge_df()
+        self.fn_findOrgIdx()
+        self.fn_bsIdx()
+        self.fn_freqidx2Hz()
+        self.fn_cnt_cycle()
+        self.fn_dataout()
+        
+        
+    
         
     def fn_loadfile(self):
         ### 데이터 파일 읽어오기.
@@ -412,19 +427,8 @@ class MeasSetGen(tkinter.Tk):
         
         ## data-out
         df = df_sort
-        df.to_csv('./example/MeasSetGen/csv_files/check_20230128.csv')    
+        df.to_csv('./example/MeasSetGen/csv_files/check_20230130.csv')    
         
 
 if __name__ == '__main__':
-    app = TopMain()
-    app.mainloop()
-    
-    # cl_measset = MeasSetGen()
-    # cl_measset.fn_merge_df()
-    # cl_measset.fn_findOrgIdx()
-    # cl_measset.fn_bsIdx()
-    # cl_measset.fn_freqidx2Hz()
-    # cl_measset.fn_cnt_cycle()
-    # cl_measset.fn_dataout()
-
-    
+    app = TopMain()  
