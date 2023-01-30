@@ -1,0 +1,39 @@
+import pymssql
+import pandas as pd
+
+class SQL(object):
+    def __init__(self, server_address, ID, password, database, command=None):
+        super().__init__()
+        self.server_address = server_address
+        self.ID = ID
+        self.password = password
+        self.database = database
+        self.command = command
+                
+        
+    ## SQL 데이터베이스에 접속하여 데이터 load.
+    def fn_sql_get(self):
+        try:
+            conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
+
+            if self.command > 5:
+                query = "f'''" + self.command + "'''"
+            
+            elif self.command == 1:
+                query = '''
+                SELECT probeName, probeId FROM probe_geo 
+                order by probeName, probeId
+                '''
+            
+            Raw_data = pd.read_sql(sql=query, con=conn)
+            
+            return Raw_data
+            conn.close()
+
+        except:
+            print("Error: func_sql_get")
+            
+
+if __name__ == "__main__":
+  app = SQL('kr001s1804srv', 'sel02776', '1qaz!QAZ', 'New_Trees', 1)
+  print(app.fn_sql_get())    

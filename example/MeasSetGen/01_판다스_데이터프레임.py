@@ -3,11 +3,267 @@ import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
 
+import os
+import tkinter
+import pymssql
 from tkinter import filedialog
+from tkinter import *
+from tkinter import ttk
+import configparser
 
-class MeasSetGen(object):
+
+class SQL(object):
+    def __init__(self, server_address, ID, password, database, command=None):
+        super().__init__()
+        self.server_address = server_address
+        self.ID = ID
+        self.password = password
+        self.database = database
+        self.command = command
+        
+    ## SQL 데이터베이스에 접속하여 데이터 load.
+    def fn_sql_get(self):
+        try:
+            conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
+
+            if self.command > 5:
+                query = "f'''" + self.command + "'''"
+
+            # elif self.command == 0:
+            #     if selected_DBtable == 'SSR_table':
+            #         query = f'''
+            #         SELECT * FROM meas_station_setup WHERE probeId = {selected_probeId}
+            #         ORDER BY 1 desc
+            #         '''
+            #     else:
+            #         query = f'''
+            #         SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
+            #         ORDER BY 1
+            #         '''
+
+            elif self.command == 1:
+                query = '''
+                SELECT probeName, probeId FROM probe_geo 
+                order by probeName, probeId
+                '''
+            # elif command == 2:
+            #     if selected_DBtable == 'SSR_table':
+            #         query = f'''
+            #         SELECT * FROM {selected_DBtable} WHERE measSSId IN {str_sel_param}
+            #         ORDER BY measSSId, 1
+            #         '''
+
+            #     else:
+            #         query = f'''
+            #         SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
+            #         ORDER BY 1
+            #         '''
+
+            # elif command == 3:
+            #     if selected_DBtable == 'SSR_table':
+            #         query = f'''
+            #         SELECT * FROM meas_station_setup WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
+            #         ORDER BY 1
+            #         '''
+            #     else:
+            #         query = f'''
+            #         SELECT * FROM {selected_DBtable} WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
+            #         ORDER BY 1
+            #         '''
+
+            # # probe_geo database load.
+            # elif command == 4:
+            #     query = f'''
+            #     SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevFocusRangCm] FROM probe_geo WHERE probeid = {selected_probeId}
+            #     ORDER BY 1
+            #     '''
+
+            # # Tx_summary database load.
+            # elif command == 5:
+            #     query = f'''
+            #     SELECT * FROM Tx_summary WHERE probeid = {selected_probeId}
+            #     ORDER BY 1
+            #     '''
+
+
+            Raw_data = pd.read_sql(sql=query, con=conn)
+
+            return Raw_data
+            conn.close()
+
+        except:
+            print("Error: func_sql_get")
+
+
+    ## SQL data get from database.
+    ## parameter 중 한 개를 선정하게 되면 filter 기능.
+    def fn_SQL_value_filter(df=None, param=None):
+        try:
+            selected_param = param
+            print(selected_param)
+            list_datas = df['Software_version'].values.tolist()
+            # list_datas = df[f'{selected_param}'].values.tolist()
+            # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
+            set_datas = set(list_datas)
+            filtered_datas = list(set_datas)
+
+            return filtered_datas
+
+        except:
+            print("Error: func_SQL_value")
     
-    def __init__(self) -> None:
+class TopMain(tkinter.Tk):
+    def __init__(self):
+        super().__init__()
+        self.initialize()
+        
+        
+    def initialize(self):
+        config = configparser.ConfigParser()
+        config.read('AOP_config.cfg')
+
+        self.server_address = config["server address"]["address"]
+        databases = config["database"]["name"]
+        self.ID = config["username"]["ID"]
+        self.password = config["password"]["PW"]
+        server_table_M3 = config["server table"]["M3 server table"]
+        Machine_Learning = config["Machine Learning"]["Model"]
+
+        list_database = databases.split(',')
+        self.list_M3_table = server_table_M3.split(',')
+        self.list_ML = Machine_Learning.split(',')
+
+        ## Start tk 만들기.
+        # root = Tk()
+        self.title("DB 선택")
+        self.geometry("280x150")
+        self.resizable(False, False)
+
+        label1 = Label(self, text='데이터베이스를 선택하세요')
+        label1.place(x=10, y=10)
+
+        # combo-Box 만들어서 데이터베이스만들기
+        self.combo_login = ttk.Combobox(self, value=list_database)
+        # combo-Box 처음 선택되는 위치가 공란이 아니라 처음 데이터베이스 선택 옵션
+        self.combo_login.current(0)
+        # combo-Box 의 위치
+        self.combo_login.place(x=10, y=30)
+        # login_combo.pack(pady=20)
+
+        btn_login = Button(self, width=10, height=2, text='Login', command=self.fn_Menu)
+        btn_login.place(x=180, y=10)
+
+        # root.mainloop()
+        
+    def fn_Menu(self):
+        global database, list_probeIds, list_probe, list_probenames
+        database = self.combo_login.get()
+
+        window_Menu = tkinter.Toplevel()
+        window_Menu.title(f"{database}" + ' / main')
+        window_Menu.geometry("440x300")
+        window_Menu.resizable(False, False)
+
+        ## SQL class 객체 생성.
+        connect = SQL(self.server_address, self.ID, self.password, database, 1)
+        df = connect.fn_sql_get()
+        df_probeIds = df[['probeId']]
+        
+
+        list_probeIds = df_probeIds.values.tolist()
+        ## ProbeID and ProbeName를 list로 변환.
+        list_probeinfor = df.values.tolist()
+        numprobe = len(list_probeinfor)
+
+        list_probenames = list(zip(*list_probeinfor))[0]
+        list_probe = list()
+
+        # Probelist를 probeName + probeId 생성
+        for i in range(numprobe):
+            list_probe.append('  |  '.join(map(str, list_probeinfor[i])))
+
+
+        btn_gen = Button(window_Menu, width=30, height=3, text='MeasSetGeneration', command=MeasSetGen)
+        btn_gen.grid(row=0, column=0)
+
+        # btn_sum = Button(frame_Menu, width=30, height=3, text='SQL Viewer', command=func_viewer_database)
+        # btn_sum.grid(row=0, column=1)
+
+        # btn_tx_sum = Button(frame_Menu, width=30, height=3, text='Tx Summary', command=func_tx_summ)
+        # btn_tx_sum.grid(row=1, column=0)
+
+        # btn_ML = Button(frame_Menu, width=30, height=3, text='Verification Report', command=func_verify_report)
+        # btn_ML.grid(row=1, column=1)
+
+        # btn_ML = Button(frame_Menu, width=30, height=3, text='Machine Learning', command=func_machine_learning)
+        # btn_ML.grid(row=2, column=0)
+
+        window_Menu.mainloop()
+    
+class MeasSetGen(tkinter.Tk):
+    
+    def __init__(self):
+        super().__init__()
+        self.initialize()
+        
+        
+    def initialize(self):
+        window_gen = tkinter.Toplevel()
+        window_gen.title(f"{database}" + ' / MeasSet_generation')
+        window_gen.geometry("600x200")
+        window_gen.resizable(False, False)
+
+        frame1 = Frame(window_gen, relief="solid", bd=2)
+        frame1.pack(side="top", fill="both", expand=True)
+
+        label_probename = Label(frame1, text='Probe Name')
+        label_probename.place(x=5, y=5)
+        combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
+        combo_probename.place(x=5, y=25)
+
+        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=self.fn_loadfile)
+        btn_load.place(x=185, y=5)
+
+        btn_insert = Button(frame1, width=15, height=2, text='To MS-SQL', command=self.fn_dataout)
+        btn_insert.place(x=325, y=5)
+
+        frame2 = Frame(window_gen, relief="solid", bd=2)
+        frame2.pack(side="bottom", fill="both", expand=True)
+
+        #Labels
+        label_DumpSW = Label(frame2, text="[dumpSwVersion]")
+        label_DumpSW.grid(row=0, column=0)
+
+        label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
+        label_MaxVolt.grid(row=2, column=0)
+
+        label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
+        label_CeilVolt.grid(row=2, column=1)
+
+        label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
+        label_TotalVoltpt.grid(row=2, column=2)
+
+        label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
+        label_NumMeasVolt.grid(row=2, column=3)
+
+        #Entry boxes
+        box_DumpSW = Entry(frame2, justify='center')
+        box_DumpSW.grid(row=1, column=0)
+
+        box_MaxVolt = Entry(frame2, justify='center')
+        box_MaxVolt.grid(row=3, column=0)
+
+        box_CeilVolt = Entry(frame2, justify='center')
+        box_CeilVolt.grid(row=3, column=1)
+
+        box_TotalVoltpt = Entry(frame2, justify='center')
+        box_TotalVoltpt.grid(row=3, column=2)
+
+        box_NumMeasVolt = Entry(frame2, justify='center')
+        box_NumMeasVolt.grid(row=3, column=3)
+
+        
+    def fn_loadfile(self):
         ### 데이터 파일 읽어오기.
         self.data = filedialog.askopenfilename(initialdir='.txt')
         self.data = pd.read_csv(self.data, sep='\t', encoding='cp949')
@@ -20,12 +276,12 @@ class MeasSetGen(object):
                     'SYSTEMPULSERSEL', 'VTXINDEX']
         
         ## list_param, 즉 선택한 parameter만 데이터프레임.
-        self.df_selected = self.data.loc[:, list_param]
+        self.df = self.data.loc[:, list_param]
         
         
     def fn_merge_df(self):
         
-        df = self.df_selected
+        df = self.df
         
         ##### B & M mode process #####
         df_B_mode = df.loc[(df['MODE'] == 'B')]
@@ -160,12 +416,15 @@ class MeasSetGen(object):
         
 
 if __name__ == '__main__':
-    cl_measset = MeasSetGen()
-    cl_measset.fn_merge_df()
-    cl_measset.fn_findOrgIdx()
-    cl_measset.fn_bsIdx()
-    cl_measset.fn_freqidx2Hz()
-    cl_measset.fn_cnt_cycle()
-    cl_measset.fn_dataout()
+    app = TopMain()
+    app.mainloop()
+    
+    # cl_measset = MeasSetGen()
+    # cl_measset.fn_merge_df()
+    # cl_measset.fn_findOrgIdx()
+    # cl_measset.fn_bsIdx()
+    # cl_measset.fn_freqidx2Hz()
+    # cl_measset.fn_cnt_cycle()
+    # cl_measset.fn_dataout()
 
     
