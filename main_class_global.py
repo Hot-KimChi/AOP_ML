@@ -27,18 +27,14 @@ pd.set_option('display.max_colwidth', None)
 
 
 class SQL(object):
-    def __init__(self, server_address, ID, password, database, command=None):
+    def __init__(self, command=None):
         super().__init__()
-        self.server_address = server_address
-        self.ID = ID
-        self.password = password
-        self.database = database
         self.command = command
         
     ## SQL 데이터베이스에 접속하여 데이터 load.
     def fn_sql_get(self):
         try:
-            conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
+            conn = pymssql.connect(server_address, ID, password, database)
 
             if self.command > 5:
                 query = "f'''" + self.command + "'''"
@@ -136,11 +132,11 @@ class TopMain(tkinter.Tk):
         config = configparser.ConfigParser()
         config.read('AOP_config.cfg')
         
-        
-        self.server_address = config["server address"]["address"]
+        global server_address, ID, password
+        server_address = config["server address"]["address"]
         databases = config["database"]["name"]
-        self.ID = config["username"]["ID"]
-        self.password = config["password"]["PW"]
+        ID = config["username"]["ID"]
+        password = config["password"]["PW"]
         server_table_M3 = config["server table"]["M3 server table"]
         Machine_Learning = config["Machine Learning"]["Model"]
 
@@ -181,7 +177,7 @@ class TopMain(tkinter.Tk):
         window_Menu.resizable(False, False)
 
         ## SQL class 객체 생성.
-        connect = SQL(self.server_address, self.ID, self.password, database, 1)
+        connect = SQL(command = 1)
         df = connect.fn_sql_get()
         df_probeIds = df[['probeId']]
         
@@ -291,7 +287,7 @@ class MeasSetGen(object):
         self.fn_cnt_cycle()
         self.fn_calc_profvolt()
         self.fn_zMeasNum()
-        # self.fn_predictML()
+        self.fn_predictML()
         
         self.fn_dataout()
     
@@ -503,7 +499,7 @@ class MeasSetGen(object):
 
         ## take parameters for ML from measSet_gen file.
         est_params = self.df[['TxFrequencyHz', 'TXFOCUSLOCCM', 'NUMTXELEMENTS', 'TXPGWAVEFORMSTYLE', 'ProbeNumTxCycles', 'ELEVAPERINDEX', 'ISTXCHANNELMODULATIONEN']]
-        connect = SQL(self.server_address, self.ID, self.password, database, 4)
+        connect = SQL(command = 4)
         est_geo = connect.fn_sql_get()
 
 
@@ -518,7 +514,7 @@ class MeasSetGen(object):
 
         self.df['zt_est'] = round(df_zt_est, 1)
     
-     
+    
     def fn_dataout(self):
         
         ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
