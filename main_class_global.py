@@ -125,10 +125,10 @@ class SQL(object):
 class TopMain(tkinter.Tk):
     def __init__(self):
         super().__init__()
-        self.initialize()
+        self.initialize_loadConf()
         
         
-    def initialize(self):
+    def initialize_loadConf(self):
         config = configparser.ConfigParser()
         config.read('AOP_config.cfg')
         
@@ -140,9 +140,10 @@ class TopMain(tkinter.Tk):
         server_table_M3 = config["server table"]["M3 server table"]
         Machine_Learning = config["Machine Learning"]["Model"]
 
+        global list_ML
         list_database = databases.split(',')
         self.list_M3_table = server_table_M3.split(',')
-        self.list_ML = Machine_Learning.split(',')
+        list_ML = Machine_Learning.split(',')
 
         ## Start tk 만들기.
         # root = Tk()
@@ -525,6 +526,739 @@ class MeasSetGen(object):
         df = df_sort
         df.to_csv('./csv_files/check_20230131.csv')    
         
+
+class Machine_Learning(object):
+    def __init__(self):
+        super().__init__()
+        self.initialize()
+        
+        
+    def initialize(self):
+        window_ML = tkinter.Toplevel()
+        window_ML.title(f"{database}" + ' / Machine Learning')
+        window_ML.geometry("410x200")
+        window_ML.resizable(False, False)
+
+        frame1 = Frame(window_ML, relief="solid", bd=2)
+        frame1.pack(side="top", fill="both", expand=True)
+
+        label_ML = Label(frame1, text='Machine Learning')
+        label_ML.place(x=5, y=5)
+        combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
+        combo_ML.place(x=5, y=25)
+
+        btn_load = Button(frame1, width=15, height=2, text='Select & Train', command=self.fn_preprocessML)
+        btn_load.place(x=280, y=5)
+
+        window_ML.mainloop()
+    
+
+    def fn_machine_learning(self):
+        try:
+            def func_modelML(selected_ML, data, target):
+                try:
+                    def func_feature_import():
+                        try:
+                            df_import = pd.DataFrame()
+                            df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
+                                                                    columns=['txFrequencyHz', 'focusRangeCm',
+                                                                            'numTxElements',
+                                                                            'txpgWaveformStyle',
+                                                                            'numTxCycles', 'elevAperIndex',
+                                                                            'IsTxAperModulationEn', 'probePitchCm',
+                                                                            'probeRadiusCm', 'probeElevAperCm0',
+                                                                            'probeElevFocusRangCm']), ignore_index=True)
+
+                            func_show_table(f'{selected_ML}', df=df_import)
+
+                            importances = model.feature_importances_
+                            indices = np.argsort(importances)[::-1]
+                            x = np.arange(len(importances))
+
+                            import matplotlib.pyplot as plt
+                            plt.title('Feature Importance')
+                            plt.bar(x, importances[indices], align='center')
+                            labels = df_import.columns
+
+                            plt.xticks(x, labels[indices], rotation=90)
+                            plt.xlim([-1, len(importances)])
+                            plt.tight_layout()
+                            plt.show()
+
+                        except():
+                            print('func_feature_import')
+
+
+                    train_input, test_input, train_target, test_target = train_test_split(data, target, test_size=0.2)
+
+                    ## 왼쪽 공백 삭제
+                    selected_ML = selected_ML.lstrip()
+
+                    ## Random Forest 훈련하기.
+                    if selected_ML == 'RandomForestRegressor':
+                        from sklearn.ensemble import RandomForestRegressor
+                        from sklearn.model_selection import GridSearchCV
+                        from sklearn.model_selection import RandomizedSearchCV
+                        from scipy.stats import uniform, randint
+
+
+                        ## hyperparameter 세팅 시, 진행.
+                        # n_estimators = randint(20, 100)                 ## number of trees in the random forest
+                        # max_features = ['auto', 'sqrt']                 ## number of features in consideration at every split
+                        # max_depth = [int(x) for x in
+                        #              np.linspace(10, 120, num=12)]      ## maximum number of levels allowed in each decision tree
+                        # min_samples_split = [2, 6, 10]                  ## minimum sample number to split a node
+                        # # min_samples_leaf = [1, 3, 4]                  ## minimum sample number that can be stored in a leaf node
+                        # # bootstrap = [True, False]                     ## method used to sample data points
+                        #
+                        # random_grid = {'n_estimators': n_estimators,
+                        #                'max_features': max_features,
+                        #                'max_depth': max_depth,
+                        #                'min_samples_split': min_samples_split}
+                        #
+                        #                # 'min_samples_leaf': min_samples_leaf,
+                        #                # 'bootstrap': bootstrap}
+                        ## RandomizedSearchCV에서 fit이 완료.
+                        # rf = RandomForestRegressor()
+                        # model = RandomizedSearchCV(estimator = rf, param_distributions = random_grid,
+                        #                             n_iter = 300, cv = 5, verbose=2, n_jobs = -1)
+
+
+                        # After hyperparameter value find, adapt these ones.
+                        model = RandomForestRegressor(max_depth=40, max_features='sqrt', min_samples_split=2, n_estimators=90, n_jobs=-1)
+
+
+                    ## Gradient Boosting
+                    elif selected_ML == 'Gradient_Boosting':
+                        from sklearn.ensemble import GradientBoostingRegressor
+                        model = GradientBoostingRegressor(n_estimators=500, learning_rate=0.2)
+
+
+                    ## Histogram-based Gradient Boosting
+                    elif selected_ML == 'Histogram-based Gradient Boosting':
+                        from sklearn.experimental import enable_hist_gradient_boosting
+                        from sklearn.ensemble import HistGradientBoostingRegressor
+                        model = HistGradientBoostingRegressor()
+
+
+                    elif selected_ML == 'XGBoost':
+                        from xgboost import XGBRegressor
+                        model = XGBRegressor(tree_method='hist')
+
+
+                    ## VotingRegressor 훈련하기
+                    ## Need to update....
+                    elif selected_ML == 'VotingRegressor':
+                        from sklearn.ensemble import VotingRegressor
+                        from sklearn.linear_model import Ridge
+                        from sklearn.ensemble import RandomForestRegressor
+                        from sklearn.neighbors import KNeighborsRegressor
+
+                        from sklearn.pipeline import make_pipeline
+
+                        from sklearn.preprocessing import PolynomialFeatures
+                        poly = PolynomialFeatures(degree=5, include_bias=False)
+                        poly.fit(train_input)
+                        train_poly = poly.transform(train_input)
+                        test_poly = poly.transform(test_input)
+
+                        from sklearn.preprocessing import StandardScaler
+                        ss = StandardScaler()
+                        ss.fit(train_poly)
+                        train_scaled = ss.transform(train_poly)
+                        test_scaled = ss.transform(test_poly)
+
+
+                        model1 = Ridge(alpha=0.1)
+                        model2 = RandomForestRegressor(n_jobs=-1)
+                        model3 = KNeighborsRegressor()
+
+                        model = VotingRegressor(estimators=[('ridge', model1), ('random', model2), ('neigh', model3)])
+
+
+                    ## LinearRegression 훈련하기.
+                    elif selected_ML == 'LinearRegression':
+
+                        from sklearn.preprocessing import StandardScaler
+                        ss = StandardScaler()
+                        ss.fit(train_input)
+                        train_scaled = ss.transform(train_input)
+                        test_scaled = ss.transform(test_input)
+
+                        from sklearn.linear_model import LinearRegression
+                        model = LinearRegression()
+
+
+                        ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
+                        train_input = train_scaled
+                        test_input = test_scaled
+
+
+                    ## StandardScaler 적용 with linear regression
+                    elif selected_ML == 'PolynomialFeatures with linear regression':
+
+                        from sklearn.preprocessing import PolynomialFeatures
+                        poly = PolynomialFeatures(degree=3, include_bias=False)
+                        poly.fit(train_input)
+                        train_poly = poly.transform(train_input)
+                        test_poly = poly.transform(test_input)
+
+                        from sklearn.preprocessing import StandardScaler
+                        ss = StandardScaler()
+                        ss.fit(train_poly)
+                        train_scaled = ss.transform(train_poly)
+                        test_scaled = ss.transform(test_poly)
+
+                        from sklearn.linear_model import LinearRegression
+                        model = LinearRegression()
+
+                        ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
+                        train_input = train_scaled
+                        test_input = test_scaled
+
+
+                    ## Ridge regularization(L2 regularization)
+                    elif selected_ML == 'Ridge regularization(L2 regularization)':
+
+                        from sklearn.preprocessing import PolynomialFeatures
+                        poly = PolynomialFeatures(degree=3, include_bias=False)
+                        poly.fit(train_input)
+                        train_poly = poly.transform(train_input)
+                        test_poly = poly.transform(test_input)
+
+                        from sklearn.preprocessing import StandardScaler
+                        ss = StandardScaler()
+                        ss.fit(train_poly)
+                        train_scaled = ss.transform(train_poly)
+                        test_scaled = ss.transform(test_poly)
+
+                        from sklearn.linear_model import Ridge
+                        model = Ridge(alpha=0.1)
+
+                        ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
+                        train_input = train_scaled
+                        test_input = test_scaled
+
+
+                        ## L2 하이퍼파라미터 찾기
+                        train_score = []
+                        test_score = []
+
+                        alpha_list = [0.001, 0.01, 0.1, 1, 10, 100]
+                        import matplotlib.pyplot as plt
+                        for alpha in alpha_list:
+                            # 릿지모델 생성 & 훈련
+                            model = Ridge(alpha=alpha)
+                            model.fit(train_scaled, train_target)
+                            # 훈련점수 & 테스트점수
+                            train_score.append(model.score(train_scaled, train_target))
+                            test_score.append(model.score(test_scaled, test_target))
+
+                        plt.plot(np.log10(alpha_list), train_score)
+                        plt.plot(np.log10(alpha_list), test_score)
+                        plt.xlabel('alpha')
+                        plt.ylabel('R^2')
+                        plt.show()
+
+
+                    elif selected_ML == 'DecisionTreeRegressor(scaled data)':
+
+                        from sklearn.tree import DecisionTreeRegressor
+                        model = DecisionTreeRegressor(max_depth=10, random_state=42)
+
+                        from sklearn.preprocessing import StandardScaler
+                        ss = StandardScaler()
+                        ss.fit(train_input)
+                        train_scaled = ss.transform(train_input)
+                        test_scaled = ss.transform(test_input)
+
+                        model.fit(train_scaled, train_target)
+
+                        scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+                        print()
+                        print(scores)
+                        print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                        print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                        # dt.fit(train_scaled, train_target)
+                        print('결정트리 - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
+                        prediction = model.predict(test_scaled)
+
+                        df_import = pd.DataFrame()
+                        df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
+                                                                columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
+                                                                        'txpgWaveformStyle',
+                                                                        'numTxCycles', 'elevAperIndex',
+                                                                        'IsTxAperModulationEn', 'probePitchCm',
+                                                                        'probeRadiusCm', 'probeElevAperCm0',
+                                                                        'probeElevFocusRangCm']), ignore_index=True)
+
+                        func_show_table('DecisionTreeRegressor', df=df_import)
+
+                        ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
+                        import matplotlib.pyplot as plt
+                        from sklearn.tree import plot_tree
+                        plt.figure(figsize=(10, 7))
+                        plot_tree(model, max_depth=2, filled=True,
+                                feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                                                'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                                                'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                        plt.show()
+
+
+                    elif selected_ML == 'DecisionTreeRegressor(No scaled data)':
+
+                        from sklearn.tree import DecisionTreeRegressor
+                        model = DecisionTreeRegressor(max_depth=10, random_state=42)
+                        model.fit(train_input, train_target)
+
+                        func_feature_import()
+
+                        ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
+                        import matplotlib.pyplot as plt
+                        from sklearn.tree import plot_tree
+                        plt.figure(figsize=(10, 7))
+                        plot_tree(model, max_depth=1, filled=True,
+                                feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
+                                                'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                                                'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
+                        plt.show()
+
+
+                    elif selected_ML == 'DL_DNN':
+                        import tensorflow as tf
+                        from tensorflow import keras
+
+                        from sklearn.preprocessing import StandardScaler
+                        ss = StandardScaler()
+                        ss.fit(train_input)
+                        train_scaled = ss.transform(train_input)
+                        test_scaled = ss.transform(test_input)
+
+
+                        def func_build_model():
+                            dense1 = keras.layers.Dense(100, activation='relu', input_shape=(11,), name='hidden')
+                            dense2 = keras.layers.Dense(10, activation='relu')
+                            dense3 = keras.layers.Dense(1)
+
+                            model = keras.Sequential([dense1, dense2, dense3])
+
+                            optimizer = tf.keras.optimizers.RMSprop(0.001)
+
+                            model.compile(loss='mse',
+                                        optimizer=optimizer,
+                                        metrics=['mae', 'mse'])
+                            return model
+
+                        model = func_build_model()
+                        print(model.summary())
+
+                        example_batch = train_scaled[:10]
+                        example_result = model.predict(example_batch)
+                        print('example_batch 형태:', example_batch.shape)
+
+
+                        import matplotlib.pyplot as plt
+
+                        def plot_history(history):
+                            hist = pd.DataFrame(history.history)
+                            hist['epoch'] = history.epoch
+
+                            plt.figure(figsize=(8, 12))
+
+                            plt.subplot(2, 1, 1)
+                            plt.xlabel('Epoch')
+                            plt.ylabel('Mean Abs Error [Cm]')
+                            plt.plot(hist['epoch'], hist['mae'],
+                                    label='Train Error')
+                            plt.plot(hist['epoch'], hist['val_mae'],
+                                    label='Val Error')
+                            plt.ylim([0, 1.25])
+                            plt.legend()
+
+                            plt.subplot(2, 1, 2)
+                            plt.xlabel('Epoch')
+                            plt.ylabel('Mean Square Error [$Cm^2$]')
+                            plt.plot(hist['epoch'], hist['mse'],
+                                    label='Train Error')
+                            plt.plot(hist['epoch'], hist['val_mse'],
+                                    label='Val Error')
+                            plt.ylim([0, 2])
+                            plt.legend()
+                            plt.show()
+
+                        ## 모델 훈련.
+                        ## 에포크가 끝날 때마다 점(.)을 출력해 훈련 진행 과정을 표시합니다
+                        class PrintDot(keras.callbacks.Callback):
+                            def on_epoch_end(self, epoch, logs):
+                                if epoch % 100 == 0: print('')
+                                print('.', end='')
+
+                        EPOCHS = 1000
+
+                        model = func_build_model()
+
+                        # patience 매개변수는 성능 향상을 체크할 에포크 횟수입니다
+                        early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
+                        history = model.fit(train_scaled, train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
+                                            callbacks=[early_stop, PrintDot()])
+
+                        hist = pd.DataFrame(history.history)
+                        hist['epoch'] = history.epoch
+                        print(hist.tail())
+
+                        plot_history(history)
+
+                        loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+                        print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
+
+
+                        ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
+                        test_predictions = model.predict(test_scaled).flatten()
+                        print(test_predictions)
+                        print(test_target)
+
+                        import matplotlib.pyplot as plt
+                        plt.scatter(test_target, test_predictions)
+
+                        plt.xlabel('True Values [Cm]')
+                        plt.ylabel('Predictions [Cm]')
+                        plt.axis('equal')
+                        plt.axis('square')
+                        plt.xlim([0, plt.xlim()[1]])
+                        plt.ylim([0, plt.ylim()[1]])
+                        _ = plt.plot([-100, 100], [-100, 100])
+                        plt.show()
+
+
+                        ## 오차의 분표확인.
+                        error = test_predictions - test_target
+                        plt.hist(error, bins=25)
+                        plt.xlabel('Prediction Error [Cm]')
+                        _ = plt.ylabel('Count')
+                        plt.show()
+
+
+                    elif selected_ML == 'DNN_HonGong':
+                        import tensorflow as tf
+                        from tensorflow import keras
+                        # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+                        # train_target 분포 확인.
+                        import seaborn as sns
+                        import matplotlib.pyplot as plt
+                        plt.title('Distport for zt')
+                        sns.distplot(train_target)
+                        plt.show()
+
+                        from sklearn.preprocessing import StandardScaler
+                        ss = StandardScaler()
+                        ss.fit(train_input)
+                        train_scaled = ss.transform(train_input)
+                        test_scaled = ss.transform(test_input)
+
+                        def model_fn(a_layer=None):
+                            model = keras.Sequential()
+                            model.add(keras.layers.Flatten(input_shape=(11,), name='input'))
+                            model.add(keras.layers.Dense(100, activation='relu', name='hidden1'))
+                            model.add(keras.layers.Dense(10, activation='relu', name='hidden2'))
+
+                            ## add layer algorithm
+                            if a_layer:
+                                model.add(a_layer)
+
+                            model.add(keras.layers.Dense(1, name='output'))
+
+                            return model
+
+
+                        ## To build model fn
+                        ## To prevent overfitting for ML algorithm(method: dropout)
+                        # model = model_fn(keras.layers.Dropout(0.3))
+                        model = model_fn()
+                        print(model.summary())
+
+                        rmsprop = keras.optimizers.RMSprop(0.001)
+                        model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
+
+                        checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
+                        early_stopping_cb = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+                        history = model.fit(train_scaled, train_target, epochs=1000, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
+
+                        print()
+                        print('#Num of early_stopping:', early_stopping_cb.stopped_epoch)
+
+                        hist = pd.DataFrame(history.history)
+                        hist['epoch'] = history.epoch
+                        print(hist.tail())
+
+
+                        import matplotlib.pyplot as plt
+                        plt.plot(history.history['loss'])
+                        plt.plot(history.history['val_loss'])
+                        plt.xlabel('epoch')
+                        plt.ylabel('loss')
+                        plt.legend(['train', 'val'])
+                        plt.show()
+
+                        plt.plot(history.history['mae'])
+                        plt.plot(history.history['val_mae'])
+                        plt.xlabel('epoch')
+                        plt.ylabel('mae')
+                        plt.legend(['train', 'val'])
+                        plt.show()
+
+
+                        import numpy as np
+                        model = keras.models.load_model('best-model.h5')
+                        print()
+                        print('<Test evaluate>')
+                        loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+                        print('Test evaluate:', model.evaluate(test_scaled, test_target))
+                        print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
+
+
+                        prediction = model.predict(test_scaled).flatten()
+
+
+                        ## np.round_ error check. => why does works for this sequence?
+                        prediction = np.around(prediction, 2)
+                        # prediction = {:.2f}.format(prediction)
+                        df = pd.DataFrame(prediction, test_target)
+                        print('[csv 파일 추출 완료]')
+                        df.to_csv('test_est.csv')
+
+                        import matplotlib.pyplot as plt
+                        plt.scatter(test_target, prediction)
+                        plt.xlabel('True Values [Cm]')
+                        plt.ylabel('Predictions [Cm]')
+                        plt.axis('equal')
+                        plt.axis('square')
+                        plt.xlim([0, plt.xlim()[1]])
+                        plt.ylim([0, plt.ylim()[1]])
+                        _ = plt.plot([-10, 10], [-10, 10])
+                        plt.show()
+
+                        ## 오차의 분표확인.
+                        Error = prediction - test_target
+                        plt.hist(Error, bins=25)
+                        plt.xlabel('Prediction Error [Cm]')
+                        _ = plt.ylabel('Count')
+                        plt.show()
+
+
+                    if "DNN" in selected_ML:
+                        pass
+
+                    else:
+                        ## modeling file 저장 장소.
+                        newpath = './Model'
+                        if not os.path.exists(newpath):
+                            os.makedirs(newpath)
+                        joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
+
+
+                        scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
+                        print()
+                        print(scores)
+                        import numpy as np
+                        print(f'{selected_ML} - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
+                        print(f'{selected_ML} - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
+
+                        model.fit(train_input, train_target)
+                        print(f'{selected_ML} - Test R^2:', np.round_(model.score(test_input, test_target), 3))
+                        prediction = np.round_(model.predict(test_input), 2)
+
+                        if selected_ML == 'RandomForestRegressor':
+                            func_feature_import()
+                        else:
+                            pass
+
+
+                    mae = mean_absolute_error(test_target, prediction)
+                    print('|(타깃 - 예측값)|:', mae)
+
+                    Diff = np.round_(prediction - test_target, 2)
+                    Diff_per = np.round_((test_target - prediction) / test_target * 100, 1)
+
+
+                    bad = 0
+                    good = 0
+                    print()
+
+                    df_bad = pd.DataFrame()
+                    failed_condition = pd.DataFrame()
+
+                    df = pd.DataFrame()
+                    pass_condition = pd.DataFrame()
+
+
+                    # df_test_input = pd.DataFrame(test_input, columns=['txFrequencyHz',
+                    #                                                                          'focusRangeCm',
+                    #                                                                          'numTxElements',
+                    #                                                                          'txpgWaveformStyle',
+                    #                                                                          'numTxCycles',
+                    #                                                                          'elevAperIndex',
+                    #                                                                          'IsTxAperModulationEn',
+                    #                                                                          'probePitchCm',
+                    #                                                                          'probeRadiusCm',
+                    #                                                                          'probeElevAperCm0',
+                    #                                                                          'probeElevFocusRangCm'])
+                    #
+                    # func_show_table('test_input', df=df_test_input)
+
+
+                    for i in range(len(Diff)):
+                        if abs(Diff[i]) > 1:
+                            bad = bad + 1
+
+                            df_bad = df_bad.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
+                                                                columns=['index', '측정값(Cm)', '예측값(Cm)', 'Diff(Cm)', 'Diff(%)']),
+                                                ignore_index=True)
+                            # df_bad_sort_values = df_bad.sort_values(by=df_bad.columns[3], ascending=True)
+                            # df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
+
+                            failed_condition = failed_condition.append(pd.DataFrame([test_input[i]],
+                                                                                    columns=['txFrequencyHz',
+                                                                                            'focusRangeCm',
+                                                                                            'numTxElements',
+                                                                                            'txpgWaveformStyle',
+                                                                                            'numTxCycles',
+                                                                                            'elevAperIndex',
+                                                                                            'IsTxAperModulationEn',
+                                                                                            'probePitchCm',
+                                                                                            'probeRadiusCm',
+                                                                                            'probeElevAperCm0',
+                                                                                            'probeElevFocusRangCm']),
+                                                                    ignore_index=True)
+
+
+                        else:
+                            good = good + 1
+
+                            df = df.append(pd.DataFrame([[i, test_target[i], prediction[i], Diff[i], Diff_per[i]]],
+                                                        columns=['index', 'target', 'expect', 'Diff(Cm)', 'Diff(%)']),
+                                        ignore_index=True)
+                            # df_sort_values = df.sort_values(by=df.columns[3], ascending=True)
+                            # df_sort_values = df_sort_values.reset_index(drop=True)
+
+                            pass_condition = pass_condition.append(pd.DataFrame([test_input[i]],
+                                                                                columns=['txFrequencyHz',
+                                                                                        'focusRangeCm',
+                                                                                        'numTxElements',
+                                                                                        'txpgWaveformStyle',
+                                                                                        'numTxCycles',
+                                                                                        'elevAperIndex',
+                                                                                        'IsTxAperModulationEn',
+                                                                                        'probePitchCm',
+                                                                                        'probeRadiusCm',
+                                                                                        'probeElevAperCm0',
+                                                                                        'probeElevFocusRangCm']),
+                                                                ignore_index=True)
+
+                    print()
+                    print('bad:', bad)
+                    print('good:', good)
+
+                    merge_bad_inner = pd.concat([df_bad, failed_condition], axis=1)
+                    merge_good_inner = pd.concat([df, pass_condition], axis=1)
+
+                    ## failed condition show-up
+                    func_show_table("failed_condition",
+                                    df=merge_bad_inner if len(merge_bad_inner.index) > 0 else None)
+
+                    func_show_table("pass_condition",
+                                    df=merge_good_inner if len(merge_good_inner.index) > 0 else None)
+
+                except():
+                    print('error: func_modelML')
+
+
+            def func_preprocessML():
+                try:
+                    print(list_database)
+
+                    ## K2, Juniper, NX3, NX2 and FROSK
+                    for i in list_database:
+                        print(i)
+                        conn = pymssql.connect(server_address, ID, password, database=i)
+
+                        query = f'''
+                                        SELECT * FROM
+                                        (
+                                        SELECT a.[measSetId]
+                                        ,a.[probeId]
+                                        ,a.[beamstyleIndex]
+                                        ,a.[txFrequencyHz]
+                                        ,a.[focusRangeCm]
+                                        ,a.[numTxElements]
+                                        ,a.[txpgWaveformStyle]
+                                        ,a.[numTxCycles]
+                                        ,a.[elevAperIndex]
+                                        ,a.[IsTxAperModulationEn]
+                                        ,d.[probeName]
+                                        ,d.[probePitchCm]
+                                        ,d.[probeRadiusCm]
+                                        ,d.[probeElevAperCm0]
+                                        ,d.[probeElevFocusRangCm]
+            --                              ,d.[probeElevFocusRangCm1]
+                                        ,b.[measResId]
+                                        ,b.[zt]
+                                        ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
+                                        FROM meas_setting AS a
+                                        LEFT JOIN meas_res_summary AS b
+                                            ON a.[measSetId] = b.[measSetId]
+                                        LEFT JOIN meas_station_setup AS c
+                                            ON b.[measSSId] = c.[measSSId]
+                                        LEFT JOIN probe_geo AS d
+                                            ON a.[probeId] = d.[probeId]
+                                        where b.[isDataUsable] ='yes' and c.[measPurpose] like '%Beamstyle%' and b.[errorDataLog] = ''
+                                        ) T
+                                        where RankNo = 1
+                                        order by 1
+                                        '''
+
+                        Raw_data = pd.read_sql(sql=query, con=conn)
+                        print(Raw_data['probeName'].value_counts(dropna=False))
+                        AOP_data = Raw_data.dropna()
+                        AOP_data = AOP_data.append(AOP_data, ignore_index=True)
+
+                    # AOP_data.to_csv('AOP_data.csv')
+
+                    data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
+                                    'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                                    'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
+                    target = AOP_data['zt'].to_numpy()
+
+                    # Machine Learning
+                    func_modelML(combo_ML.get(), data, target)
+
+                except:
+                    print("Error: func_preprocessML")
+
+
+            root_ML = tkinter.Toplevel()
+            root_ML.title(f"{database}" + ' / Machine Learning')
+            root_ML.geometry("410x200")
+            root_ML.resizable(False, False)
+
+            frame1 = Frame(root_ML, relief="solid", bd=2)
+            frame1.pack(side="top", fill="both", expand=True)
+
+            label_ML = Label(frame1, text='Machine Learning')
+            label_ML.place(x=5, y=5)
+            combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
+            combo_ML.place(x=5, y=25)
+
+            btn_load = Button(frame1, width=15, height=2, text='Select & Train', command=func_preprocessML)
+            btn_load.place(x=280, y=5)
+
+            root_ML.mainloop()
+
+
+        except():
+            print("Error: Machine_Learning")
+
 
 if __name__ == '__main__':
     app = TopMain()  
