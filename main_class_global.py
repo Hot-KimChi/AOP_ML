@@ -140,7 +140,7 @@ class TopMain(tkinter.Tk):
         server_table_M3 = config["server table"]["M3 server table"]
         Machine_Learning = config["Machine Learning"]["Model"]
 
-        global list_ML
+        global list_ML, list_database
         list_database = databases.split(',')
         self.list_M3_table = server_table_M3.split(',')
         list_ML = Machine_Learning.split(',')
@@ -547,12 +547,77 @@ class Machine_Learning(object):
         combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
         combo_ML.place(x=5, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Train', command=self.fn_preprocessML)
+        btn_load = Button(frame1, width=15, height=2, text='Select & Train', command=self._fn_ML_sequence)
         btn_load.place(x=280, y=5)
 
         window_ML.mainloop()
     
+    
+    def _fn_ML_sequence(self):
+        self.fn_preprocessML()
+        
+    
+    def fn_preprocessML(self):
+        try:
+            print(list_database)
 
+            ## K2, Juniper, NX3, NX2 and FROSK
+            for i in list_database:
+                print(i)
+                conn = pymssql.connect(server_address, ID, password, database=i)
+
+                query = f'''
+                        SELECT * FROM
+                        (
+                        SELECT a.[measSetId]
+                        ,a.[probeId]
+                        ,a.[beamstyleIndex]
+                        ,a.[txFrequencyHz]
+                        ,a.[focusRangeCm]
+                        ,a.[numTxElements]
+                        ,a.[txpgWaveformStyle]
+                        ,a.[numTxCycles]
+                        ,a.[elevAperIndex]
+                        ,a.[IsTxAperModulationEn]
+                        ,d.[probeName]
+                        ,d.[probePitchCm]
+                        ,d.[probeRadiusCm]
+                        ,d.[probeElevAperCm0]
+                        ,d.[probeElevFocusRangCm]
+                        --,d.[probeElevFocusRangCm1]
+                        ,b.[measResId]
+                        ,b.[zt]
+                        ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
+                        FROM meas_setting AS a
+                        LEFT JOIN meas_res_summary AS b
+                            ON a.[measSetId] = b.[measSetId]
+                        LEFT JOIN meas_station_setup AS c
+                            ON b.[measSSId] = c.[measSSId]
+                        LEFT JOIN probe_geo AS d
+                            ON a.[probeId] = d.[probeId]
+                        where b.[isDataUsable] ='yes' and c.[measPurpose] like '%Beamstyle%' and b.[errorDataLog] = ''
+                        ) T
+                        where RankNo = 1
+                        order by 1
+                        '''
+
+                Raw_data = pd.read_sql(sql=query, con=conn)
+                print(Raw_data['probeName'].value_counts(dropna=False))
+                AOP_data = Raw_data.dropna()
+                AOP_data = AOP_data.append(AOP_data, ignore_index=True)
+
+            # AOP_data.to_csv('AOP_data.csv')
+
+            data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
+                            'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
+                            'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm']].to_numpy()
+            target = AOP_data['zt'].to_numpy()
+        
+        
+        except:
+            print('Error: fn_preprocessML')
+        
+        
     def fn_machine_learning(self):
         try:
             def func_modelML(selected_ML, data, target):
