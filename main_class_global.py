@@ -618,17 +618,17 @@ class Machine_Learning(object):
             print('Error: fn_preprocessML')
         
    
-    def func_feature_import(self):
+    def fn_feature_import(self):
         try:
             df_import = pd.DataFrame()
-            df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
+            df_import = df_import.append(pd.DataFrame([np.round((self.model.feature_importances_) * 100, 2)],
                                                     columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles', 
                                                              'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
                                                              'probeElevFocusRangCm']), ignore_index=True)
 
             func_show_table(f'{selected_ML}', df=df_import)
 
-            importances = model.feature_importances_
+            importances = self.model.feature_importances_
             indices = np.argsort(importances)[::-1]
             x = np.arange(len(importances))
 
@@ -643,10 +643,11 @@ class Machine_Learning(object):
             plt.show()
 
         except:
-            print('func_feature_import')
+            print('fn_feature_import')
    
         
     def fn_modelML(self):
+        
         train_input, test_input, train_target, test_target = train_test_split(self.data, self.target, test_size=0.2)
 
         ## 왼쪽 공백 삭제
@@ -683,25 +684,25 @@ class Machine_Learning(object):
 
 
             # After hyperparameter value find, adapt these ones.
-            model = RandomForestRegressor(max_depth=40, max_features='sqrt', min_samples_split=2, n_estimators=90, n_jobs=-1)
+            self.model = RandomForestRegressor(max_depth=40, max_features='sqrt', min_samples_split=2, n_estimators=90, n_jobs=-1)
 
 
         ## Gradient Boosting
         elif selected_ML == 'Gradient_Boosting':
             from sklearn.ensemble import GradientBoostingRegressor
-            model = GradientBoostingRegressor(n_estimators=500, learning_rate=0.2)
+            self.model = GradientBoostingRegressor(n_estimators=500, learning_rate=0.2)
 
 
         ## Histogram-based Gradient Boosting
         elif selected_ML == 'Histogram-based Gradient Boosting':
             from sklearn.experimental import enable_hist_gradient_boosting
             from sklearn.ensemble import HistGradientBoostingRegressor
-            model = HistGradientBoostingRegressor()
+            self.model = HistGradientBoostingRegressor()
 
 
         elif selected_ML == 'XGBoost':
             from xgboost import XGBRegressor
-            model = XGBRegressor(tree_method='hist')
+            self.model = XGBRegressor(tree_method='hist')
 
 
         ## VotingRegressor 훈련하기
@@ -731,7 +732,7 @@ class Machine_Learning(object):
             model2 = RandomForestRegressor(n_jobs=-1)
             model3 = KNeighborsRegressor()
 
-            model = VotingRegressor(estimators=[('ridge', model1), ('random', model2), ('neigh', model3)])
+            self.model = VotingRegressor(estimators=[('ridge', model1), ('random', model2), ('neigh', model3)])
 
 
         ## LinearRegression 훈련하기.
@@ -744,7 +745,7 @@ class Machine_Learning(object):
             test_scaled = ss.transform(test_input)
 
             from sklearn.linear_model import LinearRegression
-            model = LinearRegression()
+            self.model = LinearRegression()
 
 
             ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
@@ -768,7 +769,7 @@ class Machine_Learning(object):
             test_scaled = ss.transform(test_poly)
 
             from sklearn.linear_model import LinearRegression
-            model = LinearRegression()
+            self.model = LinearRegression()
 
             ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
             train_input = train_scaled
@@ -791,7 +792,7 @@ class Machine_Learning(object):
             test_scaled = ss.transform(test_poly)
 
             from sklearn.linear_model import Ridge
-            model = Ridge(alpha=0.1)
+            self.model = Ridge(alpha=0.1)
 
             ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
             train_input = train_scaled
@@ -806,11 +807,11 @@ class Machine_Learning(object):
             import matplotlib.pyplot as plt
             for alpha in alpha_list:
                 # 릿지모델 생성 & 훈련
-                model = Ridge(alpha=alpha)
-                model.fit(train_scaled, train_target)
+                self.model = Ridge(alpha=alpha)
+                self.model.fit(train_scaled, train_target)
                 # 훈련점수 & 테스트점수
-                train_score.append(model.score(train_scaled, train_target))
-                test_score.append(model.score(test_scaled, test_target))
+                train_score.append(self.model.score(train_scaled, train_target))
+                test_score.append(self.model.score(test_scaled, test_target))
 
             plt.plot(np.log10(alpha_list), train_score)
             plt.plot(np.log10(alpha_list), test_score)
@@ -822,7 +823,7 @@ class Machine_Learning(object):
         elif selected_ML == 'DecisionTreeRegressor(scaled data)':
 
             from sklearn.tree import DecisionTreeRegressor
-            model = DecisionTreeRegressor(max_depth=10, random_state=42)
+            self.model = DecisionTreeRegressor(max_depth=10, random_state=42)
 
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
@@ -830,20 +831,20 @@ class Machine_Learning(object):
             train_scaled = ss.transform(train_input)
             test_scaled = ss.transform(test_input)
 
-            model.fit(train_scaled, train_target)
+            self.model.fit(train_scaled, train_target)
 
-            scores = cross_validate(model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
+            scores = cross_validate(self.model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
             print()
             print(scores)
             print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
             print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
             # dt.fit(train_scaled, train_target)
-            print('결정트리 - Test R^2:', np.round_(model.score(test_scaled, test_target), 3))
-            prediction = model.predict(test_scaled)
+            print('결정트리 - Test R^2:', np.round_(self.model.score(test_scaled, test_target), 3))
+            prediction = self.model.predict(test_scaled)
 
             df_import = pd.DataFrame()
-            df_import = df_import.append(pd.DataFrame([np.round((model.feature_importances_) * 100, 2)],
+            df_import = df_import.append(pd.DataFrame([np.round((self.model.feature_importances_) * 100, 2)],
                                                     columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements',
                                                             'txpgWaveformStyle',
                                                             'numTxCycles', 'elevAperIndex',
@@ -857,7 +858,7 @@ class Machine_Learning(object):
             import matplotlib.pyplot as plt
             from sklearn.tree import plot_tree
             plt.figure(figsize=(10, 7))
-            plot_tree(model, max_depth=2, filled=True,
+            plot_tree(self.model, max_depth=2, filled=True,
                     feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
                                     'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                                     'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
@@ -867,8 +868,8 @@ class Machine_Learning(object):
         elif selected_ML == 'DecisionTreeRegressor(No scaled data)':
 
             from sklearn.tree import DecisionTreeRegressor
-            model = DecisionTreeRegressor(max_depth=10, random_state=42)
-            model.fit(train_input, train_target)
+            self.model = DecisionTreeRegressor(max_depth=10, random_state=42)
+            self.model.fit(train_input, train_target)
 
             func_feature_import()
 
@@ -876,7 +877,7 @@ class Machine_Learning(object):
             import matplotlib.pyplot as plt
             from sklearn.tree import plot_tree
             plt.figure(figsize=(10, 7))
-            plot_tree(model, max_depth=1, filled=True,
+            plot_tree(self.model, max_depth=1, filled=True,
                     feature_names=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle',
                                     'numTxCycles', 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm',
                                     'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
@@ -908,11 +909,11 @@ class Machine_Learning(object):
                             metrics=['mae', 'mse'])
                 return model
 
-            model = func_build_model()
-            print(model.summary())
+            self.model = func_build_model()
+            print(self.model.summary())
 
             example_batch = train_scaled[:10]
-            example_result = model.predict(example_batch)
+            example_result = self.model.predict(example_batch)
             print('example_batch 형태:', example_batch.shape)
 
 
@@ -954,11 +955,11 @@ class Machine_Learning(object):
 
             EPOCHS = 1000
 
-            model = func_build_model()
+            self.model = func_build_model()
 
             # patience 매개변수는 성능 향상을 체크할 에포크 횟수입니다
             early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
-            history = model.fit(train_scaled, train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
+            history = self.model.fit(train_scaled, train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
                                 callbacks=[early_stop, PrintDot()])
 
             hist = pd.DataFrame(history.history)
@@ -967,12 +968,12 @@ class Machine_Learning(object):
 
             plot_history(history)
 
-            loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
+            loss, mae, mse = self.model.evaluate(test_scaled, test_target, verbose=2)
             print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
 
             ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
-            test_predictions = model.predict(test_scaled).flatten()
+            test_predictions = self.model.predict(test_scaled).flatten()
             print(test_predictions)
             print(test_target)
 
@@ -1033,15 +1034,15 @@ class Machine_Learning(object):
             ## To build model fn
             ## To prevent overfitting for ML algorithm(method: dropout)
             # model = model_fn(keras.layers.Dropout(0.3))
-            model = model_fn()
-            print(model.summary())
+            self.model = model_fn()
+            print(self.model.summary())
 
             rmsprop = keras.optimizers.RMSprop(0.001)
-            model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
+            self.model.compile(optimizer=rmsprop, loss='mse', metrics=['mae', 'mse'])
 
             checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
             early_stopping_cb = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-            history = model.fit(train_scaled, train_target, epochs=1000, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
+            history = self.model.fit(train_scaled, train_target, epochs=1000, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
 
             print()
             print('#Num of early_stopping:', early_stopping_cb.stopped_epoch)
@@ -1068,15 +1069,15 @@ class Machine_Learning(object):
 
 
             import numpy as np
-            model = keras.models.load_model('best-model.h5')
+            self.model = keras.models.load_model('best-model.h5')
             print()
             print('<Test evaluate>')
-            loss, mae, mse = model.evaluate(test_scaled, test_target, verbose=2)
-            print('Test evaluate:', model.evaluate(test_scaled, test_target))
+            loss, mae, mse = self.model.evaluate(test_scaled, test_target, verbose=2)
+            print('Test evaluate:', self.model.evaluate(test_scaled, test_target))
             print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
 
-            prediction = model.predict(test_scaled).flatten()
+            prediction = self.model.predict(test_scaled).flatten()
 
 
             ## np.round_ error check. => why does works for this sequence?
@@ -1113,19 +1114,19 @@ class Machine_Learning(object):
             newpath = './Model'
             if not os.path.exists(newpath):
                 os.makedirs(newpath)
-            joblib.dump(model, f'Model/{selected_ML}_v1_python37.pkl')
+            joblib.dump(self.model, f'Model/{selected_ML}_v1_python37.pkl')
 
 
-            scores = cross_validate(model, train_input, train_target, return_train_score=True, n_jobs=-1)
+            scores = cross_validate(self.model, train_input, train_target, return_train_score=True, n_jobs=-1)
             print()
             print(scores)
             import numpy as np
             print(f'{selected_ML} - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
             print(f'{selected_ML} - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
-            model.fit(train_input, train_target)
-            print(f'{selected_ML} - Test R^2:', np.round_(model.score(test_input, test_target), 3))
-            prediction = np.round_(model.predict(test_input), 2)
+            self.model.fit(train_input, train_target)
+            print(f'{selected_ML} - Test R^2:', np.round_(self.model.score(test_input, test_target), 3))
+            prediction = np.round_(self.model.predict(test_input), 2)
 
             if selected_ML == 'RandomForestRegressor':
                 func_feature_import()
