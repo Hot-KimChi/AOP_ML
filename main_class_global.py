@@ -622,9 +622,9 @@ class Machine_Learning(object):
         try:
             df_import = pd.DataFrame()
             df_import = df_import.append(pd.DataFrame([np.round((self.model.feature_importances_) * 100, 2)],
-                                                    columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles', 
-                                                             'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
-                                                             'probeElevFocusRangCm']), ignore_index=True)
+                                        columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles', 
+                                                'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
+                                                'probeElevFocusRangCm']), ignore_index=True)
 
             func_show_table(f'{selected_ML}', df=df_import)
 
@@ -833,6 +833,7 @@ class Machine_Learning(object):
 
             self.model.fit(train_scaled, train_target)
 
+
             scores = cross_validate(self.model, train_scaled, train_target, return_train_score=True, n_jobs=-1)
             print()
             print(scores)
@@ -895,7 +896,7 @@ class Machine_Learning(object):
             test_scaled = ss.transform(test_input)
 
 
-            def func_build_model():
+            def fn_build_DNN():
                 dense1 = keras.layers.Dense(100, activation='relu', input_shape=(11,), name='hidden')
                 dense2 = keras.layers.Dense(10, activation='relu')
                 dense3 = keras.layers.Dense(1)
@@ -904,12 +905,10 @@ class Machine_Learning(object):
 
                 optimizer = tf.keras.optimizers.RMSprop(0.001)
 
-                model.compile(loss='mse',
-                            optimizer=optimizer,
-                            metrics=['mae', 'mse'])
+                model.compile(loss='mse', optimizer=optimizer, metrics=['mae', 'mse'])
                 return model
 
-            self.model = func_build_model()
+            self.model = fn_build_DNN()
             print(self.model.summary())
 
             example_batch = train_scaled[:10]
@@ -928,10 +927,8 @@ class Machine_Learning(object):
                 plt.subplot(2, 1, 1)
                 plt.xlabel('Epoch')
                 plt.ylabel('Mean Abs Error [Cm]')
-                plt.plot(hist['epoch'], hist['mae'],
-                        label='Train Error')
-                plt.plot(hist['epoch'], hist['val_mae'],
-                        label='Val Error')
+                plt.plot(hist['epoch'], hist['mae'], label='Train Error')
+                plt.plot(hist['epoch'], hist['val_mae'], label='Val Error')
                 plt.ylim([0, 1.25])
                 plt.legend()
 
@@ -955,7 +952,7 @@ class Machine_Learning(object):
 
             EPOCHS = 1000
 
-            self.model = func_build_model()
+            self.model = fn_build_DNN()
 
             # patience 매개변수는 성능 향상을 체크할 에포크 횟수입니다
             early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
