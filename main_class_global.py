@@ -26,6 +26,100 @@ pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
 
+## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
+class ShowTable(object):
+    def fn_show_table(selected_DBtable, df=None, extra=None):
+        try:
+            n_root = tkinter.Toplevel()
+            n_root.title(f"{database}  //  {selected_DBtable}")
+            n_root.geometry("1720x1000")
+
+            # Add some style
+            style = ttk.Style()
+            # Pick a theme
+            style.theme_use("default")
+
+            # Configure our treeview colors
+            style.configure("Treeview",
+                            background="#D3D3D3",
+                            foreground="black",
+                            rowheight=25,
+                            fieldbackground="#D3D3D3"
+                            )
+            # Change selected color
+            style.map('Treeview',
+                    background=[('selected', '#347083')])
+
+            # Create Treeview Frame
+            frame1 = Frame(n_root)
+            frame1.pack(pady=20)
+
+
+            tree_scroll_y = Scrollbar(frame1, orient="vertical")
+            tree_scroll_y.pack(side=RIGHT, fill=Y)
+            tree_scroll_x = Scrollbar(frame1, orient="horizontal")
+            tree_scroll_x.pack(side=BOTTOM, fill=X)
+
+            my_tree = ttk.Treeview(frame1, style="Treeview", height=20, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
+            # Pack to the screen
+            my_tree.pack()
+
+            tree_scroll_y.config(command=my_tree.yview)
+            tree_scroll_x.config(command=my_tree.xview)
+
+            my_tree["column"] = list(df.columns)
+            my_tree["show"] = "headings"
+
+            # Loop thru column list for headers
+            for column in my_tree["column"]:
+                my_tree.column(column, width=110, minwidth=110)
+                my_tree.heading(column, text=column)
+
+            my_tree.tag_configure('oddrow', background="lightblue")
+            my_tree.tag_configure('evenrow', background="white")
+
+            # Put data in treeview
+            df_rows = df.round(3)
+            df_rows = df_rows.to_numpy().tolist()
+
+
+            global count
+            count = 0
+            for row in df_rows:
+                if count % 2 == 0:
+                    my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
+                else:
+                    my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
+                count += 1
+
+
+            if (extra is not None):
+                frame2 = Frame(n_root, relief="solid", bd=2)
+                frame2.pack(side="bottom", fill="both", expand=True, pady=10)
+
+                my_tree_extra = ttk.Treeview(frame2)
+
+                my_tree_extra["column"] = list(extra.columns)
+                my_tree_extra["show"] = "headings"
+
+                # Loop thru column list for headers
+                for column in my_tree_extra["column"]:
+                    my_tree_extra.column(column, width=110, minwidth=110)
+                    my_tree_extra.heading(column, text=column)
+
+                # Put data in treeview
+                df_rows = extra.to_numpy().tolist()
+                for row in df_rows:
+                    my_tree_extra.insert("", "end", values=row)
+
+                my_tree_extra.pack(pady=20)
+
+            # n_root.mainloop()
+
+        except:
+            print('fn_show_table')
+
+
 class SQL(object):
     def __init__(self, command=None):
         super().__init__()
@@ -56,30 +150,31 @@ class SQL(object):
                 SELECT probeName, probeId FROM probe_geo 
                 order by probeName, probeId
                 '''
-            # elif command == 2:
-            #     if selected_DBtable == 'SSR_table':
-            #         query = f'''
-            #         SELECT * FROM {selected_DBtable} WHERE measSSId IN {str_sel_param}
-            #         ORDER BY measSSId, 1
-            #         '''
+            
+            elif self.command == 2:
+                if selected_DBtable == 'SSR_table':
+                    query = f'''
+                    SELECT * FROM {selected_DBtable} WHERE measSSId IN {str_sel_param}
+                    ORDER BY measSSId, 1
+                    '''
 
-            #     else:
-            #         query = f'''
-            #         SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
-            #         ORDER BY 1
-            #         '''
+                else:
+                    query = f'''
+                    SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
+                    ORDER BY 1
+                    '''
 
-            # elif command == 3:
-            #     if selected_DBtable == 'SSR_table':
-            #         query = f'''
-            #         SELECT * FROM meas_station_setup WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
-            #         ORDER BY 1
-            #         '''
-            #     else:
-            #         query = f'''
-            #         SELECT * FROM {selected_DBtable} WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
-            #         ORDER BY 1
-            #         '''
+            elif self.command == 3:
+                if selected_DBtable == 'SSR_table':
+                    query = f'''
+                    SELECT * FROM meas_station_setup WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
+                    ORDER BY 1
+                    '''
+                else:
+                    query = f'''
+                    SELECT * FROM {selected_DBtable} WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
+                    ORDER BY 1
+                    '''
 
             # probe_geo database load.
             elif self.command == 4:
@@ -203,8 +298,8 @@ class TopMain(tkinter.Tk):
         btn_sum = Button(window_Menu, width=30, height=3, text='SQL Viewer', command=Viewer)
         btn_sum.grid(row=0, column=1)
 
-        # btn_tx_sum = Button(window_Menu, width=30, height=3, text='Tx Summary', command=func_tx_summ)
-        # btn_tx_sum.grid(row=1, column=0)
+        btn_tx_sum = Button(window_Menu, width=30, height=3, text='Tx Summary', command=TxSumm)
+        btn_tx_sum.grid(row=1, column=0)
 
         # btn_ML = Button(window_Menu, width=30, height=3, text='Verification Report', command=func_verify_report)
         # btn_ML.grid(row=1, column=1)
@@ -1265,7 +1360,7 @@ class Viewer(object):
         self.combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
         self.combo_DBtable.place(x=115, y=25)
 
-        btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self.fn_select_table)
+        btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._fn_viewer_sequence)
         btn_view.place(x=350, y=5)
 
         # if combo_DBtable == 'SSR_table':
@@ -1292,18 +1387,40 @@ class Viewer(object):
         root_view.mainloop()
 
 
-    def fn_select_table(self):
-        global selected_probeId, selected_DBtable, selected_probename   #, combo_SSId, combo_probesn
+    def _fn_viewer_sequence(self):
+        self.fn_select_table()
+        self.fn_update_table()
 
+
+    def fn_select_table(self):
+        
+        global selected_probeId, selected_DBtable, selected_probename, sel_cnt   #, combo_SSId, combo_probesn
         sel_cnt += 1
         selected_probeId = str(list_probeIds[self.combo_probename.current()])[1:-1]
         selected_probename = str(list_probenames[self.combo_probename.current()])
         selected_DBtable = self.combo_DBtable.get()
 
         ## selected_probeId에 선택 & 선택된 DBtable에서 데이터 가져오기.
-        ## SQL class 객체 생성.
-        connect = SQL(command = 0)
+        connect = SQL(command = 0)                  ## SQL class 객체 생성.
         self.df = connect.fn_sql_get()
+            
+    
+    def fn_update_table(self):
+        
+        list_params = self.df.columns.values.tolist()
+        
+        ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
+        label_filter = Label(self.frame2, text='filter Column')
+        label_filter.place(x=5, y=5)
+
+        combo_list_columns = ttk.Combobox(self.frame2, value=list_params, height=0, state='readonly')
+        combo_list_columns.place(x=115, y=5)
+        combo_list_columns.bind('<<ComboboxSelected>>', self.fn_on_selected)
+
+        btn_view = Button(self.frame2, width=15, height=2, text='Select & Detail', command=self.fn_detail_table)
+        btn_view.place(x=350, y=5)
+
+        self.fn_tree_update(self.df)
         
     
     def fn_tree_update(self, df=None, selected_input=None):
@@ -1387,196 +1504,70 @@ class Viewer(object):
         except:
             print("Error: fn_tree_update")
 
+
+    def fn_sel_update(self, event):
+        global sel_data
+        sel_data = self.combo_sel_datas.get()
         
-    def fn_update_table(self):
-        self.fn_tree_update(self.df)
+        ## SQL class 객체 생성.
+        connect = SQL(command = 3)
+        self.df = connect.fn_sql_get()
+        
+        self.fn_tree_update(df=self.df, selected_input=sel_data)
+
+
+    def fn_on_selected(self, event):
+        global selected_param
+        # parameter 중 한개를 선정하게 되면 filter 기능.
+        selected_param = event.widget.get()
+        list_datas = self.df[f'{selected_param}'].values.tolist()
+        # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
+        set_datas = set(list_datas)
+        filtered_datas = list(set_datas)
+
+        label_sel_data = Label(self.frame2, text='Selection')
+        label_sel_data.place(x=5, y=25)
+
+        self.combo_sel_datas = ttk.Combobox(self.frame2, value=filtered_datas, height=0, state='readonly')
+        self.combo_sel_datas.place(x=115, y=25)
+        self.combo_sel_datas.bind('<<ComboboxSelected>>', self.fn_sel_update)
         
         
+    def fn_detail_table(self):
+        connect = SQL(command = 2)                  ## SQL class 객체 생성.
+        self.df = connect.fn_sql_get()
+        ShowTable.fn_show_table(selected_DBtable, df=self.df)
+
+
+class TxSumm(object):
+    def __init__(self):
+        super().__init__()
+        self.initialize()
         
         
+    def initialize(self):
+        filename = filedialog.askopenfilename(initialdir='.txt')
+        self.df_txsumm = pd.read_csv(filename, sep='\t', encoding='cp949')
+        self.fn_tx_summ()
         
         
+    def fn_tx_summ(self):
+        ## mode, BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE
+        df_first = self.df_txsumm.iloc[:, [2, 4, 5, 6, 7, 8, 9, 10]]
 
-## root 제목 DB 변경 --> SQL 접속
-def func_viewer_database():
-    try:
-        global sel_cnt
-        sel_cnt = 0
+        df = df_first.drop_duplicates()
+        df_D_mode = df.loc[(df['BeamStyleIndex'] == 10) & (df['ProbeNumTxCycles'] == 4)]
+        df_others_mode = df.loc[df['BeamStyleIndex'] != 10]
 
-        def func_1st_load():
-            try:
+        df_D_mode = df_D_mode.drop_duplicates(['Mode', 'BeamStyleIndex', 'TxFreqIndex', 'TxFrequency', 'ProbeNumElevAper', 'TxpgWaveformStyle', 'TxChannelModulationEn'])
+        df_others_mode = df_others_mode.drop_duplicates()
+        df_final_mode = pd.concat([df_others_mode, df_D_mode])                                                          ## 2개 데이터프레임 합치기
+        df_final_mode = df_final_mode.reset_index(drop=True)                                                            ## 데이터프레임 index reset
+        df_final_mode = df_final_mode.sort_values(
+            by=[df_final_mode.columns[0], df_final_mode.columns[1], df_final_mode.columns[2], df_final_mode.columns[4],
+                df_final_mode.columns[6]], ascending=True)
 
-                def func_tree_update(df=None, selected_input=None):
-                    try:
-
-                        ## tree table안에 있는 데이터를 선택해서 제일 앞에 있는 데이터를 (x1, x2, x3) 형태로 변수 update.
-                        def func_click_item(event):
-                            ## multiple selection
-                            global sel_param_click, str_sel_param
-                            selectedItem = my_tree.selection()
-
-                            # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
-                            # sel_param_click = my_tree.item(selectedItem).get('values')[0]
-                            sel_param_click = []
-                            for i in selectedItem:
-                                sel_param_click.append(my_tree.item(i).get('values')[0])
-                            str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
-
-                        # tree_scroll_y = Scrollbar(frame2, orient="vertical")
-                        # tree_scroll_y.pack(side=RIGHT, fill=Y)
-                        # tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-                        # tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-                        if sel_cnt == 1 and selected_input == None:
-                            global my_tree, tree_scroll_y, tree_scroll_x
-                            tree_scroll_y = Scrollbar(frame2, orient="vertical")
-                            tree_scroll_y.pack(side=RIGHT, fill=Y)
-                            tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-                            tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-                            my_tree = ttk.Treeview(frame2, height=20, yscrollcommand=tree_scroll_y.set,
-                                                   xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                            my_tree.pack(padx=20, pady=20, side='left')
-                        else:
-                            my_tree.destroy()
-                            tree_scroll_y.destroy()
-                            tree_scroll_x.destroy()
-
-                            tree_scroll_y = Scrollbar(frame2, orient="vertical")
-                            tree_scroll_y.pack(side=RIGHT, fill=Y)
-                            tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-                            tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-                            my_tree = ttk.Treeview(frame2, height=20, yscrollcommand=tree_scroll_y.set,
-                                                   xscrollcommand=tree_scroll_x.set, selectmode="extended")
-                            my_tree.pack(padx=20, pady=20, side='left')
-                            # for i in my_tree.get_children():
-                            #     my_tree.delete(i)
-
-
-                        # event update시, func_click_item 수행.
-                        my_tree.bind('<ButtonRelease-1>', func_click_item)
-
-                        tree_scroll_y.config(command=my_tree.yview)
-                        tree_scroll_x.config(command=my_tree.xview)
-
-                        my_tree["column"] = list(df.columns)
-                        my_tree["show"] = "headings"
-
-                        # Loop thru column list for headers
-                        for column in my_tree["column"]:
-                            my_tree.column(column, width=100, minwidth=100)
-                            my_tree.heading(column, text=column)
-
-                        my_tree.tag_configure('oddrow', background="lightblue")
-                        my_tree.tag_configure('evenrow', background="white")
-
-                        # Put data in treeview
-                        df_rows = df.round(3)
-                        df_rows = df_rows.to_numpy().tolist()
-
-                        global count
-                        count = 0
-                        for row in df_rows:
-                            if count % 2 == 0:
-                                my_tree.insert(parent='', index='end', iid=count, text="", values=row,
-                                               tags=('evenrow',))
-                            else:
-                                my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
-                            count += 1
-
-                    except():
-                        print("Error: func_tree_update")
-
-
-                global selected_probeId, selected_DBtable, selected_probename, sel_cnt   #, combo_SSId, combo_probesn
-
-                sel_cnt += 1
-                selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
-                selected_probename = str(list_probenames[combo_probename.current()])
-                selected_DBtable = combo_DBtable.get()
-
-                ## selected_probeId에 선택 & 선택된 DBtable에서 데이터 가져오기.
-                df = func_sql_get(server_address, ID, password, database, 0)
-
-                ''' 선택한 table treeview update'''
-                func_tree_update(df)
-
-                ''' parameter list from SQL table '''
-                list_params = df.columns.values.tolist()
-
-                ''' SQL DB에서 받은 데이터의 선택된 column(ex: meas_person_name)에서 선택된 datas(HIS, others)를 추출하는 algorithm'''
-                def func_on_selected(event):
-
-                    def func_sel_update(event):
-                        global sel_data
-                        sel_data = combo_sel_datas.get()
-                        table = func_sql_get(server_address, ID, password, database, 3)
-                        func_tree_update(df=table, selected_input=sel_data)
-
-                    global selected_param
-                    # parameter 중 한개를 선정하게 되면 filter 기능.
-                    selected_param = event.widget.get()
-                    list_datas = df[f'{selected_param}'].values.tolist()
-                    # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
-                    set_datas = set(list_datas)
-                    filtered_datas = list(set_datas)
-
-                    label_sel_data = Label(frame2, text='Selection')
-                    label_sel_data.place(x=5, y=25)
-
-                    combo_sel_datas = ttk.Combobox(frame2, value=filtered_datas, height=0, state='readonly')
-                    combo_sel_datas.place(x=115, y=25)
-                    combo_sel_datas.bind('<<ComboboxSelected>>', func_sel_update)
-
-
-                    # btn_filter = Button(frame2, width=15, height=2, text='filter', command=func_tree_update)
-                    # btn_filter.place(x=380, y=5)
-
-
-                ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
-                label_filter = Label(frame2, text='filter Column')
-                label_filter.place(x=5, y=5)
-
-                combo_list_columns = ttk.Combobox(frame2, value=list_params, height=0, state='readonly')
-                combo_list_columns.place(x=115, y=5)
-                combo_list_columns.bind('<<ComboboxSelected>>', func_on_selected)
-
-
-                    # measSSId = str(df['measSSId'].sort_values().unique())[1:-1]
-                    # probeSN = str(df['probeSn'].sort_values().unique())[1:-1]
-                    #
-                    # label_SSId = Label(frame2, text='SSId')
-                    # label_SSId.place(x=5, y=5)
-                    # combo_SSId = ttk.Combobox(frame2, value=measSSId, height=0) #, state='readonly')
-                    # combo_SSId.place(x=115, y=5)
-                    #
-                    # label_probesn = Label(frame2, text='probeSN')
-                    # label_probesn.place(x=5, y=25)
-                    # combo_probesn = ttk.Combobox(frame2, value=probeSN, height=0) #, state='readonly')
-                    # combo_probesn.place(x=115, y=25)
-
-
-                btn_view = Button(frame2, width=15, height=2, text='Select & View', command=func_select_view)
-                btn_view.place(x=350, y=5)
-
-
-            except():
-                print("Error: func_1st_load")
-
-
-        def func_select_view():
-            try:
-                global selected_probeId, selected_DBtable, selected_probename
-                selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
-                selected_probename = str(list_probenames[combo_probename.current()])
-                selected_DBtable = combo_DBtable.get()
-
-                df = func_sql_get(server_address, ID, password, database, 2)
-                func_show_table(selected_DBtable, df=df)
-
-            except():
-                print("Error: func_select_view")
+        ShowTable.fn_show_table('Tx_summary', df_final_mode)
 
 
 if __name__ == '__main__':
