@@ -723,7 +723,7 @@ class Machine_Learning(object):
                                                 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
                                                 'probeElevFocusRangCm']), ignore_index=True)
 
-            func_show_table(f'{selected_ML}', df=df_import)
+            ShowTable.fn_show_table(f'{self.selected_ML}', df=df_import)
 
             importances = self.model.feature_importances_
             indices = np.argsort(importances)[::-1]
@@ -950,7 +950,7 @@ class Machine_Learning(object):
                                                             'probeRadiusCm', 'probeElevAperCm0',
                                                             'probeElevFocusRangCm']), ignore_index=True)
 
-            func_show_table('DecisionTreeRegressor', df=df_import)
+            ShowTable.fn_show_table('DecisionTreeRegressor', df=df_import)
 
             ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
             import matplotlib.pyplot as plt
@@ -969,7 +969,7 @@ class Machine_Learning(object):
             self.model = DecisionTreeRegressor(max_depth=10, random_state=42)
             self.model.fit(self.train_input, self.train_target)
 
-            func_feature_import()
+            self.fn_feature_import()
 
             ## plot_tree 이용하여 어떤 트리가 생성되었는지 확인.
             import matplotlib.pyplot as plt
@@ -1271,25 +1271,17 @@ class Machine_Learning(object):
             if abs(Diff[i]) > 1:
                 bad = bad + 1
 
-                df_bad = df_bad.append(pd.DataFrame([[i, test_target[i], self.prediction[i], Diff[i], Diff_per[i]]],
+                df_bad = df_bad.append(pd.DataFrame([[i, self.test_target[i], self.prediction[i], Diff[i], Diff_per[i]]],
                                                     columns=['index', '측정값(Cm)', '예측값(Cm)', 'Diff(Cm)', 'Diff(%)']),
-                                    ignore_index=True)
+                                                    ignore_index=True)
                 # df_bad_sort_values = df_bad.sort_values(by=df_bad.columns[3], ascending=True)
                 # df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
 
                 failed_condition = failed_condition.append(pd.DataFrame([self.test_input[i]],
-                                                                        columns=['txFrequencyHz',
-                                                                                'focusRangeCm',
-                                                                                'numTxElements',
-                                                                                'txpgWaveformStyle',
-                                                                                'numTxCycles',
-                                                                                'elevAperIndex',
-                                                                                'IsTxAperModulationEn',
-                                                                                'probePitchCm',
-                                                                                'probeRadiusCm',
-                                                                                'probeElevAperCm0',
+                                                                        columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
+                                                                                'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
                                                                                 'probeElevFocusRangCm']),
-                                                        ignore_index=True)
+                                                                        ignore_index=True)
 
 
             else:
@@ -1302,18 +1294,10 @@ class Machine_Learning(object):
                 # df_sort_values = df_sort_values.reset_index(drop=True)
 
                 pass_condition = pass_condition.append(pd.DataFrame([self.test_input[i]],
-                                                                    columns=['txFrequencyHz',
-                                                                            'focusRangeCm',
-                                                                            'numTxElements',
-                                                                            'txpgWaveformStyle',
-                                                                            'numTxCycles',
-                                                                            'elevAperIndex',
-                                                                            'IsTxAperModulationEn',
-                                                                            'probePitchCm',
-                                                                            'probeRadiusCm',
-                                                                            'probeElevAperCm0',
+                                                                    columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
+                                                                            'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
                                                                             'probeElevFocusRangCm']),
-                                                    ignore_index=True)
+                                                                    ignore_index=True)
 
         print()
         print('bad:', bad)
@@ -1323,11 +1307,9 @@ class Machine_Learning(object):
         merge_good_inner = pd.concat([df, pass_condition], axis=1)
 
         ## failed condition show-up
-        func_show_table("failed_condition",
-                        df=merge_bad_inner if len(merge_bad_inner.index) > 0 else None)
+        ShowTable.fn_show_table("failed_condition", df=merge_bad_inner if len(merge_bad_inner.index) > 0 else None)
 
-        func_show_table("pass_condition",
-                        df=merge_good_inner if len(merge_good_inner.index) > 0 else None)
+        ShowTable.fn_show_table("pass_condition", df=merge_good_inner if len(merge_good_inner.index) > 0 else None)
 
 
 class Viewer(object):
