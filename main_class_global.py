@@ -130,7 +130,7 @@ class SQL(object):
         try:
             conn = pymssql.connect(server_address, ID, password, database)
 
-            if self.command > 5:
+            if self.command > 7:
                 query = "f'''" + self.command + "'''"
 
             elif self.command == 0:
@@ -176,19 +176,19 @@ class SQL(object):
                     ORDER BY 1
                     '''
 
-            # probe_geo database load.
+            ## probe_geo database load.
             elif self.command == 4:
                 query = f'''
                 SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevFocusRangCm] FROM probe_geo WHERE probeid = {selected_probeId}
                 ORDER BY 1
                 '''
 
-            # # Tx_summary database load.
-            # elif command == 5:
-            #     query = f'''
-            #     SELECT * FROM Tx_summary WHERE probeid = {selected_probeId}
-            #     ORDER BY 1
-            #     '''
+            ## meas_station_setup database load
+            elif self.command == 5:
+                query = f'''
+                SELECT * FROM meas_station_setup
+                ORDER BY 1 desc
+                '''
 
 
             Raw_data = pd.read_sql(sql=query, con=conn)
@@ -301,8 +301,8 @@ class TopMain(tkinter.Tk):
         btn_tx_sum = Button(window_Menu, width=30, height=3, text='Tx Summary', command=TxSumm)
         btn_tx_sum.grid(row=1, column=0)
 
-        # btn_ML = Button(window_Menu, width=30, height=3, text='Verification Report', command=func_verify_report)
-        # btn_ML.grid(row=1, column=1)
+        btn_ML = Button(window_Menu, width=30, height=3, text='Verification Report', command=Verify_Report)
+        btn_ML.grid(row=1, column=1)
 
         # btn_ML = Button(window_Menu, width=30, height=3, text='Machine Learning', command=func_machine_learning)
         # btn_ML.grid(row=2, column=0)
@@ -652,6 +652,10 @@ class Machine_Learning(object):
     
     def _fn_ML_sequence(self):
         self.fn_preprocessML()
+        self.fn_modelML()
+        self.fn_ML_fit()
+        self.fn_ML_save()
+        self.fn_diff_check()
         
     
     def fn_preprocessML(self):
@@ -1322,16 +1326,17 @@ class Viewer(object):
         global sel_cnt
         sel_cnt = 0
 
-        root_view = tkinter.Toplevel()
-        root_view.title(f"{database}" + ' / Viewer')
-        root_view.geometry("1720x1000")
-        root_view.resizable(False, False)
+        window_view = tkinter.Toplevel()
+        window_view.title(f"{database}" + ' / Viewer')
+        window_view.geometry("1720x1000")
+        window_view.resizable(False, False)
 
-        frame1 = Frame(root_view, relief="solid", bd=2)
+        frame1 = Frame(window_view, relief="solid", bd=2)
         frame1.pack(side="top", fill="both", expand=True)
-        self.frame2 = Frame(root_view, relief="solid", bd=2)
+        self.frame2 = Frame(window_view, relief="solid", bd=2)
         self.frame2.pack(side="bottom", fill="both", expand=True)
 
+        
         label_probename = Label(frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
         self.combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
@@ -1366,7 +1371,7 @@ class Viewer(object):
         # Change selected color
         style.map('Treeview', background=[('selected', '#347083')])
 
-        root_view.mainloop()
+        window_view.mainloop()
 
 
     def _fn_viewer_sequence(self):
@@ -1402,10 +1407,10 @@ class Viewer(object):
         btn_view = Button(self.frame2, width=15, height=2, text='Select & Detail', command=self.fn_detail_table)
         btn_view.place(x=350, y=5)
 
-        self.fn_tree_update(self.df)
+        self.fn_tree_update(df=self.df, frame=self.frame2)
         
     
-    def fn_tree_update(self, df=None, selected_input=None):
+    def fn_tree_update(self, df=None, selected_input=None, frame=None, treeline=20):
         try:
             ## tree table안에 있는 데이터를 선택해서 제일 앞에 있는 데이터를 (x1, x2, x3) 형태로 변수 update.
             def fn_click_item(event):
@@ -1419,40 +1424,30 @@ class Viewer(object):
                 for i in selectedItem:
                     sel_param_click.append(self.my_tree.item(i).get('values')[0])
                 str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
+                
 
-            # tree_scroll_y = Scrollbar(frame2, orient="vertical")
-            # tree_scroll_y.pack(side=RIGHT, fill=Y)
-            # tree_scroll_x = Scrollbar(frame2, orient="horizontal")
-            # tree_scroll_x.pack(side=BOTTOM, fill=X)
-
+            ## select_count가 1번 이상일 경우, tree_table reset.
             if sel_cnt == 1 and selected_input == None:
-                self.tree_scroll_y = Scrollbar(self.frame2, orient="vertical")
-                self.tree_scroll_y.pack(side=RIGHT, fill=Y)
-                self.tree_scroll_x = Scrollbar(self.frame2, orient="horizontal")
-                self.tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-                self.my_tree = ttk.Treeview(self.frame2, height=20, yscrollcommand=self.tree_scroll_y.set,
-                                        xscrollcommand=self.tree_scroll_x.set, selectmode="extended")
-                self.my_tree.pack(padx=20, pady=20, side='left')
+                pass
             
             else:
                 self.my_tree.destroy()
                 self.tree_scroll_y.destroy()
                 self.tree_scroll_x.destroy()
 
-                self.tree_scroll_y = Scrollbar(self.frame2, orient="vertical")
-                self.tree_scroll_y.pack(side=RIGHT, fill=Y)
-                self.tree_scroll_x = Scrollbar(self.frame2, orient="horizontal")
-                self.tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-                self.my_tree = ttk.Treeview(self.frame2, height=20, yscrollcommand=self.tree_scroll_y.set,
-                                        xscrollcommand=self.tree_scroll_x.set, selectmode="extended")
-                self.my_tree.pack(padx=20, pady=20, side='left')
-                # for i in my_tree.get_children():
-                #     my_tree.delete(i)
+            ## tree_table update
+            self.tree_scroll_y = Scrollbar(frame, orient="vertical")
+            self.tree_scroll_y.pack(side=RIGHT, fill=Y)
+            self.tree_scroll_x = Scrollbar(frame, orient="horizontal")
+            self.tree_scroll_x.pack(side=BOTTOM, fill=X)
 
+            self.my_tree = ttk.Treeview(frame, height=treeline, yscrollcommand=self.tree_scroll_y.set,
+                                    xscrollcommand=self.tree_scroll_x.set, selectmode="extended")
+            self.my_tree.pack(padx=20, pady=20, side='left')
+                
 
-            # event update시, func_click_item 수행.
+            ## event update시, func_click_item 수행.
             self.my_tree.bind('<ButtonRelease-1>', fn_click_item)
 
             self.tree_scroll_y.config(command=self.my_tree.yview)
@@ -1495,7 +1490,7 @@ class Viewer(object):
         connect = SQL(command = 3)
         self.df = connect.fn_sql_get()
         
-        self.fn_tree_update(df=self.df, selected_input=sel_data)
+        self.fn_tree_update(df=self.df, selected_input=sel_data, frame=self.frame2)
 
 
     def fn_on_selected(self, event):
@@ -1551,6 +1546,66 @@ class TxSumm(object):
 
         ShowTable.fn_show_table('Tx_summary', df_final_mode)
 
+
+class Verify_Report(Viewer):
+    def __init__(self,):
+        super().__init__()
+        
+        
+        self.initialize()
+
+                
+    def initialize(self):
+        global sel_cnt
+        sel_cnt = 0
+        
+        window_verify = tkinter.Toplevel()
+        window_verify.title(f"{database}" + ' / Verify Report')
+        window_verify.geometry("1720x1000")
+        window_verify.resizable(False, False)
+
+        self.frame1 = Frame(window_verify, relief="solid", bd=2)
+        self.frame1.pack(side="top", fill="both", expand=True)
+        self.frame2 = Frame(window_verify, relief="solid", bd=2)
+        self.frame2.pack(side="bottom", fill="both", expand=True)
+
+        label_probename = Label(self.frame1, text='Probe Name')
+        label_probename.place(x=5, y=5)
+        self.combo_probename = ttk.Combobox(self.frame1, value=list_probe, height=0, state='readonly')
+        self.combo_probename.place(x=115, y=5)
+        
+        # btn_view = Button(self.frame1, width=15, height=2, text='Select Table', command=self.fn_max_cons)
+        # btn_view.place(x=350, y=5)
+
+
+        # Add some style
+        style = ttk.Style()
+        # Pick a theme
+        style.theme_use("default")
+
+        # Configure our treeview colors
+        style.configure("Treeview",
+                        background="#D3D3D3",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#D3D3D3"
+                        )
+        # Change selected color
+        style.map('Treeview', background=[('selected', '#347083')])
+        
+        ## [meas_station_setup] load.
+        connect = SQL(command=5)
+        self.df = connect.fn_sql_get()
+        
+        sel_cnt += 1
+        Viewer.fn_tree_update(self, df=self.df, frame=self.frame1, treeline=10)
+        
+        
+        
+        window_verify.mainloop()
+    
+    # def fn_max_cons(self):
+    #     pass
 
 if __name__ == '__main__':
     TopMain()  
