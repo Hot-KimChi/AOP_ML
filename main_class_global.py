@@ -168,12 +168,12 @@ class SQL(object):
                 if selected_DBtable == 'SSR_table':
                     query = f'''
                     SELECT * FROM meas_station_setup WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
-                    ORDER BY 1
+                    ORDER BY 1 desc
                     '''
                 else:
                     query = f'''
                     SELECT * FROM {selected_DBtable} WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
-                    ORDER BY 1
+                    ORDER BY 1 desc
                     '''
 
             ## probe_geo database load.
@@ -186,18 +186,25 @@ class SQL(object):
             ## meas_station_setup database load
             elif self.command == 5:
                 query = f'''
-                SELECT * FROM meas_station_setup
+                    SELECT * FROM meas_station_setup
+                    ORDER BY 1 desc
+                    '''
+            
+            
+            elif self.command == 6:
+                query = f'''
+                SELECT * FROM meas_station_setup WHERE probeid = {selected_probeId}
                 ORDER BY 1 desc
                 '''
 
-
+                    
             Raw_data = pd.read_sql(sql=query, con=conn)
 
             return Raw_data
             conn.close()
 
         except:
-            print("Error: func_sql_get")
+            print("Error: fn_sql_get")
 
 
     ## SQL data get from database.
@@ -1328,8 +1335,8 @@ class Viewer(object):
 
         window_view = tkinter.Toplevel()
         window_view.title(f"{database}" + ' / Viewer')
-        window_view.geometry("1720x1000")
-        window_view.resizable(False, False)
+        window_view.geometry("1900x1100")
+        # window_view.resizable(False, False)
 
         frame1 = Frame(window_view, relief="solid", bd=2)
         frame1.pack(side="top", fill="both", expand=True)
@@ -1436,7 +1443,7 @@ class Viewer(object):
                 self.tree_scroll_x.destroy()
 
 
-            ## tree_table update
+            ## tree_table 생성 및 update
             self.tree_scroll_y = Scrollbar(frame, orient="vertical")
             self.tree_scroll_y.pack(side=RIGHT, fill=Y)
             self.tree_scroll_x = Scrollbar(frame, orient="horizontal")
@@ -1478,6 +1485,8 @@ class Viewer(object):
                     self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
                 count += 1
 
+            return self.my_tree
+            
         except:
             print("Error: fn_tree_update")
 
@@ -1547,11 +1556,9 @@ class TxSumm(object):
         ShowTable.fn_show_table('Tx_summary', df_final_mode)
 
 
-class Verify_Report(Viewer):
+class Verify_Report(object):
     def __init__(self,):
         super().__init__()
-        
-        
         self.initialize()
 
                 
@@ -1561,21 +1568,34 @@ class Verify_Report(Viewer):
         
         window_verify = tkinter.Toplevel()
         window_verify.title(f"{database}" + ' / Verify Report')
-        window_verify.geometry("1720x1000")
-        window_verify.resizable(False, False)
+        window_verify.geometry("1900x1100")
+        # window_verify.resizable(False, False)
 
         self.frame1 = Frame(window_verify, relief="solid", bd=2)
         self.frame1.pack(side="top", fill="both", expand=True)
         self.frame2 = Frame(window_verify, relief="solid", bd=2)
         self.frame2.pack(side="bottom", fill="both", expand=True)
 
+        
         label_probename = Label(self.frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
         self.combo_probename = ttk.Combobox(self.frame1, value=list_probe, height=0, state='readonly')
         self.combo_probename.place(x=115, y=5)
+        self.combo_probename.bind('<<ComboboxSelected>>', self.fn_sel_update)
+
+        btn_view = Button(self.frame1, width=15, height=2, text='Select & Load', command=self.fn_load_cond)
+        btn_view.place(x=350, y=5)
+
+        ## [meas_station_setup] load.
+        connect = SQL(command = 5)
+        self.df = connect.fn_sql_get()
         
-        # btn_view = Button(self.frame1, width=15, height=2, text='Select Table', command=self.fn_max_cons)
-        # btn_view.place(x=350, y=5)
+        sel_cnt += 1
+        Viewer.fn_tree_update(self, df=self.df, frame=self.frame1, treeline=10)
+
+        
+        btn_view = Button(self.frame2, width=15, height=2, text='Max Condition', command=self.fn_max_cond)
+        btn_view.place(x=5, y=5)
 
 
         # Add some style
@@ -1592,20 +1612,31 @@ class Verify_Report(Viewer):
                         )
         # Change selected color
         style.map('Treeview', background=[('selected', '#347083')])
-        
-        ## [meas_station_setup] load.
-        connect = SQL(command=5)
-        self.df = connect.fn_sql_get()
-        
-        sel_cnt += 1
-        Viewer.fn_tree_update(self, df=self.df, frame=self.frame1, treeline=10)
-        
-        
-        
+ 
+          
         window_verify.mainloop()
     
-    # def fn_max_cons(self):
-    #     pass
+    
+    def fn_sel_update(self, event):
+                
+        global selected_probeId, sel_cnt
+        selected_probeId = str(list_probeIds[self.combo_probename.current()])[1:-1]
+        
+        ## SQL class 객체 생성.
+        connect = SQL(command = 6)
+        self.df = connect.fn_sql_get()
+                
+        sel_cnt += 1
+        Viewer.fn_tree_update(self, df=self.df, frame=self.frame1, treeline=10)
+
+
+    def fn_load_cond(self):
+        pass
+
+
+            
+    def fn_max_cond(self):
+        pass
 
 if __name__ == '__main__':
     TopMain()  
