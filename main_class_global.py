@@ -49,18 +49,24 @@ class ShowTable(object):
             # Change selected color
             style.map('Treeview',
                     background=[('selected', '#347083')])
-
+                        
+            btn_view = Button(n_root, width=15, height=2, text='To_Excel', command=lambda: df.to_excel('123.csv'))
+            btn_view.place(x=35, y=5)
+            
             # Create Treeview Frame
-            frame1 = Frame(n_root)
-            frame1.pack(pady=20)
-
+            frame1 = Frame(n_root, relief="solid", bd=2)
+            frame1.pack(pady=50, fill="both", expand=True)
+            
+            
+            # frame1 = Frame(n_root)
+            # frame1.pack(pady=10)
 
             tree_scroll_y = Scrollbar(frame1, orient="vertical")
             tree_scroll_y.pack(side=RIGHT, fill=Y)
             tree_scroll_x = Scrollbar(frame1, orient="horizontal")
             tree_scroll_x.pack(side=BOTTOM, fill=X)
 
-            my_tree = ttk.Treeview(frame1, style="Treeview", height=20, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
+            my_tree = ttk.Treeview(frame1, style="Treeview", height=35, yscrollcommand=tree_scroll_y.set, xscrollcommand=tree_scroll_x.set, selectmode="extended")
             # Pack to the screen
             my_tree.pack()
 
@@ -72,7 +78,7 @@ class ShowTable(object):
 
             # Loop thru column list for headers
             for column in my_tree["column"]:
-                my_tree.column(column, width=110, minwidth=110)
+                my_tree.column(column, width=90, minwidth=90)
                 my_tree.heading(column, text=column)
 
             my_tree.tag_configure('oddrow', background="lightblue")
@@ -81,7 +87,6 @@ class ShowTable(object):
             # Put data in treeview
             df_rows = df.round(3)
             df_rows = df_rows.to_numpy().tolist()
-
 
             global count
             count = 0
@@ -197,7 +202,38 @@ class SQL(object):
                 ORDER BY 1 desc
                 '''
 
-                    
+            
+            elif self.command == 7:
+                query = f'''
+                SELECT
+                T.tempvrfid AS WCSId,
+                T.DataUsable,
+                T.measSSId, 
+                S.probeName,	
+                S.Exam, 
+                T.Mode, 
+                T.TxFrequencyHz, 
+                T.ElevIndex, 
+                T.NumTxCycles, 
+                T.WaveformStyle, 
+                T.ChModulationEn, 
+                T.SystemVolt,
+                S.SSRId, 
+                S.reportTerm_1, 
+                S.XP_Value_1,
+                S.reportValue_1, 
+                S.Difference_1, 
+                S.Ambient_Temp_1 
+                FROM dbo.tempVrf_result AS T
+
+                INNER JOIN dbo.SSR_table AS S
+                ON T.tempVrfId = S.WCSId
+
+                WHERE T.measSSId IN ({str_sel_param}) 
+                order by wcsid, datausable, ssrid
+                '''
+            
+            
             Raw_data = pd.read_sql(sql=query, con=conn)
 
             return Raw_data
@@ -1431,8 +1467,12 @@ class Viewer(object):
                 for i in selectedItem:
                     sel_param_click.append(self.my_tree.item(i).get('values')[0])
                 str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
+                print(str_sel_param)
                 
-
+            frame_list =[]
+            frame_list = frame
+            print(frame_list)
+            
             ## select_count가 1번 이상일 경우, tree_table reset.
             if sel_cnt == 1 and selected_input == None:
                 pass
@@ -1586,17 +1626,13 @@ class Verify_Report(object):
         btn_view = Button(self.frame1, width=15, height=2, text='Select & Load', command=self.fn_load_cond)
         btn_view.place(x=350, y=5)
 
-        ## [meas_station_setup] load.
+        
+        ## [meas_station_setup] load. / initial data update from SQL[measSSId]
         connect = SQL(command = 5)
         self.df = connect.fn_sql_get()
-        
+                
         sel_cnt += 1
-        Viewer.fn_tree_update(self, df=self.df, frame=self.frame1, treeline=10)
-
-        
-        btn_view = Button(self.frame2, width=15, height=2, text='Max Condition', command=self.fn_max_cond)
-        btn_view.place(x=5, y=5)
-
+        Viewer.fn_tree_update(self, df=self.df, frame=self.frame2, treeline=30)
 
         # Add some style
         style = ttk.Style()
@@ -1612,7 +1648,7 @@ class Verify_Report(object):
                         )
         # Change selected color
         style.map('Treeview', background=[('selected', '#347083')])
- 
+        
           
         window_verify.mainloop()
     
@@ -1627,13 +1663,21 @@ class Verify_Report(object):
         self.df = connect.fn_sql_get()
                 
         sel_cnt += 1
-        Viewer.fn_tree_update(self, df=self.df, frame=self.frame1, treeline=10)
-
+        Viewer.fn_tree_update(self, df=self.df, frame=self.frame2, treeline=30)
+        
 
     def fn_load_cond(self):
-        pass
-
-
+        ## SQL class 객체 생성.
+        connect = SQL(command = 7)
+        self.df = connect.fn_sql_get()
+        self.df = self.df.drop_duplicates(keep='first')
+        
+        if self.df['DataUsable'] == 'No':
+            pass
+        
+      
+        ShowTable.fn_show_table(selected_DBtable='WCS & SSR_table', df=self.df)
+        
             
     def fn_max_cond(self):
         pass
