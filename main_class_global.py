@@ -1672,10 +1672,16 @@ class Verify_Report(object):
         self.df = connect.fn_sql_get()
         self.df = self.df.drop_duplicates(keep='first')
         
-        if self.df['DataUsable'] == 'No':
-            pass
-        
-      
+        params = self.df['DataUsable'], self.df['SSRId'], self.df['reportTerm_1'], self.df['XP_Value_1'], self.df['reportValue_1'], self.df['Difference_1'], self.df['Ambient_Temp_1']
+        for usable, id, term, xp, value, diff, ambi in params:
+            if usable == 'No':
+                id = 'NULL'
+                term = 'NULL'
+                xp = 'NULL'
+                value = 'NULL'
+                diff = 'NULL'
+                ambi = 'NULL'
+     
         ShowTable.fn_show_table(selected_DBtable='WCS & SSR_table', df=self.df)
         
             
