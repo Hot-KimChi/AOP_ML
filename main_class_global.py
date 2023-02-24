@@ -207,6 +207,7 @@ class SQL(object):
                 query = f'''
                 SELECT
                 T.tempvrfid AS WCSId,
+                T.tempVrfResID,
                 T.DataUsable,
                 T.measSSId, 
                 S.probeName,	
@@ -218,6 +219,7 @@ class SQL(object):
                 T.WaveformStyle, 
                 T.ChModulationEn, 
                 T.SystemVolt,
+                T.MeasPurpose,
                 S.SSRId, 
                 S.reportTerm_1, 
                 S.XP_Value_1,
@@ -229,8 +231,8 @@ class SQL(object):
                 INNER JOIN dbo.SSR_table AS S
                 ON T.tempVrfId = S.WCSId
 
-                WHERE T.measSSId IN ({str_sel_param}) 
-                order by wcsid, datausable, ssrid
+                WHERE T.measSSId IN ({str_sel_param}) and T.MeasPurpose IN ('TMM', 'Still Air')
+                order by MeasPurpose, tempVrfResID, WCSId, DataUsable, SSRId
                 '''
             
             
@@ -1467,11 +1469,11 @@ class Viewer(object):
                 for i in selectedItem:
                     sel_param_click.append(self.my_tree.item(i).get('values')[0])
                 str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
-                print(str_sel_param)
                 
-            frame_list =[]
-            frame_list = frame
-            print(frame_list)
+                
+            # frame_list =[]
+            # frame_list = frame
+            
             
             ## select_count가 1번 이상일 경우, tree_table reset.
             if sel_cnt == 1 and selected_input == None:
@@ -1670,18 +1672,48 @@ class Verify_Report(object):
         ## SQL class 객체 생성.
         connect = SQL(command = 7)
         self.df = connect.fn_sql_get()
-        self.df = self.df.drop_duplicates(keep='first')
         
-        params = self.df['DataUsable'], self.df['SSRId'], self.df['reportTerm_1'], self.df['XP_Value_1'], self.df['reportValue_1'], self.df['Difference_1'], self.df['Ambient_Temp_1']
-        for usable, id, term, xp, value, diff, ambi in params:
+        
+        DataUsable_list = []
+        SSRId_list = []
+        reportTerm_1_list = []
+        XP_value_1_list = []
+        reportValue_1_list = []
+        Difference_1_list = []
+        Ambient_Temp_1_list = []
+         
+        # params = self.df['DataUsable'], self.df['SSRId'], self.df['reportTerm_1'], self.df['XP_Value_1'], self.df['reportValue_1'], self.df['Difference_1'], self.df['Ambient_Temp_1']
+        for usable, id, term, xp, value, diff, ambi in zip(self.df['DataUsable'], self.df['SSRId'], self.df['reportTerm_1'], self.df['XP_Value_1'], self.df['reportValue_1'], self.df['Difference_1'], self.df['Ambient_Temp_1']):
             if usable == 'No':
-                id = 'NULL'
-                term = 'NULL'
-                xp = 'NULL'
-                value = 'NULL'
-                diff = 'NULL'
-                ambi = 'NULL'
-     
+                DataUsable_list.append('No')
+                SSRId_list.append('NULL')
+                reportTerm_1_list.append('NULL')
+                XP_value_1_list.append('NULL')
+                reportValue_1_list.append('NULL')
+                Difference_1_list.append('NULL')
+                Ambient_Temp_1_list.append('NULL')
+            else:
+                DataUsable_list.append(usable)
+                SSRId_list.append(id)
+                reportTerm_1_list.append(term)
+                XP_value_1_list.append(xp)
+                reportValue_1_list.append(value)
+                Difference_1_list.append(diff)
+                Ambient_Temp_1_list.append(ambi)
+
+        ## drop table for param
+        self.df.drop(['DataUsable', 'SSRId', 'reportTerm_1', 'XP_Value_1', 'reportValue_1', 'Difference_1', 'Ambient_Temp_1'], axis=1, inplace=True)
+        
+        self.df['DataUsable'] = DataUsable_list
+        self.df['SSRId'] = SSRId_list
+        self.df['reportTerm_1'] = reportTerm_1_list
+        self.df['XP_Value_1'] = XP_value_1_list
+        self.df['reportValue_1'] = reportValue_1_list
+        self.df['Difference_1'] = Difference_1_list
+        self.df['Ambient_Temp_1'] = Ambient_Temp_1_list
+        
+        self.df = self.df.drop_duplicates(keep='first')     
+        
         ShowTable.fn_show_table(selected_DBtable='WCS & SSR_table', df=self.df)
         
             
