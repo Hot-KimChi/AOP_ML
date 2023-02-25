@@ -32,7 +32,7 @@ class ShowTable(object):
         try:
             n_root = tkinter.Toplevel()
             n_root.title(f"{database}  //  {selected_DBtable}")
-            n_root.geometry("1720x1000")
+            n_root.geometry("1850x1000")
 
             # Add some style
             style = ttk.Style()
@@ -206,12 +206,12 @@ class SQL(object):
             elif self.command == 7:
                 query = f'''
                 SELECT
-                T.tempvrfid AS WCSId,
+	            T.tempvrfid AS WCSId,
                 T.tempVrfResID,
                 T.DataUsable,
-                T.measSSId, 
                 S.probeName,	
                 S.Exam, 
+                S.measSSId, 
                 T.Mode, 
                 T.TxFrequencyHz, 
                 T.ElevIndex, 
@@ -219,20 +219,21 @@ class SQL(object):
                 T.WaveformStyle, 
                 T.ChModulationEn, 
                 T.SystemVolt,
-                T.MeasPurpose,
+                T.MeasPurpose,	
                 S.SSRId, 
                 S.reportTerm_1, 
                 S.XP_Value_1,
                 S.reportValue_1, 
                 S.Difference_1, 
                 S.Ambient_Temp_1 
+                
                 FROM dbo.tempVrf_result AS T
 
-                INNER JOIN dbo.SSR_table AS S
+                LEFT OUTER JOIN dbo.SSR_table AS S
                 ON T.tempVrfId = S.WCSId
 
-                WHERE T.measSSId IN ({str_sel_param}) and T.MeasPurpose IN ('TMM', 'Still Air')
-                order by MeasPurpose, tempVrfResID, WCSId, DataUsable, SSRId
+                WHERE S.measSSId IN ({str_sel_param}) and T.MeasPurpose IN ('TMM', 'Still Air')
+                ORDER BY tempVrfResID, MeasPurpose
                 '''
             
             
@@ -1373,7 +1374,7 @@ class Viewer(object):
 
         window_view = tkinter.Toplevel()
         window_view.title(f"{database}" + ' / Viewer')
-        window_view.geometry("1900x1100")
+        window_view.geometry("1800x1100")
         # window_view.resizable(False, False)
 
         frame1 = Frame(window_view, relief="solid", bd=2)
@@ -1610,7 +1611,7 @@ class Verify_Report(object):
         
         window_verify = tkinter.Toplevel()
         window_verify.title(f"{database}" + ' / Verify Report')
-        window_verify.geometry("1900x1100")
+        window_verify.geometry("1850x1000")
         # window_verify.resizable(False, False)
 
         self.frame1 = Frame(window_verify, relief="solid", bd=2)
@@ -1696,10 +1697,10 @@ class Verify_Report(object):
                 DataUsable_list.append(usable)
                 SSRId_list.append(id)
                 reportTerm_1_list.append(term)
-                XP_value_1_list.append(xp)
-                reportValue_1_list.append(value)
-                Difference_1_list.append(diff)
-                Ambient_Temp_1_list.append(ambi)
+                XP_value_1_list.append(round(xp, 2))
+                reportValue_1_list.append(round(value, 2))
+                Difference_1_list.append(round(diff, 2))
+                Ambient_Temp_1_list.append(round(ambi, 2))
 
         ## drop table for param
         self.df.drop(['DataUsable', 'SSRId', 'reportTerm_1', 'XP_Value_1', 'reportValue_1', 'Difference_1', 'Ambient_Temp_1'], axis=1, inplace=True)
