@@ -687,8 +687,8 @@ class Machine_Learning(object):
 
         label_ML = Label(frame1, text='Machine Learning')
         label_ML.place(x=5, y=5)
-        combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
-        combo_ML.place(x=5, y=25)
+        self.combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
+        self.combo_ML.place(x=5, y=25)
 
         btn_load = Button(frame1, width=15, height=2, text='Select & Train', command=self._fn_ML_sequence)
         btn_load.place(x=280, y=5)
@@ -795,6 +795,7 @@ class Machine_Learning(object):
         
     def fn_modelML(self):
         
+        self.selected_ML = self.combo_ML.get()
         self.train_input, self.test_input, self.train_target, self.test_target = train_test_split(self.data, self.target, test_size=0.2)
 
         ## 왼쪽 공백 삭제
@@ -1069,7 +1070,7 @@ class Machine_Learning(object):
                 hist = pd.DataFrame(history.history)
                 hist['epoch'] = history.epoch
 
-                plt.figure(figsize=(8, 12))
+                plt.figure(figsize=(8, 10))
 
                 plt.subplot(2, 1, 1)
                 plt.xlabel('Epoch')
@@ -1108,6 +1109,7 @@ class Machine_Learning(object):
 
             hist = pd.DataFrame(history.history)
             hist['epoch'] = history.epoch
+            print()
             print(hist.tail())
 
             plot_history(history)
