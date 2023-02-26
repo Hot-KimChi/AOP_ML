@@ -206,7 +206,7 @@ class SQL(object):
             elif self.command == 7:
                 query = f'''
                 SELECT
-	            T.tempvrfid AS WCSId,
+                T.tempvrfid AS WCSId,
                 T.tempVrfResID,
                 T.DataUsable,
                 S.probeName,	
@@ -229,11 +229,11 @@ class SQL(object):
                 
                 FROM dbo.tempVrf_result AS T
 
-                LEFT OUTER JOIN dbo.SSR_table AS S
-                ON T.tempVrfId = S.WCSId
+                INNER JOIN dbo.SSR_table AS S
+                ON T.tempVrfId = S.WCSId and T.tempVrfResID = S.measResId
 
                 WHERE S.measSSId IN ({str_sel_param}) and T.MeasPurpose IN ('TMM', 'Still Air')
-                ORDER BY tempVrfResID, MeasPurpose
+                order by tempVrfResID, MeasPurpose, WCSId
                 '''
             
             
@@ -350,8 +350,8 @@ class TopMain(tkinter.Tk):
         btn_ML = Button(window_Menu, width=30, height=3, text='Verification Report', command=Verify_Report)
         btn_ML.grid(row=1, column=1)
 
-        # btn_ML = Button(window_Menu, width=30, height=3, text='Machine Learning', command=func_machine_learning)
-        # btn_ML.grid(row=2, column=0)
+        btn_ML = Button(window_Menu, width=30, height=3, text='Machine Learning', command=Machine_Learning)
+        btn_ML.grid(row=2, column=0)
 
         window_Menu.mainloop()
     
@@ -1705,6 +1705,7 @@ class Verify_Report(object):
         ## drop table for param
         self.df.drop(['DataUsable', 'SSRId', 'reportTerm_1', 'XP_Value_1', 'reportValue_1', 'Difference_1', 'Ambient_Temp_1'], axis=1, inplace=True)
         
+        ## update list_values
         self.df['DataUsable'] = DataUsable_list
         self.df['SSRId'] = SSRId_list
         self.df['reportTerm_1'] = reportTerm_1_list
@@ -1713,6 +1714,7 @@ class Verify_Report(object):
         self.df['Difference_1'] = Difference_1_list
         self.df['Ambient_Temp_1'] = Ambient_Temp_1_list
         
+        ## 중복 제거
         self.df = self.df.drop_duplicates(keep='first')     
         
         ShowTable.fn_show_table(selected_DBtable='WCS & SSR_table', df=self.df)
