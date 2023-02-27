@@ -872,8 +872,8 @@ class Machine_Learning(object):
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
             ss.fit(train_poly)
-            train_scaled = ss.transform(train_poly)
-            test_scaled = ss.transform(test_poly)
+            self.train_scaled = ss.transform(train_poly)
+            self.test_scaled = ss.transform(test_poly)
 
 
             model1 = Ridge(alpha=0.1)
@@ -889,16 +889,16 @@ class Machine_Learning(object):
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
             ss.fit(self.train_input)
-            train_scaled = ss.transform(self.train_input)
-            test_scaled = ss.transform(self.test_input)
+            self.train_scaled = ss.transform(self.train_input)
+            self.test_scaled = ss.transform(self.test_input)
 
             from sklearn.linear_model import LinearRegression
             self.model = LinearRegression()
 
 
             ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
-            self.train_input = train_scaled
-            self.test_input = test_scaled
+            self.train_input = self.train_scaled
+            self.test_input = self.test_scaled
 
 
         ## StandardScaler 적용 with linear regression
@@ -913,15 +913,15 @@ class Machine_Learning(object):
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
             ss.fit(train_poly)
-            train_scaled = ss.transform(train_poly)
-            test_scaled = ss.transform(test_poly)
+            self.train_scaled = ss.transform(train_poly)
+            self.test_scaled = ss.transform(test_poly)
 
             from sklearn.linear_model import LinearRegression
             self.model = LinearRegression()
 
             ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
-            self.train_input = train_scaled
-            self.test_input = test_scaled
+            self.train_input = self.train_scaled
+            self.test_input = self.test_scaled
 
 
         ## Ridge regularization(L2 regularization)
@@ -936,15 +936,15 @@ class Machine_Learning(object):
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
             ss.fit(train_poly)
-            train_scaled = ss.transform(train_poly)
-            test_scaled = ss.transform(test_poly)
+            self.train_scaled = ss.transform(train_poly)
+            self.test_scaled = ss.transform(test_poly)
 
             from sklearn.linear_model import Ridge
             self.model = Ridge(alpha=0.1)
 
             ## PolynomialFeatures 데이터를 train_input / test_input에 넣어서 아래 common에 입력
-            self.train_input = train_scaled
-            self.test_input = test_scaled
+            self.train_input = self.train_scaled
+            self.test_input = self.test_scaled
 
 
             ## L2 하이퍼파라미터 찾기
@@ -956,10 +956,10 @@ class Machine_Learning(object):
             for alpha in alpha_list:
                 # 릿지모델 생성 & 훈련
                 self.model = Ridge(alpha=alpha)
-                self.model.fit(train_scaled, self.train_target)
+                self.model.fit(self.train_scaled, self.train_target)
                 # 훈련점수 & 테스트점수
-                train_score.append(self.model.score(train_scaled, self.train_target))
-                test_score.append(self.model.score(test_scaled, self.test_target))
+                train_score.append(self.model.score(self.train_scaled, self.train_target))
+                test_score.append(self.model.score(self.test_scaled, self.test_target))
 
             plt.plot(np.log10(alpha_list), train_score)
             plt.plot(np.log10(alpha_list), test_score)
@@ -976,21 +976,21 @@ class Machine_Learning(object):
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
             ss.fit(self.train_input)
-            train_scaled = ss.transform(self.train_input)
-            test_scaled = ss.transform(self.test_input)
+            self.train_scaled = ss.transform(self.train_input)
+            self.test_scaled = ss.transform(self.test_input)
 
-            self.model.fit(train_scaled, self.train_target)
+            self.model.fit(self.train_scaled, self.train_target)
 
 
-            scores = cross_validate(self.model, train_scaled, self.train_target, return_train_score=True, n_jobs=-1)
+            scores = cross_validate(self.model, self.train_scaled, self.train_target, return_train_score=True, n_jobs=-1)
             print()
             print(scores)
             print('결정트리 - Train R^2:', np.round_(np.mean(scores['train_score']), 3))
             print('결정트리 - Train_validation R^2:', np.round_(np.mean(scores['test_score']), 3))
 
             # dt.fit(train_scaled, train_target)
-            print('결정트리 - Test R^2:', np.round_(self.model.score(test_scaled, self.test_target), 3))
-            prediction = self.model.predict(test_scaled)
+            print('결정트리 - Test R^2:', np.round_(self.model.score(self.test_scaled, self.test_target), 3))
+            self.prediction = self.model.predict(self.test_scaled)
 
             df_import = pd.DataFrame()
             df_import = df_import.append(pd.DataFrame([np.round((self.model.feature_importances_) * 100, 2)],
@@ -1040,8 +1040,8 @@ class Machine_Learning(object):
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
             ss.fit(self.train_input)
-            train_scaled = ss.transform(self.train_input)
-            test_scaled = ss.transform(self.test_input)
+            self.train_scaled = ss.transform(self.train_input)
+            self.test_scaled = ss.transform(self.test_input)
 
 
             def fn_build_DNN():
@@ -1059,36 +1059,56 @@ class Machine_Learning(object):
             self.model = fn_build_DNN()
             print(self.model.summary())
 
-            example_batch = train_scaled[:10]
+            example_batch = self.train_scaled[:10]
             example_result = self.model.predict(example_batch)
             print('example_batch 형태:', example_batch.shape)
 
 
             import matplotlib.pyplot as plt
 
-            def plot_history(history):
+            def plot_data(history):
                 hist = pd.DataFrame(history.history)
                 hist['epoch'] = history.epoch
 
-                plt.figure(figsize=(8, 10))
+                plt.figure(figsize=(8, 8))
 
-                plt.subplot(2, 1, 1)
+                plt.subplot(2, 2, 1)
                 plt.xlabel('Epoch')
                 plt.ylabel('Mean Abs Error [Cm]')
                 plt.plot(hist['epoch'], hist['mae'], label='Train Error')
                 plt.plot(hist['epoch'], hist['val_mae'], label='Val Error')
-                plt.ylim([0, 1.25])
+                plt.ylim([0, 2])
                 plt.legend()
 
-                plt.subplot(2, 1, 2)
+                plt.subplot(2, 2, 2)
                 plt.xlabel('Epoch')
                 plt.ylabel('Mean Square Error [$Cm^2$]')
                 plt.plot(hist['epoch'], hist['mse'],
                         label='Train Error')
                 plt.plot(hist['epoch'], hist['val_mse'],
                         label='Val Error')
-                plt.ylim([0, 2])
+                plt.ylim([0, 3])
                 plt.legend()
+
+                ## test_target vs. prediction 차이
+                plt.subplot(2, 2, 3)
+                plt.scatter(self.test_target, self.prediction)
+                plt.xlabel('True Values [Cm]')
+                plt.ylabel('Predictions [Cm]')
+                plt.axis('equal')
+                plt.axis('square')
+                plt.xlim([0, plt.xlim()[1]])
+                plt.ylim([0, plt.ylim()[1]])
+                _ = plt.plot([-10, 10], [-10, 10])
+                
+                
+                ## 오차의 분표확인.
+                plt.subplot(2, 2, 4)
+                error = self.prediction - self.test_target
+                plt.hist(error, bins=25)
+                plt.xlabel('Prediction Error [Cm]')
+                _ = plt.ylabel('Count')
+
                 plt.show()
 
             ## 모델 훈련.
@@ -1099,49 +1119,27 @@ class Machine_Learning(object):
                     print('.', end='')
 
             EPOCHS = 1000
-
             self.model = fn_build_DNN()
 
             # patience 매개변수는 성능 향상을 체크할 에포크 횟수입니다
             early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
-            history = self.model.fit(train_scaled, self.train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
+            history = self.model.fit(self.train_scaled, self.train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
                                 callbacks=[early_stop, PrintDot()])
 
             hist = pd.DataFrame(history.history)
             hist['epoch'] = history.epoch
             print()
             print(hist.tail())
+            
 
-            plot_history(history)
-
-            loss, mae, mse = self.model.evaluate(test_scaled, self.test_target, verbose=2)
+            loss, mae, mse = self.model.evaluate(self.test_scaled, self.test_target, verbose=2)
             print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
 
             ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
-            test_predictions = self.model.predict(test_scaled).flatten()
-            print(test_predictions)
-            print(self.test_target)
-
-            import matplotlib.pyplot as plt
-            plt.scatter(self.test_target, test_predictions)
-
-            plt.xlabel('True Values [Cm]')
-            plt.ylabel('Predictions [Cm]')
-            plt.axis('equal')
-            plt.axis('square')
-            plt.xlim([0, plt.xlim()[1]])
-            plt.ylim([0, plt.ylim()[1]])
-            _ = plt.plot([-100, 100], [-100, 100])
-            plt.show()
-
-
-            ## 오차의 분표확인.
-            error = test_predictions - self.test_target
-            plt.hist(error, bins=25)
-            plt.xlabel('Prediction Error [Cm]')
-            _ = plt.ylabel('Count')
-            plt.show()
+            self.prediction = self.model.predict(self.test_scaled).flatten()
+            
+            plot_data(history)
 
 
         elif self.selected_ML == 'DNN_HonGong':
@@ -1159,8 +1157,8 @@ class Machine_Learning(object):
             from sklearn.preprocessing import StandardScaler
             ss = StandardScaler()
             ss.fit(self.train_input)
-            train_scaled = ss.transform(self.train_input)
-            test_scaled = ss.transform(self.test_input)
+            self.train_scaled = ss.transform(self.train_input)
+            self.test_scaled = ss.transform(self.test_input)
 
             def model_fn(a_layer=None):
                 model = keras.Sequential()
@@ -1188,7 +1186,7 @@ class Machine_Learning(object):
 
             checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5')
             early_stopping_cb = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-            history = self.model.fit(train_scaled, self.train_target, epochs=1000, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
+            history = self.model.fit(self.train_scaled, self.train_target, epochs=1000, validation_split=0.2, callbacks=[checkpoint_cb, early_stopping_cb])
 
             print()
             print('#Num of early_stopping:', early_stopping_cb.stopped_epoch)
@@ -1218,23 +1216,23 @@ class Machine_Learning(object):
             self.model = keras.models.load_model('best-model.h5')
             print()
             print('<Test evaluate>')
-            loss, mae, mse = self.model.evaluate(test_scaled, self.test_target, verbose=2)
-            print('Test evaluate:', self.model.evaluate(test_scaled, self.test_target))
+            loss, mae, mse = self.model.evaluate(self.test_scaled, self.test_target, verbose=2)
+            print('Test evaluate:', self.model.evaluate(self.test_scaled, self.test_target))
             print("테스트 세트의 평균 절대 오차: {:5.2f} Cm".format(mae))
 
 
-            prediction = self.model.predict(test_scaled).flatten()
+            self.prediction = self.model.predict(self.test_scaled).flatten()
 
 
             ## np.round_ error check. => why does works for this sequence?
-            prediction = np.around(prediction, 2)
+            self.prediction = np.around(self.prediction, 2)
             # prediction = {:.2f}.format(prediction)
-            df = pd.DataFrame(prediction, self.test_target)
+            df = pd.DataFrame(self.prediction, self.test_target)
             print('[csv 파일 추출 완료]')
             df.to_csv('test_est.csv')
 
             import matplotlib.pyplot as plt
-            plt.scatter(self.test_target, prediction)
+            plt.scatter(self.test_target, self.prediction)
             plt.xlabel('True Values [Cm]')
             plt.ylabel('Predictions [Cm]')
             plt.axis('equal')
@@ -1245,7 +1243,7 @@ class Machine_Learning(object):
             plt.show()
 
             ## 오차의 분표확인.
-            Error = prediction - self.test_target
+            Error = self.prediction - self.test_target
             plt.hist(Error, bins=25)
             plt.xlabel('Prediction Error [Cm]')
             _ = plt.ylabel('Count')
