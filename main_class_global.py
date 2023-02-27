@@ -1100,7 +1100,7 @@ class Machine_Learning(object):
                 plt.xlim([0, plt.xlim()[1]])
                 plt.ylim([0, plt.ylim()[1]])
                 _ = plt.plot([-10, 10], [-10, 10])
-                
+                plt.legend()
                 
                 ## 오차의 분표확인.
                 plt.subplot(2, 2, 4)
@@ -1108,7 +1108,9 @@ class Machine_Learning(object):
                 plt.hist(error, bins=25)
                 plt.xlabel('Prediction Error [Cm]')
                 _ = plt.ylabel('Count')
-
+                plt.legend()
+                
+                
                 plt.show()
 
             ## 모델 훈련.
@@ -1251,6 +1253,11 @@ class Machine_Learning(object):
 
     
     def fn_ML_fit(self):
+        ## DNN 인 경우, 아래와 같이 training
+        if "DNN" in self.selected_ML:
+            pass            
+            
+        else:
             scores = cross_validate(self.model, self.train_input, self.train_target, return_train_score=True, n_jobs=-1)
             print()
             print(scores)
@@ -1261,7 +1268,8 @@ class Machine_Learning(object):
             self.model.fit(self.train_input, self.train_target)
             print(f'{self.selected_ML} - Test R^2:', np.round_(self.model.score(self.test_input, self.test_target), 3))
             self.prediction = np.round_(self.model.predict(self.test_input), 2)
-
+            
+            ## feature import table pop-up
             if self.selected_ML == 'RandomForestRegressor':
                 self.fn_feature_import()
             else:
@@ -1269,17 +1277,18 @@ class Machine_Learning(object):
             
     
     def fn_ML_save(self):
+        newpath = './Model'
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
+        
         ## DNN 인 경우 아래와 같이 저장.
         if "DNN" in self.selected_ML:
             pass
-        
-        
+                
+                
         ## DNN 아닐 경우 아래와 같이 저장.
         else:
             ## modeling file 저장 장소.
-            newpath = './Model'
-            if not os.path.exists(newpath):
-                os.makedirs(newpath)
             joblib.dump(self.model, f'Model/{self.selected_ML}_v1_python37.pkl')
 
 
