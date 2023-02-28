@@ -703,11 +703,12 @@ class Machine_Learning(object):
         self.fn_ML_save()
         self.fn_diff_check()
         
-    
+        
     def fn_preprocessML(self):
         try:
             print(list_database)
-
+            
+            SQL_list = []
             ## K2, Juniper, NX3, NX2 and FROSK
             for i in list_database:
                 print(i)
@@ -730,7 +731,9 @@ class Machine_Learning(object):
                         ,d.[probePitchCm]
                         ,d.[probeRadiusCm]
                         ,d.[probeElevAperCm0]
+                        ,d.[probeElevAperCm1]
                         ,d.[probeElevFocusRangCm]
+                        ,d.[probeElevFocusRangCm1]
                         ,b.[measResId]
                         ,b.[zt]
                         ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
@@ -749,15 +752,29 @@ class Machine_Learning(object):
 
                 Raw_data = pd.read_sql(sql=query, con=conn)
                 print(Raw_data['probeName'].value_counts(dropna=False))
-                AOP_data = Raw_data.dropna()
-                AOP_data = AOP_data.append(AOP_data, ignore_index=True)
+                # AOP_data = Raw_data.dropna()
+                SQL_list.append(Raw_data)
             
+            ## 결합할 데이터프레임 list: SQL_list
+            AOP_data = pd.concat(SQL_list, ignore_index=True)
+            
+            
+            ## 결측치 제거 및 대체
+            AOP_data['probeRadiusCm'] = AOP_data['probeRadiusCm'].fillna(0)
+            AOP_data['probeElevAperCm1'] = AOP_data['probeElevAperCm1'].fillna(0)
+            AOP_data['probeElevFocusRangCm1'] = AOP_data['probeElevFocusRangCm1'].fillna(0)
+            AOP_data = AOP_data.drop(AOP_data[AOP_data['beamstyleIndex'] == 12].index)
+            AOP_data = AOP_data.dropna()
+            
+                        
             print(AOP_data.count())
             AOP_data.to_csv('AOP_data.csv')
 
-            self.data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
-                            'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0', 
-                            'probeElevFocusRangCm']].to_numpy()
+            self.feature_list = ['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
+                                 'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0', 
+                                 'probeElevAperCm1', 'probeElevFocusRangCm', 'probeElevFocusRangCm1']
+            ## feature 2개 추가.
+            self.data = AOP_data[self.feature_list].to_numpy()
             self.target = AOP_data['zt'].to_numpy()
         
         
@@ -769,9 +786,7 @@ class Machine_Learning(object):
         try:
             df_import = pd.DataFrame()
             df_import = df_import.append(pd.DataFrame([np.round((self.model.feature_importances_) * 100, 2)],
-                                        columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles', 
-                                                'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
-                                                'probeElevFocusRangCm']), ignore_index=True)
+                                        columns=self.feature_list), ignore_index=True)
 
             ShowTable.fn_show_table(f'{self.selected_ML}', df=df_import)
 
@@ -1045,13 +1060,13 @@ class Machine_Learning(object):
 
 
             def fn_build_DNN():
-                dense1 = keras.layers.Dense(100, activation='relu', input_shape=(11,), name='hidden')
+                dense1 = keras.layers.Dense(100, activation='relu', input_shape=(13,), name='hidden')
                 dense2 = keras.layers.Dense(10, activation='relu')
                 dense3 = keras.layers.Dense(1)
 
                 model = keras.Sequential([dense1, dense2, dense3])
 
-                optimizer = tf.keras.optimizers.RMSprop(0.001)
+                optimizer = tf.keras.optimizers.Adam(0.001)
 
                 model.compile(loss='mse', optimizer=optimizer, metrics=['mae', 'mse'])
                 return model
@@ -1100,7 +1115,7 @@ class Machine_Learning(object):
                 plt.xlim([0, plt.xlim()[1]])
                 plt.ylim([0, plt.ylim()[1]])
                 _ = plt.plot([-10, 10], [-10, 10])
-                plt.legend()
+                
                 
                 ## 오차의 분표확인.
                 plt.subplot(2, 2, 4)
@@ -1108,8 +1123,7 @@ class Machine_Learning(object):
                 plt.hist(error, bins=25)
                 plt.xlabel('Prediction Error [Cm]')
                 _ = plt.ylabel('Count')
-                plt.legend()
-                
+                                
                 
                 plt.show()
 
@@ -1124,7 +1138,7 @@ class Machine_Learning(object):
 
             # patience 매개변수는 성능 향상을 체크할 에포크 횟수입니다
             early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
-            history = self.model.fit(self.train_scaled, self.train_target, epochs=EPOCHS, validation_split=0.2, verbose=0,
+            history = self.model.fit(self.train_scaled, self.train_target, epochs=EPOCHS, batch_size= 3, validation_split=0.2, verbose=0,
                                 callbacks=[early_stop, PrintDot()])
 
             hist = pd.DataFrame(history.history)
@@ -1138,7 +1152,7 @@ class Machine_Learning(object):
 
 
             ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
-            self.prediction = round(self.model.predict(self.test_scaled).flatten(), 2)
+            self.prediction = self.model.predict(self.test_scaled).flatten()
             
             plot_data(history)
 
@@ -1163,7 +1177,7 @@ class Machine_Learning(object):
 
             def model_fn(a_layer=None):
                 model = keras.Sequential()
-                model.add(keras.layers.Flatten(input_shape=(11,), name='input'))
+                model.add(keras.layers.Flatten(input_shape=(13,), name='input'))
                 model.add(keras.layers.Dense(100, activation='relu', name='hidden1'))
                 model.add(keras.layers.Dense(10, activation='relu', name='hidden2'))
 
@@ -1336,9 +1350,7 @@ class Machine_Learning(object):
                 # df_bad_sort_values = df_bad_sort_values.reset_index(drop=True)
 
                 failed_condition = failed_condition.append(pd.DataFrame([self.test_input[i]],
-                                                                        columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
-                                                                                'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
-                                                                                'probeElevFocusRangCm']),
+                                                                        columns=self.feature_list),
                                                                         ignore_index=True)
 
 
@@ -1352,9 +1364,7 @@ class Machine_Learning(object):
                 # df_sort_values = df_sort_values.reset_index(drop=True)
 
                 pass_condition = pass_condition.append(pd.DataFrame([self.test_input[i]],
-                                                                    columns=['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
-                                                                            'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0',
-                                                                            'probeElevFocusRangCm']),
+                                                                    columns=self.feature_list),
                                                                     ignore_index=True)
 
         print()
