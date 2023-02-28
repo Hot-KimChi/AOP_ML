@@ -731,7 +731,6 @@ class Machine_Learning(object):
                         ,d.[probeRadiusCm]
                         ,d.[probeElevAperCm0]
                         ,d.[probeElevFocusRangCm]
-                        --,d.[probeElevFocusRangCm1]
                         ,b.[measResId]
                         ,b.[zt]
                         ,ROW_NUMBER() over (partition by a.measSetId order by b.measResId desc) as RankNo
@@ -752,8 +751,9 @@ class Machine_Learning(object):
                 print(Raw_data['probeName'].value_counts(dropna=False))
                 AOP_data = Raw_data.dropna()
                 AOP_data = AOP_data.append(AOP_data, ignore_index=True)
-
-            # AOP_data.to_csv('AOP_data.csv')
+            
+            print(AOP_data.count())
+            AOP_data.to_csv('AOP_data.csv')
 
             self.data = AOP_data[['txFrequencyHz', 'focusRangeCm', 'numTxElements', 'txpgWaveformStyle', 'numTxCycles',
                             'elevAperIndex', 'IsTxAperModulationEn', 'probePitchCm', 'probeRadiusCm', 'probeElevAperCm0', 
@@ -1070,7 +1070,7 @@ class Machine_Learning(object):
                 hist = pd.DataFrame(history.history)
                 hist['epoch'] = history.epoch
 
-                plt.figure(figsize=(8, 8))
+                plt.figure(figsize=(12, 8))
 
                 plt.subplot(2, 2, 1)
                 plt.xlabel('Epoch')
@@ -1113,8 +1113,7 @@ class Machine_Learning(object):
                 
                 plt.show()
 
-            ## 모델 훈련.
-            ## 에포크가 끝날 때마다 점(.)을 출력해 훈련 진행 과정을 표시합니다
+            ## 모델 훈련 / 에포크가 끝날 때마다 점(.)을 출력해 훈련 진행 과정을 표시합니다
             class PrintDot(keras.callbacks.Callback):
                 def on_epoch_end(self, epoch, logs):
                     if epoch % 100 == 0: print('')
@@ -1139,7 +1138,7 @@ class Machine_Learning(object):
 
 
             ## 테스트 세트에 있는 샘플을 사용해 zt 값을 예측하여 비교하기.
-            self.prediction = self.model.predict(self.test_scaled).flatten()
+            self.prediction = round(self.model.predict(self.test_scaled).flatten(), 2)
             
             plot_data(history)
 
@@ -1283,7 +1282,7 @@ class Machine_Learning(object):
         
         ## DNN 인 경우 아래와 같이 저장.
         if "DNN" in self.selected_ML:
-            pass
+            self.model.save(f'Model/{self.selected_ML}_v1_python37.h5')
                 
                 
         ## DNN 아닐 경우 아래와 같이 저장.
