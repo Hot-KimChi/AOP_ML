@@ -1047,7 +1047,7 @@ class Machine_Learning(object):
                                     'probeRadiusCm', 'probeElevAperCm0', 'probeElevFocusRangCm'])
             plt.show()
 
-
+        ## common DNN
         elif self.selected_ML == 'DL_DNN':
             import tensorflow as tf
             from tensorflow import keras
