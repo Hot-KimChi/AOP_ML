@@ -1157,7 +1157,8 @@ class Machine_Learning(object):
             
             plot_data(history)
 
-
+        
+        ## 위 아래 DNN 비교.
         elif self.selected_ML == 'DNN_HonGong':
             import tensorflow as tf
             from tensorflow import keras
