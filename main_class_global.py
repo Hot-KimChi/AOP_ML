@@ -435,13 +435,15 @@ class MeasSetGen(object):
         
         self.fn_dataout()
     
-        
+    
+    ## 파일 load
     def fn_loadfile(self):
         ### 데이터 파일 읽어오기.
         self.data = filedialog.askopenfilename(initialdir='.txt')
         self.data = pd.read_csv(self.data, sep='\t', encoding='cp949')
     
     
+    ## 대문자로 변경하여 param 선택.
     def fn_select(self):    
         ## columns name to 대문자.
         self.data.columns = [x.upper() for x in self.data.columns]
@@ -450,7 +452,7 @@ class MeasSetGen(object):
                     'PROBENUMTXCYCLES', 'ISTXCHANNELMODULATIONEN', 'ISPRESETCPAEN', 'CPADELAYOFFSETCLK', 'TXPULSERLE', 'TXPGWAVEFORMLUT', 'ELEVAPERINDEX',
                     'SYSTEMPULSERSEL', 'VTXINDEX']
         
-        ## list_param, 즉 선택한 parameter만 데이터프레임.
+        ## list_param, 즉 선택한 parameter만 데이터프레임 생성.
         self.df = self.data.loc[:, list_param]
         
         global selected_probeId
