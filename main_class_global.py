@@ -471,7 +471,8 @@ class MeasSetGen(object):
         self.df['dumpSwVersion'] = self.box_DumpSW.get()
         self.df['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
         
-        
+    
+    ## B / C / D / M 모드 구분하여 중복 삭제하고 난 후, merge.    
     def fn_merge_df(self):
         
         df = self.df
