@@ -503,7 +503,7 @@ class MeasSetGen(object):
         
         self.df = df_total
                 
-    
+    ## find freq index
     def fn_findOrgIdx(self):
         
         orgindex = []
