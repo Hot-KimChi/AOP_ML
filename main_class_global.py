@@ -502,6 +502,7 @@ class MeasSetGen(object):
         df_total['Count'] = dup_count['size']
         
         self.df = df_total
+     
                 
     ## find freq index
     def fn_findOrgIdx(self):
