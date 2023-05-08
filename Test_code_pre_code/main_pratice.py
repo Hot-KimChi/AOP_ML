@@ -28,66 +28,6 @@ pd.set_option('display.max_colwidth', None)
 # warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-def func_freqidx2Hz(idx):
-    try:
-        frequencyTable = [1000000,
-                          1111100,
-                          1250000,
-                          1333300,
-                          1428600,
-                          1538500,
-                          1666700,
-                          1818200,
-                          2000000,
-                          2222200,
-                          2500000,
-                          2666700,
-                          2857100,
-                          3076900,
-                          3333300,
-                          3636400,
-                          3809500,
-                          4000000,
-                          4210500,
-                          4444400,
-                          4705900,
-                          5000000,
-                          5333300,
-                          5714300,
-                          6153800,
-                          6666700,
-                          7272700,
-                          8000000,
-                          8888900,
-                          10000000,
-                          11428600,
-                          13333333,
-                          16000000,
-                          20000000,
-                          26666667,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600,
-                          11428600]
-        FreqIndex = idx
-        freqHz = frequencyTable[FreqIndex]
-
-        return freqHz
-
-    except:
-        print("Error: func_freqidx2Hz")
-
-
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
 def func_show_table(selected_DBtable, df=None, extra=None):
     try:
@@ -755,246 +695,299 @@ def func_viewer_database():
         print("Error: func_viewer_database")
 
 
-## 수정 필요. --> 10L4 Error 발생(Beamstyle)
-## UE 데이터 파라미터, 순서로 가져갈지 아니면 이름으로 가져갈지 확인 필요. --> 미팅 필요
-def func_measset_gen():
-    try:
-        def func_create_data():
-            try:
-                filename = filedialog.askopenfilename(initialdir='.txt')
-                df_UEdata = pd.read_csv(filename, sep='\t', encoding='cp949')
-                ## BeamStyle, TxFrequncyIndex, WF, Focus, Element, cycle, Chmodul, IsCPA, CPAclk, RLE, VTxIndex, elevAperIndex, SysPulserSelA
-                df_first = df_UEdata.iloc[:, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 15]]
+        ###################################
+        ##### MeasSetGeneration class #####
+        ###################################
 
-                ########################
-                ## B & M mode process ##
-                # df_sort_B = df_B_mode.sort_values(by=[df_B_mode.columns[0], df_B_mode.columns[1], df_B_mode.columns[2], df_B_mode.columns[5], df_B_mode.columns[3]], ascending=True)
-                # B_num = df_sort_B['TxFocusLocCm'].nunique()
-
-                df_B_mode = df_first.loc[(df_first['BeamStyleIndex'] == 0) | (df_first['BeamStyleIndex'] == 1)]
-                df_M_mode = df_first.loc[(df_first['BeamStyleIndex'] == 15) | (df_first['BeamStyleIndex'] == 20)]
-                df_C_mode = df_first.loc[df_first['BeamStyleIndex'] == 5]
-                df_D_mode = df_first.loc[df_first['BeamStyleIndex'] == 10]
-
-                df = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode])                                            ## 2개 데이터프레임 합치기
-                df = df.reset_index(drop=True)                                                                          ## 데이터프레임 index reset
-                df = df.fillna(0)                                                                                       ## 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
-
-                ## 중복된 parameter count 하기 위하여 groupby 진행.
-                list_params =['IsTxChannelModulationEn', 'SysTxFreqIndex', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'TxPulseRle', 'TxFocusLocCm', 'NumTxElements']
-                dup_count = df.groupby(by=list_params, as_index=False).count()                                          ## groupby로 중복 count.
-
-
-                ##  duplicated parameter check. => dup = df.duplicated(['SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles', 'IsTxChannelModulationEn', 'TxPulseRle'], keep='first')
-                ##  중복된 parameter가 있을 경우, 제거하기.
-                drop_dup = df.drop_duplicates(list_params)
-                sort_dup = drop_dup.sort_values(by=list_params, ascending=True).reset_index()
-
-
-                ## bsIndexTrace list만들어서 2개 DataFrame에서 zip으로 for문.
+        class MeasSetGen(object):
+            
+            def __init__(self) -> None:
+                ## tkinter button 여기에 입력?? 
+                
+                ## 데이터 파일 읽어오기.
+                self.data = filedialog.askopenfilename(initialdir='.txt')
+                self.data = pd.read_csv(self.data, sep='\t', encoding='cp949')
+                
+            
+            def fn_select(self):
+                ## columns name to 대문자.
+                self.data.columns = [x.upper() for x in self.data.columns]
+                
+                list_param = ['PROBENAME', 'MODE', 'SUBMODEINDEX', 'BEAMSTYLEINDEX', 'SYSTXFREQINDEX', 'TXPGWAVEFORMSTYLE', 'TXFOCUSLOCCM', 'NUMTXELEMENTS',
+                              'PROBENUMTXCYCLES', 'ISTXCHANNELMODULATIONEN', 'ISPRESETCPAEN', 'CPADELAYOFFSETCLK', 'TXPULSERLE', 'TXPGWAVEFORMLUT', 'ELEVAPERINDEX',
+                              'SYSTEMPULSERSEL', 'VTXINDEX']
+                
+                ## list_param, 즉 선택한 parameter만 데이터프레임.
+                self.df = self.data.loc[:, list_param]
+                
+                self.df['probeId'] = str(list_probeIds[combo_probename.current()])[1:-1]
+                self.df['probeName'] = str(list_probenames[combo_probename.current()])
+                self.df['maxTxVoltageVolt'] = box_MaxVolt.get()
+                self.df['ceilTxVoltageVolt'] = box_CeilVolt.get()
+                self.df['totalVoltagePt'] = box_TotalVoltpt.get()
+                self.df['numMeasVoltage'] = box_NumMeasVolt.get()
+                self.df['zStartDistCm'] = 0.5
+                self.df['DTxFreqIndex'] = 0
+                self.df['dumpSwVersion'] = box_DumpSW.get()
+                self.df['measSetComments'] = f'Beamstyle_{self.selected_probename}_Intensity'
+            
+            
+            def fn_merge_df(self):
+                
+                df = self.df
+                
+                ##### B & M mode process #####
+                df_B_mode = df.loc[(df['MODE'] == 'B')]
+                df_M_mode = df.loc[(df['MODE'] == 'M')]
+                df_C_mode = df.loc[df['MODE'] == 'Cb']
+                df_D_mode = df.loc[df['MODE'] == 'D']
+                df_CEUS_mode = df.loc[df['MODE'] == 'Contrast']
+                                
+                ## 4개 모드 데이터프레임 합치기 / 합쳐진 데이터프레임 index reset / 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
+                df_total = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode, df_CEUS_mode])                                            
+                df_total = df_total.reset_index(drop=True)                                                                          
+                df_total = df_total.fillna(0)
+                        
+                ## groupby count 를 위해 parameter setting 
+                self.group_params =['ISTXCHANNELMODULATIONEN', 'PROBENUMTXCYCLES', 'SYSTXFREQINDEX', 'TXPGWAVEFORMSTYLE', 'TXPULSERLE', 'ELEVAPERINDEX', 'TXFOCUSLOCCM', 'NUMTXELEMENTS']
+                
+                ## 중복된 column 갯수 세기 --> 중복된 열 삭제됨.
+                dup_count = df_total.groupby(self.group_params, as_index=False).size()
+                
+                ## 중복된 열 제거, 위쪽에 갯수와 동일하게 하기 위해, 동일하게 정열.                
+                ## 중복된 열 갯수를 df_total에 집어넣기.
+                df_total = df_total.drop_duplicates(subset = self.group_params, keep='first')
+                df_total = df_total.sort_values(by=self.group_params, ascending=True).reset_index()
+                df_total['Count'] = dup_count['size']
+                
+                self.df = df_total
+            
+            
+            def fn_findOrgIdx(self):
+                
+                orgindex = []
+                
+                for mode, subidx in zip(self.df['MODE'], self.df['SUBMODEINDEX']):
+                    if mode == 'B' and subidx == 0:
+                        orgindex.append(0)
+                    elif mode == 'B' and subidx == 1:
+                        orgindex.append(1)
+                    elif mode == 'Cb' and subidx == 0:
+                        orgindex.append(5)
+                    elif mode == 'D' and subidx == 0:
+                        orgindex.append(10)
+                    elif mode == 'M' and subidx == 0:
+                        orgindex.append(15)
+                    elif mode == 'M' and subidx == 1:
+                        orgindex.append(20)
+                
+                self.df['OrgBeamstyleIdx'] = orgindex
+            
+            
+            ## bsIndexTrace algorithm    
+            def fn_bsIdx(self):
+                
                 bsIndexTrace = []
-                for beam, cnt in zip(sort_dup['BeamStyleIndex'], dup_count['BeamStyleIndex']):
-                    if beam == 0 and cnt >= 2:
+                
+                for orgidx, cnt in zip(self.df['OrgBeamstyleIdx'], self.df['Count']):
+                    if orgidx == 0 and cnt >= 2:
                         bsIndexTrace.append(15)
-                    elif beam == 1 and cnt >= 2:
+                    elif orgidx == 1 and cnt >= 2:
                         bsIndexTrace.append(20)
-                    elif beam == 5 and cnt >= 2:
+                    elif orgidx == 5 and cnt >= 2:
                         bsIndexTrace.append(10)
                     else:
                         bsIndexTrace.append(0)
-                sort_dup['bsIndexTrace'] = bsIndexTrace
                 
+                self.df['bsIndexTrace'] = bsIndexTrace
+            
+            
+            ## FrequencyIndex to FrequencyHz    
+            def fn_freqidx2Hz(self):
+                try:
+                    frequencyTable = [1000000, 1111100, 1250000, 1333300, 1428600, 1538500, 1666700, 1818200, 2000000, 2222200,
+                                    2500000, 2666700, 2857100, 3076900, 3333300, 3636400, 3809500, 4000000, 4210500, 4444400,
+                                    4705900, 5000000, 5333300, 5714300, 6153800, 6666700, 7272700, 8000000, 8888900, 10000000,
+                                    11428600, 13333333, 16000000, 20000000, 26666667, 11428600, 11428600, 11428600, 11428600, 11428600,
+                                    11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600] 
+                    
+                    
+                    FrequencyHz = []
+                    for i in self.df['SYSTXFREQINDEX'].values:
+                        FrequencyHz.append(frequencyTable[i])
+                    
+                    self.df['TxFrequencyHz'] = FrequencyHz
+                                
+                except:
+                    print("Error: fn_freqidx2Hz")
+            
+            
+            ## Calc_cycle for RLE code
+            def fn_cnt_cycle(self):
 
-                ## FrequencyIndex to FrequencyHz
-                n = 0
-                FrequencyHz = []
-                for i in sort_dup['SysTxFreqIndex'].values:
-                    FrequencyHz.insert(n, func_freqidx2Hz(i))
-                    n += 1
-                sort_dup['TxFrequencyHz'] = FrequencyHz
+                list_cycle = []
+                for i in range(len(self.df['TXPGWAVEFORMSTYLE'])):
+                    if self.df['TXPGWAVEFORMSTYLE'][i] == 0:
+                        rle = self.df['TXPULSERLE'].str.split(":")[i]
+                        list_flt = list(map(float, rle))
+                        ## 아래 code도 가능.
+                        ## floatList = [float(x) for x in list_option]
+                        abs_value = np.abs(list_flt)
 
-
-                ## Calc_cycle for RLE code
-                def func_cnt_cycle():
-
-                    list_cycle = []
-                    for i in range(len(sort_dup['TxpgWaveformStyle'])):
-
-                        if sort_dup['TxpgWaveformStyle'][i] == 0:
-                            rle = sort_dup['TxPulseRle'].str.split(":")[i]
-                            list_flt = list(map(float, rle))
-                            ## 아래 code도 가능.
-                            ## floatList = [float(x) for x in list_option]
-                            abs_value = np.abs(list_flt)
-
-                            calc = []
-                            for value in abs_value:
-                                if 1 < value:
-                                    calc.append(round(value - 1, 4))
-                                else:
-                                    calc.append(value)
-                            cycle = round(sum(calc), 2)
-                            list_cycle.append(cycle)
-
-                        else:
-                            cycle = sort_dup['ProbeNumTxCycles'][i]
-                            list_cycle.append(cycle)
-
-                    return list_cycle
-
-                list_cycle = func_cnt_cycle()
-
-
-                ##  input parameter define.
-                global selected_probeId
-                selected_probeId = str(list_probeIds[combo_probename.current()])[1:-1]
-                selected_probename = str(list_probenames[combo_probename.current()])
-
-
-                sort_dup['probeId'] = selected_probeId
-                sort_dup['maxTxVoltageVolt'] = box_MaxVolt.get()
-                sort_dup['ceilTxVoltageVolt'] = box_CeilVolt.get()
-                sort_dup['totalVoltagePt'] = box_TotalVoltpt.get()
-                sort_dup['numMeasVoltage'] = box_NumMeasVolt.get()
-                sort_dup['ProbeNumTxCycles'] = list_cycle
-                sort_dup['zStartDistCm'] = 0.5
-                sort_dup['DTxFreqIndex'] = 0
-                sort_dup['dumpSwVersion'] = box_DumpSW.get()
-                sort_dup['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
-
-
-
-                ## function: calc_profTxVoltage 구현
-                def func_calc_profvolt():
-                    try:
-                        profTxVoltageVolt = []
-                        for str_maxV, str_ceilV, str_totalpt in zip(sort_dup['maxTxVoltageVolt'].values, sort_dup['ceilTxVoltageVolt'].values, sort_dup['totalVoltagePt'].values):
-                            idx = 2
-                            ## tkinter에서 넘어오는 데이터 string.
-                            maxV = float(str_maxV)
-                            ceilV = float(str_ceilV)
-                            totalpt = int(str_totalpt)
-
-                            profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt-1-idx)/(totalpt-1)), 2))
-                        sort_dup['profTxVoltageVolt'] = profTxVoltageVolt
-
-                    except():
-                        print('error: func_profvolt')
-
-
-                ## function: calc zMeasNum 구현
-                def func_zMeasNum():
-                    try:
-                        zStartDistCm = 0.5
-                        zMeasNum = []
-                        for focus in sort_dup['TxFocusLocCm']:
-                            if (focus <= 3):
-                                zMeasNum.append((5 - zStartDistCm) * 10)
-                            elif (focus <= 6):
-                                zMeasNum.append((8 - zStartDistCm) * 10)
-                            elif (focus <= 9):
-                                zMeasNum.append((12 - zStartDistCm) * 10)
+                        calc = []
+                        for value in abs_value:
+                            if 1 < value:
+                                calc.append(round(value-1, 4))
                             else:
-                                zMeasNum.append((14 - zStartDistCm) * 10)
-                        sort_dup['zMeasNum'] = zMeasNum
+                                calc.append(value)
+                        cycle = round(sum(calc), 2)
+                        list_cycle.append(cycle)
 
-                    except():
-                        print('error: func_zMeaNum')
+                    else:
+                        cycle = self.df['PROBENUMTXCYCLES'][i]
+                        list_cycle.append(cycle)
+                
+                self.df['ProbeNumTxCycles'] = list_cycle
+            
+            
+            ## function: calc_profTxVoltage 구현
+            def fn_calc_profvolt(self):
+                try:
+                    profTxVoltageVolt = []
+                    for str_maxV, str_ceilV, str_totalpt in zip(self.df['maxTxVoltageVolt'], self.df['ceilTxVoltageVolt'], self.df['totalVoltagePt']):
+                        idx = 2
+                        ## tkinter에서 넘어오는 데이터 string.
+                        maxV = float(str_maxV)
+                        ceilV = float(str_ceilV)
+                        totalpt = int(str_totalpt)
 
+                        profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt-1-idx)/(totalpt-1)), 2))
+                    
+                    self.df['profTxVoltageVolt'] = profTxVoltageVolt
 
-                func_calc_profvolt()
-                func_zMeasNum()
+                except:
+                    print('error: func_profvolt')
+            
+            
+            ## function: calc zMeasNum 구현
+            def fn_zMeasNum(self):
+                try:
+                    zStartDistCm = 0.5
+                    zMeasNum = []
+                    
+                    for focus in self.df['TXFOCUSLOCCM']:
+                        if (focus <= 3):
+                            zMeasNum.append((5 - zStartDistCm) * 10)
+                        elif (focus <= 6):
+                            zMeasNum.append((8 - zStartDistCm) * 10)
+                        elif (focus <= 9):
+                            zMeasNum.append((12 - zStartDistCm) * 10)
+                        else:
+                            zMeasNum.append((14 - zStartDistCm) * 10)
+                    
+                    self.df['zMeasNum'] = zMeasNum
 
-
-                ## sorting data
-                sort_dup = sort_dup.sort_values(by=[sort_dup.columns[1], sort_dup.columns[2], sort_dup.columns[7], sort_dup.columns[3], sort_dup.columns[6], sort_dup.columns[4]], ascending=True)
-
-                ## predict by Machine Learning model.
-                ## load modeling by pickle file.
-                loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
-
-                ## take parameters for ML from measSet_gen file.
-                est_params = sort_dup[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle',
-                                        'ProbeNumTxCycles', 'elevAperIndex', 'IsTxChannelModulationEn']]
-                est_geo = func_sql_get(server_address, ID, password, database, 4)
-
-                est_params[['probePitchCm']] = est_geo['probePitchCm']
-                est_params[['probeRadiusCm']] = est_geo['probeRadiusCm']
-                est_params[['probeElevAperCm0']] = est_geo['probeElevAperCm0']
-                est_params[['probeElevFocusRangCm']] = est_geo['probeElevFocusRangCm']
-
-
-                zt_est = loaded_model.predict(est_params)
-                df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
-
-                sort_dup['zt_est'] = round(df_zt_est, 1)
-
-
-                ## replace the location of data.
-                sorting_lists = ['measSetComments', 'probeId', 'BeamStyleIndex', 'bsIndexTrace', 'TxFrequencyHz',
-                                     'TxFocusLocCm', 'maxTxVoltageVolt', 'ceilTxVoltageVolt', 'profTxVoltageVolt',
-                                     'totalVoltagePt', 'numMeasVoltage', 'NumTxElements', 'TxpgWaveformStyle',
-                                     'ProbeNumTxCycles', 'elevAperIndex', 'zStartDistCm', 'zMeasNum',
-                                     'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
-                                     'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk', 'zt_est']
-                df_intensity = sort_dup[sorting_lists]
-
-
-                ## Power condition and Temperature condition 생성.
-                ## 필요없는 column 삭제.
-                df_drop = sort_dup.drop(columns=['TxFocusLocCm', 'NumTxElements'])
-
-                ## 중복된 데이터의 삭제.
-                list_params = ['BeamStyleIndex', 'IsTxChannelModulationEn', 'TxFrequencyHz', 'TxpgWaveformStyle',
-                               'ProbeNumTxCycles', 'TxPulseRle']
-                df_drop_ORG = df_drop.drop_duplicates(list_params)
-
-                # def func_cnt_cycle():
-                #
-                #     list_rle = []
-                #     for wf in df_drop_ORG['TxpgWaveformStyle']:
-                #         if wf == 0:
-                #             list_rle.append(df_drop_ORG['TxPulseRle'].split(":"))
-                #
-                #         else:
-                #             list_rle.append(0)
-                #     print(list_rle)
-                #
-                # func_cnt_cycle()
-                df_power = df_drop_ORG
-                df_temperature = df_drop_ORG
+                except:
+                    print('error: func_zMeaNum')
+                    
+                             
+            def fn_dataout(self):
+                
+                ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
+                sort_params = ['OrgBeamstyleIdx'] + self.group_params
+                df_sort = self.df.sort_values(by=sort_params, ascending=True).reset_index()
+                
+                ## data-out
+                df = df_sort
+                df.to_csv('./example/MeasSetGen/csv_files/check_20230128.csv')    
+ 
+                
+                
+            ## sorting data
+            sort_dup = sort_dup.sort_values(by=[sort_dup.columns[1], sort_dup.columns[2], sort_dup.columns[7], sort_dup.columns[3], sort_dup.columns[6], sort_dup.columns[4]], ascending=True)
 
 
-                df_temperature['measSetComments'] = f'Beamstyle_{selected_probename}_Temperature'
-                df_temperature['TxFocusLocCm'] = sort_dup['TxFocusLocCm'].max()
-                df_temperature['NumTxElements'] = sort_dup['NumTxElements'].max()
-                df_temperature['zt_est'] = 0
-                df_temperature = df_temperature[sorting_lists]
+            ## predict by Machine Learning model.
+            ## load modeling by pickle file.
+            loaded_model = joblib.load('../Model/RandomForest_v1_python37.pkl')
+
+            ## take parameters for ML from measSet_gen file.
+            est_params = sort_dup[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'elevAperIndex', 'IsTxChannelModulationEn']]
+            est_geo = func_sql_get(server_address, ID, password, database, 4)
+
+            est_params[['probePitchCm']] = est_geo['probePitchCm']
+            est_params[['probeRadiusCm']] = est_geo['probeRadiusCm']
+            est_params[['probeElevAperCm0']] = est_geo['probeElevAperCm0']
+            est_params[['probeElevFocusRangCm']] = est_geo['probeElevFocusRangCm']
 
 
-                df_power['measSetComments'] = f'Beamstyle_{selected_probename}_Power'
-                df_power['TxFocusLocCm'] = sort_dup['TxFocusLocCm'].max()
-                df_power[['NumTxElements']] = int(round(1 / est_geo['probePitchCm']))
-                df_power['zt_est'] = 0
-                df_power = df_power[sorting_lists]
+            zt_est = loaded_model.predict(est_params)
+            df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
+
+            sort_dup['zt_est'] = round(df_zt_est, 1)
 
 
-                df_merge = pd.concat([df_intensity, df_temperature, df_power])
-                print(df_merge)
+            ## replace the location of data.
+            sorting_lists = ['measSetComments', 'probeId', 'BeamStyleIndex', 'bsIndexTrace', 'TxFrequencyHz',
+                                    'TxFocusLocCm', 'maxTxVoltageVolt', 'ceilTxVoltageVolt', 'profTxVoltageVolt',
+                                    'totalVoltagePt', 'numMeasVoltage', 'NumTxElements', 'TxpgWaveformStyle',
+                                    'ProbeNumTxCycles', 'elevAperIndex', 'zStartDistCm', 'zMeasNum',
+                                    'IsTxChannelModulationEn', 'dumpSwVersion', 'DTxFreqIndex', 'VTxIndex',
+                                    'IsPresetCpaEn', 'TxPulseRle', 'SystemPulserSel', 'CpaDelayOffsetClk', 'zt_est']
+            df_intensity = sort_dup[sorting_lists]
 
 
-                func_show_table(selected_DBtable='meas_setting', df=df_merge)
-                LUT_count = box_DumpSW.get()
+            ## Power condition and Temperature condition 생성.
+            ## 필요없는 column 삭제.
+            df_drop = sort_dup.drop(columns=['TxFocusLocCm', 'NumTxElements'])
 
-                newpath = f'./{database}'
-                if not os.path.exists(newpath):
-                    os.makedirs(newpath)
-                df_merge.to_csv(f'./{database}/meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
+            ## 중복된 데이터의 삭제.
+            list_params = ['BeamStyleIndex', 'IsTxChannelModulationEn', 'TxFrequencyHz', 'TxpgWaveformStyle',
+                            'ProbeNumTxCycles', 'TxPulseRle']
+            df_drop_ORG = df_drop.drop_duplicates(list_params)
 
-                return df_merge
+            # def func_cnt_cycle():
+            #
+            #     list_rle = []
+            #     for wf in df_drop_ORG['TxpgWaveformStyle']:
+            #         if wf == 0:
+            #             list_rle.append(df_drop_ORG['TxPulseRle'].split(":"))
+            #
+            #         else:
+            #             list_rle.append(0)
+            #     print(list_rle)
+            #
+            # func_cnt_cycle()
+            df_power = df_drop_ORG
+            df_temperature = df_drop_ORG
 
-            except:
-                print("Error: func_create_data")
+
+            df_temperature['measSetComments'] = f'Beamstyle_{selected_probename}_Temperature'
+            df_temperature['TxFocusLocCm'] = sort_dup['TxFocusLocCm'].max()
+            df_temperature['NumTxElements'] = sort_dup['NumTxElements'].max()
+            df_temperature['zt_est'] = 0
+            df_temperature = df_temperature[sorting_lists]
+
+
+            df_power['measSetComments'] = f'Beamstyle_{selected_probename}_Power'
+            df_power['TxFocusLocCm'] = sort_dup['TxFocusLocCm'].max()
+            df_power[['NumTxElements']] = int(round(1 / est_geo['probePitchCm']))
+            df_power['zt_est'] = 0
+            df_power = df_power[sorting_lists]
+
+
+            df_merge = pd.concat([df_intensity, df_temperature, df_power])
+            print(df_merge)
+
+
+            func_show_table(selected_DBtable='meas_setting', df=df_merge)
+            LUT_count = box_DumpSW.get()
+
+            newpath = f'./{database}'
+            if not os.path.exists(newpath):
+                os.makedirs(newpath)
+            df_merge.to_csv(f'./{database}/meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
+
 
 
         def func_insert_data():
@@ -1054,7 +1047,7 @@ def func_measset_gen():
                 conn.commit()
                 conn.close()
 
-            except():
+            except:
                 print('error: func_insert_data')
 
 
@@ -1879,7 +1872,7 @@ def func_main():
             list_probe.append('  |  '.join(map(str, list_probeinfor[i])))
 
 
-        btn_gen = Button(root_main, width=30, height=3, text='MeasSetGeneration', command=func_measset_gen)
+        btn_gen = Button(root_main, width=30, height=3, text='MeasSetGeneration', command=MeasSetGen)
         btn_gen.grid(row=0, column=0)
 
         btn_sum = Button(root_main, width=30, height=3, text='SQL Viewer', command=func_viewer_database)

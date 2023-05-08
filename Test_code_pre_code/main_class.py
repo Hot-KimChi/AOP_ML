@@ -499,7 +499,7 @@ class MeasSetGen(object):
     def fn_predictML(self):
         ## predict by Machine Learning model.
         ## load modeling by pickle file.
-        loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
+        loaded_model = joblib.load('../Model/RandomForest_v1_python37.pkl')
 
         ## take parameters for ML from measSet_gen file.
         est_params = self.df[['TxFrequencyHz', 'TXFOCUSLOCCM', 'NUMTXELEMENTS', 'TXPGWAVEFORMSTYLE', 'ProbeNumTxCycles', 'ELEVAPERINDEX', 'ISTXCHANNELMODULATIONEN']]
