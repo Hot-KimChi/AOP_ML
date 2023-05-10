@@ -50,7 +50,7 @@ class ShowTable(object):
             style.map('Treeview',
                     background=[('selected', '#347083')])
                         
-            btn_view = Button(n_root, width=15, height=2, text='To_Excel', command=lambda: df.to_excel('123.csv'))
+            btn_view = Button(n_root, width=15, height=2, text='To_Excel', command=lambda: df.to_csv('save.csv'))
             btn_view.place(x=35, y=5)
             
             # Create Treeview Frame
