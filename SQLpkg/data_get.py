@@ -2,37 +2,37 @@ import pymssql
 
 
 class SQL(object):
-    def __init__(self, server_address, ID, password, database, command=None,
-                 selected_DBtable=None, selected_probeId=None, str_sel_param=None):
+    def __init__(self, server_address, server_id, password, database, command=None,
+                 selected_DBtable=None, selected_probeid=None, str_sel_param=None):
 
         super().__init__()
         self.command = command
         self.server_address = server_address
-        self.ID = ID
+        self.ID = server_id
         self.password = password
         self.database = database
         self.selected_DBtable = selected_DBtable
-        self.selected_probeId = selected_probeId
+        self.selected_probeId = selected_probeid
         self.str_sel_param = str_sel_param
 
 
     ## SQL 데이터베이스에 접속하여 데이터 load.
     def fn_sql_get(self):
         try:
-            conn = pymssql.connect(server_address, ID, password, database)
+            conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
 
             if self.command > 7:
                 query = "f'''" + self.command + "'''"
 
             elif self.command == 0:
-                if selected_DBtable == 'SSR_table':
+                if self.selected_DBtable == 'SSR_table':
                     query = f'''
-                    SELECT * FROM meas_station_setup WHERE probeId = {selected_probeId}
+                    SELECT * FROM meas_station_setup WHERE probeId = {self.selected_probeId}
                     ORDER BY 1 desc
                     '''
                 else:
                     query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
+                    SELECT * FROM {self.selected_DBtable} WHERE probeId = {self.selected_probeId}
                     ORDER BY 1
                     '''
 
