@@ -1,7 +1,12 @@
 from tkinter import filedialog
 import pandas as pd
 
-class DataInOut():
+
+class DataInOut:
+
+    def __int__(self):
+
+
 
     def fn_loadfile(self):
         ### 데이터 파일 읽어오기.

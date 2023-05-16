@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/MeasSetGen_pkg/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MeasSetGen_pkg/merge_df.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MeasSetGen_pkg/param_select.py" afterDir="false" />
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update package files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_pkg.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_pkg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +27,14 @@
   }
 }]]></component>
   <component name="TaskManager">
+    <task id="LOCAL-00001" summary="update package files">
+      <created>1684220265226</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1684220265226</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -44,5 +47,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update package files" />
+    <option name="LAST_COMMIT_MESSAGE" value="update package files" />
   </component>
 </project>

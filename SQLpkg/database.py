@@ -1,20 +1,25 @@
+import pandas as pd
 import pymssql
 
 
-class SQL(object):
-    def __init__(self, server_address, server_id, password, database, command=None,
-                 selected_DBtable=None, selected_probeid=None, str_sel_param=None):
-
-        super().__init__()
-        self.command = command
+class DBInfor(object):
+    def __init__(self, server_address, server_id, password, database):
         self.server_address = server_address
         self.ID = server_id
         self.password = password
         self.database = database
-        self.selected_DBtable = selected_DBtable
-        self.selected_probeId = selected_probeid
-        self.str_sel_param = str_sel_param
 
+
+class SQL(DBInfor):
+    def __init__(self, command=None, selected_DBtable=None, selected_probeId=None,
+                 selected_measSSId=None, selected_param=None, sel_data=None):
+        super().__init__()
+        self.command = command
+        self.selected_DBtable = selected_DBtable
+        self.selected_probeId = selected_probeId
+        self.selected_measSSId = selected_measSSId
+        self.selected_param = selected_param
+        self.sel_data = sel_data
 
     ## SQL 데이터베이스에 접속하여 데이터 load.
     def fn_sql_get(self):
@@ -36,43 +41,48 @@ class SQL(object):
                     ORDER BY 1
                     '''
 
+
             elif self.command == 1:
                 query = '''
                 SELECT probeName, probeId FROM probe_geo 
                 order by probeName, probeId
                 '''
 
+
             elif self.command == 2:
-                if selected_DBtable == 'SSR_table':
+                if self.selected_DBtable == 'SSR_table':
                     query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE measSSId IN {str_sel_param}
+                    SELECT * FROM {self.selected_DBtable} WHERE measSSId IN {self.selected_measSSId}
                     ORDER BY measSSId, 1
                     '''
 
                 else:
                     query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE probeId = {selected_probeId}
+                    SELECT * FROM {self.selected_DBtable} WHERE probeId = {self.selected_probeId}
                     ORDER BY 1
                     '''
 
+
             elif self.command == 3:
-                if selected_DBtable == 'SSR_table':
+                if self.selected_DBtable == 'SSR_table':
                     query = f'''
-                    SELECT * FROM meas_station_setup WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
+                    SELECT * FROM meas_station_setup WHERE probeid = {self.selected_probeId} and {self.selected_param} = '{self.sel_data}' 
                     ORDER BY 1 desc
                     '''
                 else:
                     query = f'''
-                    SELECT * FROM {selected_DBtable} WHERE probeid = {selected_probeId} and {selected_param} = '{sel_data}' 
+                    SELECT * FROM {self.selected_DBtable} WHERE probeid = {self.selected_probeId} and {self.selected_param} = '{self.sel_data}' 
                     ORDER BY 1 desc
                     '''
+
 
             ## probe_geo database load.
             elif self.command == 4:
                 query = f'''
-                SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevFocusRangCm] FROM probe_geo WHERE probeid = {selected_probeId}
+                SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevFocusRangCm] FROM probe_geo WHERE probeid = {self.selected_probeId}
                 ORDER BY 1
                 '''
+
 
             ## meas_station_setup database load
             elif self.command == 5:
@@ -84,7 +94,7 @@ class SQL(object):
 
             elif self.command == 6:
                 query = f'''
-                SELECT * FROM meas_station_setup WHERE probeid = {selected_probeId}
+                SELECT * FROM meas_station_setup WHERE probeid = {self.selected_probeId}
                 ORDER BY 1 desc
                 '''
 
@@ -118,7 +128,7 @@ class SQL(object):
                 INNER JOIN dbo.SSR_table AS S
                 ON T.tempVrfId = S.WCSId and T.tempVrfResID = S.measResId
 
-                WHERE S.measSSId IN ({str_sel_param}) and T.MeasPurpose IN ('TMM', 'Still Air')
+                WHERE S.measSSId IN ({self.selected_measSSId}) and T.MeasPurpose IN ('TMM', 'Still Air')
                 order by tempVrfResID, MeasPurpose, WCSId
                 '''
 
@@ -137,6 +147,7 @@ class SQL(object):
             selected_param = param
             print(selected_param)
             list_datas = df['Software_version'].values.tolist()
+
             # list_datas = df[f'{selected_param}'].values.tolist()
             # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
             set_datas = set(list_datas)
