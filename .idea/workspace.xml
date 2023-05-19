@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update package files">
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update package files&#10;- database file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,10 +19,14 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/PycharmProjects/ML_DL_study"
+    "last_opened_file_path": "D:/PycharmProjects/ML_DL_study",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="TaskManager">
@@ -34,7 +37,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684220265226</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="update package files&#10;- database file">
+      <created>1684246532205</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1684246532205</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -50,6 +60,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update package files" />
-    <option name="LAST_COMMIT_MESSAGE" value="update package files" />
+    <MESSAGE value="update package files&#10;- database file" />
+    <option name="LAST_COMMIT_MESSAGE" value="update package files&#10;- database file" />
   </component>
 </project>
