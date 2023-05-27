@@ -1,14 +1,23 @@
+import tkinter
+from tkinter import *
+from tkinter import ttk
+from MeasSetGen_pkg import data_inout
+from MeasSetGen_pkg import param_select
+from MeasSetGen_pkg import merge_df
+from MeasSetGen_pkg import param_gen
 
-class MeasSetGen(object):
 
-    def __init__(self):
-        super().__init__()
+class MeasSetGen:
+
+    def __init__(self, database, list_probe):
         self.initialize()
+        self.database = database
+        self.list_probe = list_probe
 
 
     def initialize(self):
         window_gen = tkinter.Toplevel()
-        window_gen.title(f"{database}" + ' / MeasSet_generation')
+        window_gen.title(f"{self.database}" + ' / MeasSet_generation')
         window_gen.geometry("600x200")
         window_gen.resizable(False, False)
 
@@ -17,7 +26,7 @@ class MeasSetGen(object):
 
         label_probename = Label(frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
-        self.combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
+        self.combo_probename = ttk.Combobox(frame1, value=self.list_probe, height=0, state='readonly')
         self.combo_probename.place(x=5, y=25)
 
         btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=self._fn_gen_sequence)
@@ -25,41 +34,41 @@ class MeasSetGen(object):
 
         btn_insert = Button(frame1, width=15, height=2, text='To MS-SQL', command=self.fn_dataout)
         btn_insert.place(x=350, y=5)
-
-        frame2 = Frame(window_gen, relief="solid", bd=2)
-        frame2.pack(side="bottom", fill="both", expand=True)
-
-        # Labels
-        label_DumpSW = Label(frame2, text="[dumpSwVersion]")
-        label_DumpSW.grid(row=0, column=0)
-
-        label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
-        label_MaxVolt.grid(row=2, column=0)
-
-        label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
-        label_CeilVolt.grid(row=2, column=1)
-
-        label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
-        label_TotalVoltpt.grid(row=2, column=2)
-
-        label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
-        label_NumMeasVolt.grid(row=2, column=3)
-
-        # Entry boxes
-        self.box_DumpSW = Entry(frame2, justify='center')
-        self.box_DumpSW.grid(row=1, column=0)
-
-        self.box_MaxVolt = Entry(frame2, justify='center')
-        self.box_MaxVolt.grid(row=3, column=0)
-
-        self.box_CeilVolt = Entry(frame2, justify='center')
-        self.box_CeilVolt.grid(row=3, column=1)
-
-        self.box_TotalVoltpt = Entry(frame2, justify='center')
-        self.box_TotalVoltpt.grid(row=3, column=2)
-
-        self.box_NumMeasVolt = Entry(frame2, justify='center')
-        self.box_NumMeasVolt.grid(row=3, column=3)
+        #
+        # frame2 = Frame(window_gen, relief="solid", bd=2)
+        # frame2.pack(side="bottom", fill="both", expand=True)
+        #
+        # # Labels
+        # label_DumpSW = Label(frame2, text="[dumpSwVersion]")
+        # label_DumpSW.grid(row=0, column=0)
+        #
+        # label_MaxVolt = Label(frame2, text="[maxTxVoltageVolt]")
+        # label_MaxVolt.grid(row=2, column=0)
+        #
+        # label_CeilVolt = Label(frame2, text="[ceilTxVoltageVolt]")
+        # label_CeilVolt.grid(row=2, column=1)
+        #
+        # label_TotalVoltpt = Label(frame2, text="[totalVoltagePt]")
+        # label_TotalVoltpt.grid(row=2, column=2)
+        #
+        # label_NumMeasVolt = Label(frame2, text="[numMeasVoltage]")
+        # label_NumMeasVolt.grid(row=2, column=3)
+        #
+        # # Entry boxes
+        # self.box_DumpSW = Entry(frame2, justify='center')
+        # self.box_DumpSW.grid(row=1, column=0)
+        #
+        # self.box_MaxVolt = Entry(frame2, justify='center')
+        # self.box_MaxVolt.grid(row=3, column=0)
+        #
+        # self.box_CeilVolt = Entry(frame2, justify='center')
+        # self.box_CeilVolt.grid(row=3, column=1)
+        #
+        # self.box_TotalVoltpt = Entry(frame2, justify='center')
+        # self.box_TotalVoltpt.grid(row=3, column=2)
+        #
+        # self.box_NumMeasVolt = Entry(frame2, justify='center')
+        # self.box_NumMeasVolt.grid(row=3, column=3)
 
         window_gen.mainloop()
 

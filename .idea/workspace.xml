@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="find original index add">
-      <change afterPath="$PROJECT_DIR$/MeasSetGen_pkg/param_gen.py" afterDir="false" />
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="change class and feature.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/find_OrgIndex.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/param_select.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/param_select.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +78,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684594663413</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="change class and feature.">
+      <created>1684767367604</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1684767367604</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -97,6 +104,7 @@
     <MESSAGE value="update package files&#10;- database file" />
     <MESSAGE value="update modeling files" />
     <MESSAGE value="find original index add" />
-    <option name="LAST_COMMIT_MESSAGE" value="find original index add" />
+    <MESSAGE value="change class and feature." />
+    <option name="LAST_COMMIT_MESSAGE" value="change class and feature." />
   </component>
 </project>

@@ -5,10 +5,10 @@ import pandas as pd
 class DataInOut:
 
     def __int__(self):
+        self.initialize()
 
 
-
-    def fn_loadfile(self):
+    def loadfile(self):
         ### 데이터 파일 읽어오기.
         self.data = filedialog.askopenfilename(initialdir='.txt')
         self.data = pd.read_csv(self.data, sep='\t', encoding='cp949')
@@ -16,7 +16,7 @@ class DataInOut:
         return self.data
 
 
-    def fn_dataout(self, group_params, df):
+    def dataout(self, group_params, df):
         ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
 
         self.group_params = group_params
