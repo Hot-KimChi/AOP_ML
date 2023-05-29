@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="change class and feature.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/param_select.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/param_select.py" afterDir="false" />
-    </list>
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update algorithm structure" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,7 +80,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684767367604</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="update algorithm structure">
+      <created>1685199092020</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1685199092020</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -105,6 +107,7 @@
     <MESSAGE value="update modeling files" />
     <MESSAGE value="find original index add" />
     <MESSAGE value="change class and feature." />
-    <option name="LAST_COMMIT_MESSAGE" value="change class and feature." />
+    <MESSAGE value="update algorithm structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="update algorithm structure" />
   </component>
 </project>

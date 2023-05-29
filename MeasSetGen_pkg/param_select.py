@@ -5,6 +5,7 @@ class ParamSelect:
 
     def __int__(self):
         self.initialize()
+        ## 데이터 입력을 어떻게 진행할지?
 
 
     ## 대문자로 변경하여 param 선택.
