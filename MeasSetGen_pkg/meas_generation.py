@@ -13,6 +13,7 @@ class MeasSetGen:
         self.initialize()
         self.database = database
         self.list_probe = list_probe
+        select_load = data_inout.DataInOut.loadfile()
 
 
     def initialize(self):
@@ -29,7 +30,7 @@ class MeasSetGen:
         self.combo_probename = ttk.Combobox(frame1, value=self.list_probe, height=0, state='readonly')
         self.combo_probename.place(x=5, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=self._fn_gen_sequence)
+        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=data_inout.DataInOut.loadfile())
         btn_load.place(x=200, y=5)
 
         btn_insert = Button(frame1, width=15, height=2, text='To MS-SQL', command=self.fn_dataout)
@@ -78,3 +79,5 @@ class MeasSetGen:
 
         self.df['zt_est'] = round(df_zt_est, 1)
 
+
+MeasSetGen(database='New_Trees', list_probe=['VF10-5', 'C5-2v'])
