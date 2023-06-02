@@ -19,6 +19,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import mean_absolute_error
 
+from MeasSetGen_pkg import meas_generation
+from SQLpkg.database import SQL
+
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -130,7 +133,7 @@ class TopMain(tkinter.Tk):
     def __init__(self):
         super().__init__()
         self.initialize_loadConf()
-        
+
         
     def initialize_loadConf(self):
         config = configparser.ConfigParser()
@@ -182,7 +185,7 @@ class TopMain(tkinter.Tk):
         window_Menu.resizable(False, False)
 
         ## SQL class 객체 생성.
-        connect = SQL(command = 1)
+        connect = SQL(server_address=server, server_id, password, database command=1,  )
         df = connect.fn_sql_get()
         df_probeIds = df[['probeId']]
         
@@ -200,7 +203,7 @@ class TopMain(tkinter.Tk):
             list_probe.append('  |  '.join(map(str, list_probeinfor[i])))
 
 
-        btn_gen = Button(window_Menu, width=30, height=3, text='MeasSetGeneration', command=MeasSetGen)
+        btn_gen = Button(window_Menu, width=30, height=3, text='MeasSetGeneration', command=meas_generation)
         btn_gen.grid(row=0, column=0)
 
         btn_sum = Button(window_Menu, width=30, height=3, text='SQL Viewer', command=Viewer)

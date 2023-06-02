@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update MeasSetGen">
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update model file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SQLpkg/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/SQLpkg/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_pkg.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_pkg.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +113,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685524230963</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="update model file">
+      <created>1685630842928</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1685630842928</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -134,6 +144,7 @@
     <MESSAGE value="update algorithm" />
     <MESSAGE value="update code structure" />
     <MESSAGE value="update MeasSetGen" />
-    <option name="LAST_COMMIT_MESSAGE" value="update MeasSetGen" />
+    <MESSAGE value="update model file" />
+    <option name="LAST_COMMIT_MESSAGE" value="update model file" />
   </component>
 </project>

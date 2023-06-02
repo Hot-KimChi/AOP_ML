@@ -11,9 +11,12 @@ class DBInfor(object):
 
 
 class SQL(DBInfor):
-    def __init__(self, command=None, selected_DBtable=None, selected_probeId=None,
+    def __init__(self, server_address, server_id, password, database,
+                 command=None, selected_DBtable=None, selected_probeId=None,
                  selected_measSSId=None, selected_param=None, sel_data=None):
-        super().__init__()
+
+        super().__init__(server_address, server_id, password, database)
+
         self.command = command
         self.selected_DBtable = selected_DBtable
         self.selected_probeId = selected_probeId

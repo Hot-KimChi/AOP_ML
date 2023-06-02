@@ -1,10 +1,12 @@
 import tkinter
 from tkinter import *
 from tkinter import ttk
-from MeasSetGen_pkg import data_inout
-from MeasSetGen_pkg import param_select
-from MeasSetGen_pkg import merge_df
-from MeasSetGen_pkg import param_gen
+from MeasSetGen_pkg.data_inout import DataInOut
+import MeasSetGen_pkg.data_inout
+
+# from MeasSetGen_pkg import param_select
+# from MeasSetGen_pkg import merge_df
+# from MeasSetGen_pkg import param_gen
 
 
 class MeasSetGen:
@@ -13,7 +15,6 @@ class MeasSetGen:
         self.initialize()
         self.database = database
         self.list_probe = list_probe
-        select_load = data_inout.DataInOut.loadfile()
 
 
     def initialize(self):
@@ -30,7 +31,7 @@ class MeasSetGen:
         self.combo_probename = ttk.Combobox(frame1, value=self.list_probe, height=0, state='readonly')
         self.combo_probename.place(x=5, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=data_inout.DataInOut.loadfile())
+        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=DataInOut.loadfile)
         btn_load.place(x=200, y=5)
 
         btn_insert = Button(frame1, width=15, height=2, text='To MS-SQL', command=self.fn_dataout)
@@ -78,6 +79,3 @@ class MeasSetGen:
         df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
 
         self.df['zt_est'] = round(df_zt_est, 1)
-
-
-MeasSetGen(database='New_Trees', list_probe=['VF10-5', 'C5-2v'])
