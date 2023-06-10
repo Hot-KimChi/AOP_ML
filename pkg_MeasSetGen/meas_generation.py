@@ -1,12 +1,12 @@
 import tkinter
 from tkinter import *
 from tkinter import ttk
-from MeasSetGen_pkg.data_inout import DataInOut
-import MeasSetGen_pkg.data_inout
+from pkg_MeasSetGen.data_inout import DataInOut
+import pkg_MeasSetGen.data_inout
 
-# from MeasSetGen_pkg import param_select
-# from MeasSetGen_pkg import merge_df
-# from MeasSetGen_pkg import param_gen
+# from pkg_MeasSetGen import param_select
+# from pkg_MeasSetGen import merge_df
+# from pkg_MeasSetGen import param_gen
 
 
 class MeasSetGen:

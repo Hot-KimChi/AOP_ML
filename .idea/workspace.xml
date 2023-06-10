@@ -4,7 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update model file" />
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update model file">
+      <change afterPath="$PROJECT_DIR$/pkg_MeasSetGen/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_SQL/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_Table/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_Table/showTable.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_TopMain/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_TopMain/top_main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_TxSummary/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_TxSummary/tx_summary.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_Verify_Report/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_Verify_Report/verify_report.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_Viewer/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_Viewer/viewer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MachineLearning/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/data_inout.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/data_inout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/meas_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/meas_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/merge_df.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/merge_df.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/param_gen.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/param_gen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_pkg/param_select.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/param_select.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SQLpkg/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MachineLearning/machine_learning.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SQLpkg/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_SQL/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_pkg.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_pkg.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,10 +55,15 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/PycharmProjects/AOP_ML&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/PycharmProjects/S-RIM&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\AOP_ML" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="update package files">
@@ -122,7 +150,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685689176254</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="update model file">
+      <created>1685803811828</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1685803811828</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
