@@ -6,7 +6,7 @@ from tkinter import ttk
 class TopMain:
 
     """
-    Menu 선택을 위한 windows
+    Menu 선택을 위한 Windows
     1) meas
     2) viewer
 
