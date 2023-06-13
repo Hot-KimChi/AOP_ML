@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update sequence structure">
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update sequence structure II">
+      <change afterPath="$PROJECT_DIR$/pkg_LogIn/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_LogIn/login.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_TopMenu/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_TopMenu/top_menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg_TopMain/top_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_TopMain/top_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_pkg.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_TopMain/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_TopMain/top_main.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,17 +37,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/PycharmProjects/S-RIM&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "D:/PycharmProjects/AOP_ML/pkg_LogIn",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\AOP_ML\pkg_LogIn" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PycharmProjects\AOP_ML" />
+      <recent name="D:\PycharmProjects\AOP_ML\pkg_LogIn" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
@@ -151,7 +161,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686491735447</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="update sequence structure II">
+      <created>1686580777414</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1686580777414</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +194,7 @@
     <MESSAGE value="update MeasSetGen" />
     <MESSAGE value="update model file" />
     <MESSAGE value="update sequence structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="update sequence structure" />
+    <MESSAGE value="update sequence structure II" />
+    <option name="LAST_COMMIT_MESSAGE" value="update sequence structure II" />
   </component>
 </project>
