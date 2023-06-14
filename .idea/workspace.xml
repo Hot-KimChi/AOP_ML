@@ -4,15 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update sequence structure II">
-      <change afterPath="$PROJECT_DIR$/pkg_LogIn/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg_LogIn/login.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg_TopMenu/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg_TopMenu/top_menu.py" afterDir="false" />
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update algorithm">
+      <change afterPath="$PROJECT_DIR$/pkg_MeasSetGen/param_update.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pkg_MeasSetGen/predictML.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_pkg.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg_TopMain/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg_TopMain/top_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_LogIn/login.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_LogIn/login.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/data_inout.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/data_inout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/meas_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/meas_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/merge_df.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/param_gen.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/param_gen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/param_select.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_SQL/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_SQL/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_TopMenu/top_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_TopMenu/top_menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,7 +172,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686580777414</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="update algorithm">
+      <created>1686647215189</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1686647215189</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -189,12 +200,12 @@
     <MESSAGE value="find original index add" />
     <MESSAGE value="change class and feature." />
     <MESSAGE value="update algorithm structure" />
-    <MESSAGE value="update algorithm" />
     <MESSAGE value="update code structure" />
     <MESSAGE value="update MeasSetGen" />
     <MESSAGE value="update model file" />
     <MESSAGE value="update sequence structure" />
     <MESSAGE value="update sequence structure II" />
-    <option name="LAST_COMMIT_MESSAGE" value="update sequence structure II" />
+    <MESSAGE value="update algorithm" />
+    <option name="LAST_COMMIT_MESSAGE" value="update algorithm" />
   </component>
 </project>

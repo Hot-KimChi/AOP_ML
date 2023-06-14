@@ -8,10 +8,12 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+from pkg_TopMenu.top_menu import TopMenu
 
 class LogIn:
     """
-    초기 데이터베이스 접속을 위한 Log-in windows
+    1) 초기 데이터베이스 접속을 위한 Log-in windows
+    2) LogIn 이 후에 Top_menu.py 호출(wrapper_function 참고)
     """
 
     def __init__(self, login_window):
@@ -26,7 +28,7 @@ class LogIn:
         self.combo_login = ttk.Combobox(self.window)
         self.combo_login.place(x=10, y=30)
 
-        btn_login = Button(self.window, width=10, height=2, text="Login", command=self.get_login_info)
+        btn_login = Button(self.window, width=10, height=2, text="Login", command=self._get_sequence)
         btn_login.place(x=180, y=10)
 
         self.server_address = None
@@ -66,6 +68,11 @@ class LogIn:
         self.database = self.combo_login.get()
         self.print_login_info()
         return self.server_address, self.ID, self.password, self.database
+
+
+    def _get_sequence(self):
+        self.get_login_info()
+        TopMenu(self.server_address, self.ID, self.password, self.database)
 
 
 if __name__ == '__main__':

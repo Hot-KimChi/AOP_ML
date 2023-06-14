@@ -25,7 +25,7 @@ class SQL(DBInfor):
         self.sel_data = sel_data
 
     ## SQL 데이터베이스에 접속하여 데이터 load.
-    def fn_sql_get(self):
+    def sql_get(self):
         try:
             conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
 
@@ -145,7 +145,7 @@ class SQL(DBInfor):
 
     ## SQL data get from database.
     ## parameter 중 한 개를 선정하게 되면 filter 기능.
-    def fn_SQL_value_filter(df=None, param=None):
+    def sql_filter(df=None, param=None):
         try:
             selected_param = param
             print(selected_param)

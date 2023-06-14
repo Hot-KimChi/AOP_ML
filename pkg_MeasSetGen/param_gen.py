@@ -1,8 +1,7 @@
-class ParamGen:
-    def __int__(self, data):
-        self.initialize()
 
-        ## list_param, 즉 선택한 parameter만 데이터프레임 생성.
+
+class ParamGen:
+    def __init__(self, data):
 
 
         global selected_probeId

@@ -1,8 +1,10 @@
-import tkinter
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from pkg_MeasSetGen.data_inout import DataInOut
-import pkg_MeasSetGen.data_inout
+
+from pkg_MeasSetGen.data_inout import loadfile
+from pkg_MeasSetGen.param_update import ParamUpdate
+
 
 # from pkg_MeasSetGen import param_select
 # from pkg_MeasSetGen import merge_df
@@ -12,70 +14,49 @@ import pkg_MeasSetGen.data_inout
 class MeasSetGen:
 
     def __init__(self, database, list_probe):
-        self.initialize()
+
         self.database = database
         self.list_probe = list_probe
 
+        self.window = tk.Toplevel()
+        self.window.title(f"{self.database}" + ' / MeasSet_generation')
+        self.window.geometry("600x200")
+        self.window.resizable(False, False)
 
-    def initialize(self):
-        window_gen = tkinter.Toplevel()
-        window_gen.title(f"{self.database}" + ' / MeasSet_generation')
-        window_gen.geometry("600x200")
-        window_gen.resizable(False, False)
+        frame = Frame(self.window, relief="solid", bd=2)
+        frame.pack(side="top", fill="both", expand=True)
 
-        frame1 = Frame(window_gen, relief="solid", bd=2)
-        frame1.pack(side="top", fill="both", expand=True)
-
-        label_probename = Label(frame1, text='Probe Name')
+        label_probename = Label(frame, text='Probe Name')
         label_probename.place(x=5, y=5)
-        self.combo_probename = ttk.Combobox(frame1, value=self.list_probe, height=0, state='readonly')
-        self.combo_probename.place(x=5, y=25)
+        self.combo_probe = ttk.Combobox(frame, value=self.list_probe, height=0, state='readonly')
+        self.combo_probe.place(x=5, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Load', command=DataInOut.loadfile)
+        btn_load = Button(frame, width=15, height=2, text='Select & Load', command=self._get_sequence)
         btn_load.place(x=200, y=5)
 
-        btn_insert = Button(frame1, width=15, height=2, text='To MS-SQL', command=self.fn_dataout)
+        btn_insert = Button(frame, width=15, height=2, text='To MS-SQL', command=loadfile)
         btn_insert.place(x=350, y=5)
 
 
-        window_gen.mainloop()
+    def _get_sequence(self):
+        self.probe = self.combo_probe.get().replace(" ", "")
+        idx = self.probe.find("|")
+        if idx >= 0:
+            probename = self.probe[:idx]
+            probeid = self.probe[idx+1:]
 
+        print(probename)
+        print(probeid)
 
-    def _fn_gen_sequence(self):
-        self.fn_loadfile()
-        self.fn_select()
-        self.fn_merge_df()
-        self.fn_findOrgIdx()
-        self.fn_bsIdx()
-        self.fn_freqidx2Hz()
-        self.fn_cnt_cycle()
-        self.fn_calc_profvolt()
-        self.fn_zMeasNum()
-        self.fn_predictML()
+        raw_data = loadfile()
 
-        self.fn_dataout()
-
+        param_update = ParamUpdate(raw_data)                        ## 클래스 인스턴스 생성
+        selected_df = param_update.param_merge()                    ## 메서드 호출 및 반환된 값 저장.
 
 
 
-    def fn_predictML(self):
-        ## predict by Machine Learning model.
-        ## load modeling by pickle file.
-        loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
+if __name__ == '__main__':
+    gen_window = tk.Tk()
+    app_gen = MeasSetGen(gen_window)
 
-        ## take parameters for ML from measSet_gen file.
-        est_params = self.df[
-            ['TxFrequencyHz', 'TXFOCUSLOCCM', 'NUMTXELEMENTS', 'TXPGWAVEFORMSTYLE', 'ProbeNumTxCycles', 'ELEVAPERINDEX',
-             'ISTXCHANNELMODULATIONEN']]
-        connect = SQL(command=4)
-        est_geo = connect.fn_sql_get()
-
-        est_params[['probePitchCm']] = est_geo['probePitchCm']
-        est_params[['probeRadiusCm']] = est_geo['probeRadiusCm']
-        est_params[['probeElevAperCm0']] = est_geo['probeElevAperCm0']
-        est_params[['probeElevFocusRangCm']] = est_geo['probeElevFocusRangCm']
-
-        zt_est = loaded_model.predict(est_params)
-        df_zt_est = pd.DataFrame(zt_est, columns=['zt_est'])
-
-        self.df['zt_est'] = round(df_zt_est, 1)
+    gen_window.mainloop()
