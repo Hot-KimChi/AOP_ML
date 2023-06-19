@@ -1,48 +1,67 @@
-
+import numpy as np
 
 class ParamGen:
-    def __init__(self, data):
+    def __init__(self, data, probe):
+
+        self.df = data
+        self.probe = probe
 
 
-        global selected_probeId
-        selected_probeId = str(list_probeIds[self.combo_probename.current()])[1:-1]
-        selected_probename = str(list_probenames[self.combo_probename.current()])
+        idx = self.probe.find("|")
+        if idx >= 0:
+            self.probename = self.probe[:idx]
+            self.probeid = self.probe[idx + 1:]
 
-        # # Entry boxes
-        # self.box_DumpSW = Entry(frame2, justify='center')
-        # self.box_DumpSW.grid(row=1, column=0)
-        #
-        # self.box_MaxVolt = Entry(frame2, justify='center')
-        # self.box_MaxVolt.grid(row=3, column=0)
-        #
-        # self.box_CeilVolt = Entry(frame2, justify='center')
-        # self.box_CeilVolt.grid(row=3, column=1)
-        #
-        # self.box_TotalVoltpt = Entry(frame2, justify='center')
-        # self.box_TotalVoltpt.grid(row=3, column=2)
-        #
-        # self.box_NumMeasVolt = Entry(frame2, justify='center')
-        # self.box_NumMeasVolt.grid(row=3, column=3)
+        self.df['probeId'] = self.probeid
+        self.df['probeName'] = self.probename
 
-
-        self.df['probeId'] = selected_probeId
-        self.df['probeName'] = str(list_probenames[self.combo_probename.current()])
-        self.df['maxTxVoltageVolt'] = self.box_MaxVolt.get()
-        self.df['ceilTxVoltageVolt'] = self.box_CeilVolt.get()
-        self.df['totalVoltagePt'] = self.box_TotalVoltpt.get()
-        self.df['numMeasVoltage'] = self.box_NumMeasVolt.get()
+        self.df['maxTxVoltageVolt'] = 90
+        self.df['ceilTxVoltageVolt'] = 90
+        self.df['totalVoltagePt'] = 20
         self.df['zStartDistCm'] = 0.5
         self.df['DTxFreqIndex'] = 0
-        self.df['dumpSwVersion'] = self.box_DumpSW.get()
-        self.df['measSetComments'] = f'Beamstyle_{selected_probename}_Intensity'
+        self.df['dumpSwVersion'] = self.df['RequestDate']
+        self.df['measSetComments'] = f'Beamstyle_{self.probename}_Intensity'
+
+        self._get_sequence()
+
+
+    def _get_sequence(self):
+        self.numvoltpt()
+        self.findOrgIdx()
+        self.bsIdx()
+        self.freqidx2Hz()
+        self.cnt_cycle()
+        self.calc_profvolt()
+        self.zMeasNum()
+        #
+        # self.df = self.numvoltpt()
+        # self.df = self.findOrgIdx()
+        # self.df = self.bsIdx()
+        # self.df = self.freqidx2Hz()
+        # self.df = self.cnt_cycle()
+        # self.df = self.calc_profvolt()
+        # self.df = self.zMeasNum()
+
+    def numvoltpt(self):
+        ## Contrast mode 일 경우, numMeasVoltage 10 그 외에는 8
+        numvoltpt = []
+        for mode in self.df['Mode']:
+            if mode == 'Contrast':
+                numvoltpt.append(10)
+            else:
+                numvoltpt.append(8)
+        self.df['numMeasVoltage'] = numvoltpt
+
+        return self.df
 
 
     ## find freq index
-    def fn_findOrgIdx(self):
+    def findOrgIdx(self):
 
         orgindex = []
 
-        for mode, subidx in zip(self.df['MODE'], self.df['SUBMODEINDEX']):
+        for mode, subidx in zip(self.df['Mode'], self.df['SubModeIndex']):
             if mode == 'B' and subidx == 0:
                 orgindex.append(0)
             elif mode == 'B' and subidx == 1:
@@ -58,9 +77,11 @@ class ParamGen:
 
         self.df['OrgBeamstyleIdx'] = orgindex
 
+        return self.df
+
 
     ## bsIndexTrace algorithm
-    def fn_bsIdx(self):
+    def bsIdx(self):
 
         bsIndexTrace = []
 
@@ -76,8 +97,11 @@ class ParamGen:
 
         self.df['bsIndexTrace'] = bsIndexTrace
 
+        return self.df
+
+
     ## FrequencyIndex to FrequencyHz
-    def fn_freqidx2Hz(self):
+    def freqidx2Hz(self):
         try:
             frequencyTable = [1000000, 1111100, 1250000, 1333300, 1428600, 1538500, 1666700, 1818200, 2000000, 2222200,
                               2500000, 2666700, 2857100, 3076900, 3333300, 3636400, 3809500, 4000000, 4210500, 4444400,
@@ -86,29 +110,25 @@ class ParamGen:
                               11428600,
                               11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600]
 
-            FrequencyHz = []
-            for i in self.df['SYSTXFREQINDEX'].values:
-                FrequencyHz.append(frequencyTable[i])
+            frequencyHz = []
+            for i in self.df['SysTxFreqIndex'].values:
+                frequencyHz.append(frequencyTable[i])
 
-            self.df['TxFrequencyHz'] = FrequencyHz
+            self.df['TxFrequencyHz'] = frequencyHz
 
         except:
             print("Error: fn_freqidx2Hz")
 
-    # n = 0
-    # FrequencyHz = []
-    # for i in df_sort['SYSTXFREQINDEX'].values:
-    #     FrequencyHz.insert(n, func_freqidx2Hz(i))
-    #     n += 1
-    # df_sort['TxFrequencyHz'] = FrequencyHz
+        return self.df
+
 
     ## Calc_cycle for RLE code
-    def fn_cnt_cycle(self):
+    def cnt_cycle(self):
 
         list_cycle = []
-        for i in range(len(self.df['TXPGWAVEFORMSTYLE'])):
-            if self.df['TXPGWAVEFORMSTYLE'][i] == 0:
-                rle = self.df['TXPULSERLE'].str.split(":")[i]
+        for i in range(len(self.df['TxpgWaveformStyle'])):
+            if self.df['TxpgWaveformStyle'][i] == 0:
+                rle = self.df['TxPulseArbitraryWF'].str.split(":")[i]
                 list_flt = list(map(float, rle))
                 ## 아래 code도 가능.
                 ## floatList = [float(x) for x in list_option]
@@ -124,19 +144,21 @@ class ParamGen:
                 list_cycle.append(cycle)
 
             else:
-                cycle = self.df['PROBENUMTXCYCLES'][i]
+                cycle = self.df['ProbeNumTxCycles'][i]
                 list_cycle.append(cycle)
 
         self.df['ProbeNumTxCycles'] = list_cycle
 
+        return self.df
+
+
     ## function: calc_profTxVoltage 구현
-    def fn_calc_profvolt(self):
+    def calc_profvolt(self):
         try:
             profTxVoltageVolt = []
             for str_maxV, str_ceilV, str_totalpt in zip(self.df['maxTxVoltageVolt'], self.df['ceilTxVoltageVolt'],
                                                         self.df['totalVoltagePt']):
                 idx = 2
-                ## tkinter에서 넘어오는 데이터 string.
                 maxV = float(str_maxV)
                 ceilV = float(str_ceilV)
                 totalpt = int(str_totalpt)
@@ -148,13 +170,16 @@ class ParamGen:
         except:
             print('error: func_profvolt')
 
+        return self.df
+
+
     ## function: calc zMeasNum 구현
-    def fn_zMeasNum(self):
+    def zMeasNum(self):
         try:
             zStartDistCm = 0.5
             zMeasNum = []
 
-            for focus in self.df['TXFOCUSLOCCM']:
+            for focus in self.df['TxFocusLocCm']:
                 if (focus <= 3):
                     zMeasNum.append((5 - zStartDistCm) * 10)
                 elif (focus <= 6):
@@ -168,3 +193,5 @@ class ParamGen:
 
         except:
             print('error: func_zMeaNum')
+
+        return self.df

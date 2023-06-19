@@ -11,8 +11,8 @@ class ParamUpdate:
         self.df = df
 
         ## parameter selection
-        list_param = ['ProbeName', 'Mode', 'GroupIndex', 'SubModeIndex', 'BeamStyleIndex', 'SysTxFreqIndex',
-                      'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles',
+        list_param = ['RequestDate', 'ProbeName', 'Mode', 'GroupIndex', 'SubModeIndex', 'BeamStyleIndex',
+                      'SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles',
                       'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'ElevAperIndex',
                       'SystemPulserSel', 'VTxIndex', 'TxPulseArbitraryWF']
         self.selected_df = self.df.loc[:, list_param]
@@ -50,4 +50,4 @@ class ParamUpdate:
         df_total = df_total.sort_values(by=group_params, ascending=True).reset_index()
         df_total['Count'] = dup_count['size']
 
-        return df_total
+        return df_total, group_params

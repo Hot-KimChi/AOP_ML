@@ -10,7 +10,7 @@ def loadfile():
     return encoding_data
 
 
-def dataout(group_params, df):
+def data_out(df, group_params):
     ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
 
     sort_params = ['OrgBeamstyleIdx'] + group_params

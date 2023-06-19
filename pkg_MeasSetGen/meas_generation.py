@@ -2,13 +2,9 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-from pkg_MeasSetGen.data_inout import loadfile
+from pkg_MeasSetGen.data_inout import *
 from pkg_MeasSetGen.param_update import ParamUpdate
-
-
-# from pkg_MeasSetGen import param_select
-# from pkg_MeasSetGen import merge_df
-# from pkg_MeasSetGen import param_gen
+from pkg_MeasSetGen.param_gen import *
 
 
 class MeasSetGen:
@@ -39,19 +35,25 @@ class MeasSetGen:
 
 
     def _get_sequence(self):
+
+        ## probeid에서 probename / probeid 로 구분
         self.probe = self.combo_probe.get().replace(" ", "")
-        idx = self.probe.find("|")
-        if idx >= 0:
-            probename = self.probe[:idx]
-            probeid = self.probe[idx+1:]
 
-        print(probename)
-        print(probeid)
 
+        ## 파일 선택할 수 있는 algorithm
         raw_data = loadfile()
 
-        param_update = ParamUpdate(raw_data)                        ## 클래스 인스턴스 생성
-        selected_df = param_update.param_merge()                    ## 메서드 호출 및 반환된 값 저장.
+
+        ## 동일한 데이터 삭제
+        param_update = ParamUpdate(raw_data)                                ## 클래스 인스턴스 생성
+        self.selected_df, self.group_params = param_update.param_merge()     ## 메서드 호출 및 반환된 값 저장.
+
+
+        ## 선택한 데이터를 기반으로 parameter 생성.
+        self.gen_df = ParamGen(data=self.selected_df, probe=self.probe)
+
+
+        ##
 
 
 
