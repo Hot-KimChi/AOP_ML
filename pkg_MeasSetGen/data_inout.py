@@ -10,11 +10,21 @@ def loadfile():
     return encoding_data
 
 
-def data_out(df, group_params):
-    ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
+class Dataout:
+    def __init__(self, df, group_params):
+        self.df = df
+        self.group_parmas = group_params
 
-    sort_params = ['OrgBeamstyleIdx'] + group_params
-    df_sort = df.sort_values(by=sort_params, ascending=True).reset_index()
+    def make_dir(self):
 
-    ## data-out
-    df_sort.to_csv('./csv_files/check_20230131.csv')
+
+
+    def data_out(self):
+        ## group param에서 SUBMODEINDEX 추가하여 정렬 준비 및 정렬하기
+        sort_params = ['OrgBeamstyleIdx'] + self.group_params
+
+        df_sort = self.df.sort_values(by=sort_params, ascending=True).reset_index()
+
+        df_sort.to_csv('result.csv')
+
+        return df_sort

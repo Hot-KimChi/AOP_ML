@@ -38,8 +38,8 @@ class ParamUpdate:
         df_total = df_total.fillna(0)
 
         ## groupby count 를 위해 parameter setting
-        group_params =['IsTxChannelModulationEn', 'ProbeNumTxCycles', 'SysTxFreqIndex', 'TxpgWaveformStyle',
-                       'TxPulseArbitraryWF', 'ElevAperIndex', 'TxFocusLocCm', 'GroupIndex']
+        group_params = ['IsTxChannelModulationEn', 'ProbeNumTxCycles', 'SysTxFreqIndex', 'TxpgWaveformStyle',
+                       'TxPulseArbitraryWF', 'ElevAperIndex', 'GroupIndex', 'TxFocusLocCm']
 
         ## 중복된 column 갯수 세기 --> 중복된 열 삭제됨.
         dup_count = df_total.groupby(group_params, as_index=False).size()
