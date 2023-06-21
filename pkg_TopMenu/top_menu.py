@@ -68,9 +68,6 @@ class TopMenu:
         for i in range(numprobe):
             self.list_probe.append('    |    '.join(map(str, list_probeinfor[i])))
 
-        print(self.list_probe)
-
-
 
 if __name__ == '__main__':
     menu_window = tk.Tk()

@@ -1,9 +1,10 @@
 import pandas as pd
 
+
 class ParamUpdate:
 
     """
-    1) parameter selection 진행
+    1) parameter 선정 진행
     2) selection한 데이터프레임을 기반으로 merge 작업진행: 중복을 제거하기 위해.
     """
 

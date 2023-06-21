@@ -1,12 +1,18 @@
+import tkinter as tk
+from tkinter import *
+from tkinter import ttk
+import joblib
+
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_validate
+from sklearn.metrics import mean_absolute_error
+
 
 class Machine_Learning(object):
     def __init__(self):
         super().__init__()
-        self.initialize()
 
-
-    def initialize(self):
-        window_ML = tkinter.Toplevel()
+        window_ML = tk.Toplevel()
         window_ML.title(f"{database}" + ' / Machine Learning')
         window_ML.geometry("410x200")
         window_ML.resizable(False, False)
@@ -711,3 +717,5 @@ class Machine_Learning(object):
 
         ShowTable.fn_show_table("pass_condition", df=merge_good_inner if len(merge_good_inner.index) > 0 else None)
 
+
+    def predict_ML(self):

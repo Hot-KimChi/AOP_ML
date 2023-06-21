@@ -2,15 +2,18 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-import pandas as pd
-
-from pkg_MeasSetGen.data_inout import loadfile, data_out
+from pkg_MeasSetGen.data_inout import loadfile
+from pkg_MeasSetGen.data_inout import DataOut
 from pkg_MeasSetGen.param_update import ParamUpdate
 from pkg_MeasSetGen.param_gen import ParamGen
 
 
 class MeasSetGen:
-
+    """
+    MeasSetGeneration 버튼이 눌렀을 경우, 해당 클래스가 실행.
+    1) select & Load 버튼: _get_sequence 함수 실행
+    2) To MS-SQL
+    """
     def __init__(self, database, list_probe):
 
         self.database = database
@@ -51,10 +54,9 @@ class MeasSetGen:
         ## 선택한 데이터를 기반으로 parameter 생성.
         self.gen_df = ParamGen(data=self.selected_df, probe=self.probe)
 
-        ## 클래스 인스턴스를 데이터프레임으로 변환
+        ## 클래스 인스턴스를 데이터프레임으로 변환 / DataOut 클래스 이용하여 csv 파일로 추출.
         df = self.gen_df.df
-        data_out(df=df, group_params=self.group_params)
-
+        DataOut(database=self.database, probe=self.probe, df=df, group_params=self.group_params)
 
 
 if __name__ == '__main__':

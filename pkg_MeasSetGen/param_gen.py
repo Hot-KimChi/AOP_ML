@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class ParamGen:
     def __init__(self, data, probe):
 
@@ -34,14 +35,7 @@ class ParamGen:
         self.cnt_cycle()
         self.calc_profvolt()
         self.zMeasNum()
-        #
-        # self.df = self.numvoltpt()
-        # self.df = self.findOrgIdx()
-        # self.df = self.bsIdx()
-        # self.df = self.freqidx2Hz()
-        # self.df = self.cnt_cycle()
-        # self.df = self.calc_profvolt()
-        # self.df = self.zMeasNum()
+
 
     def numvoltpt(self):
         ## Contrast mode 일 경우, numMeasVoltage 10 그 외에는 8

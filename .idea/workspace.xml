@@ -4,11 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update class files.">
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update dataframe load and modify">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_4DVE_1st.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_4DVE_1st_LUT.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_4DVE_1st_LUT.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_9VC2_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_9VC2_1st.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_9VC2_1st_LUT.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_9VE4_1st_LUT.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_P4-2_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/Griffin_r01/meas_setting_P4-2_1st_LUT.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/K2_r01_05/meas_setting_10L4_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/K2_r01_05/meas_setting_9C2_1st_LUT - 복사본.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/K2_r01_05/meas_setting_9C2_1st_LUT.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/K2_r01_05/meas_setting_9C2_1st_LUT.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/K2_r01_FDA_test/9C2_measSet.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/K2_r01_FDA_test/meas_setting_9C3_1st.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeasSetGen_files/K2_r01_FDA_test/meas_setting_9C3_1st_LUT.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_MachineLearning/machine_learning.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MachineLearning/machine_learning.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/data_inout.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/data_inout.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/meas_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/meas_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/param_gen.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/param_gen.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg_MeasSetGen/param_update.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_MeasSetGen/param_update.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg_TopMenu/top_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/pkg_TopMenu/top_menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687161737763</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="update dataframe load and modify">
+      <created>1687251598883</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1687251598883</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -221,6 +247,7 @@
     <MESSAGE value="update algorithm" />
     <MESSAGE value="change function module to class" />
     <MESSAGE value="update class files." />
-    <option name="LAST_COMMIT_MESSAGE" value="update class files." />
+    <MESSAGE value="update dataframe load and modify" />
+    <option name="LAST_COMMIT_MESSAGE" value="update dataframe load and modify" />
   </component>
 </project>
