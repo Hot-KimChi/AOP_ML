@@ -9,6 +9,10 @@ from sklearn.metrics import mean_absolute_error
 
 
 class Machine_Learning(object):
+    """
+    머신러닝 클래스
+    1)
+    """
     def __init__(self):
         super().__init__()
 
