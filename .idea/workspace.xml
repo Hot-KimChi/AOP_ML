@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="data generation part complete">
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="machine learning update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -217,7 +217,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687702957178</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="machine learning update">
+      <created>1687790621678</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1687790621678</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -248,6 +255,7 @@
     <MESSAGE value="update class files." />
     <MESSAGE value="update dataframe load and modify" />
     <MESSAGE value="data generation part complete" />
-    <option name="LAST_COMMIT_MESSAGE" value="data generation part complete" />
+    <MESSAGE value="machine learning update" />
+    <option name="LAST_COMMIT_MESSAGE" value="machine learning update" />
   </component>
 </project>

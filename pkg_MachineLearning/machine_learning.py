@@ -13,7 +13,7 @@ class Machine_Learning(object):
     머신러닝 클래스
     1)
     """
-    def __init__(self):
+    def __init__(self, database, list_ML):
         super().__init__()
 
         window_ML = tk.Toplevel()
