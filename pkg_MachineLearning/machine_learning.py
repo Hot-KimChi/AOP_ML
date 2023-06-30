@@ -8,13 +8,15 @@ from sklearn.model_selection import cross_validate
 from sklearn.metrics import mean_absolute_error
 
 
-class Machine_Learning(object):
+class Machine_Learning:
     """
     머신러닝 클래스
     1)
     """
     def __init__(self, database, list_ML):
         super().__init__()
+
+        ## load config file
 
         window_ML = tk.Toplevel()
         window_ML.title(f"{database}" + ' / Machine Learning')
