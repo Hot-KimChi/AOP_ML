@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="machine learning update">
-      <change beforePath="$PROJECT_DIR$/.idea/AOP_ML.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AOP_ML.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="machine learning class update" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,15 +28,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/PycharmProjects/ML_DL_study",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/PycharmProjects/ML_DL_study&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\PycharmProjects\AOP_ML\pkg_LogIn" />
@@ -227,7 +222,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687790621678</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="machine learning class update">
+      <created>1688047874092</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1688047874092</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -259,6 +261,7 @@
     <MESSAGE value="update dataframe load and modify" />
     <MESSAGE value="data generation part complete" />
     <MESSAGE value="machine learning update" />
-    <option name="LAST_COMMIT_MESSAGE" value="machine learning update" />
+    <MESSAGE value="machine learning class update" />
+    <option name="LAST_COMMIT_MESSAGE" value="machine learning class update" />
   </component>
 </project>

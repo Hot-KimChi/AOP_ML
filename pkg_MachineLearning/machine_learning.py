@@ -11,7 +11,8 @@ from sklearn.metrics import mean_absolute_error
 class Machine_Learning:
     """
     머신러닝 클래스
-    1)
+    1) Randomforest
+    2) Deep learning
     """
     def __init__(self, database, list_ML):
         super().__init__()
