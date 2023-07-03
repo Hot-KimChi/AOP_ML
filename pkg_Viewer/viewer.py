@@ -1,16 +1,25 @@
+import tkinter as tk
+from tkinter import *
+from tkinter import ttk
 
-class Viewer(object):
-    def __init__(self):
+from pkg_LogIn.login import LogIn
+
+
+class Viewer(LogIn):
+    def __init__(self, database, list_probe):
         super().__init__()
-        self.initialize()
 
+        login = LogIn()                 ##
+        login.load_config()
 
-    def initialize(self):
         global sel_cnt
         sel_cnt = 0
 
-        window_view = tkinter.Toplevel()
-        window_view.title(f"{database}" + ' / Viewer')
+        self.database = database
+        self.list_probe = list_probe
+
+        window_view = tk.Toplevel()
+        window_view.title(f"{self.database}" + ' / Viewer')
         window_view.geometry("1800x1100")
         # window_view.resizable(False, False)
 
