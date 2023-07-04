@@ -54,6 +54,7 @@ class LogIn:
         self.combo_login["values"] = self.list_database
         self.combo_login.current(0)
 
+        return config
 
     def print_login_info(self):
         print("-------------------------")

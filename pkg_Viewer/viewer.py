@@ -8,15 +8,17 @@ from pkg_LogIn.login import LogIn
 class Viewer(LogIn):
     def __init__(self, database, list_probe):
         super().__init__()
-
-        login = LogIn()                 ##
-        login.load_config()
-
-        global sel_cnt
-        sel_cnt = 0
-
         self.database = database
         self.list_probe = list_probe
+
+        login = LogIn()                                                 ## 클래스 인스턴스 선언
+        cfg_file = login.load_config
+        list_M3_table = cfg_file["server table"]["M3 server table"]
+
+
+        # global sel_cnt
+        # sel_cnt = 0
+
 
         window_view = tk.Toplevel()
         window_view.title(f"{self.database}" + ' / Viewer')
@@ -39,7 +41,7 @@ class Viewer(LogIn):
         self.combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
         self.combo_DBtable.place(x=115, y=25)
 
-        btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._fn_viewer_sequence)
+        btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._viewer_sequence)
         btn_view.place(x=350, y=5)
 
         # if combo_DBtable == 'SSR_table':
@@ -66,7 +68,7 @@ class Viewer(LogIn):
         window_view.mainloop()
 
 
-    def _fn_viewer_sequence(self):
+    def _viewer_sequence(self):
         self.fn_select_table()
         self.fn_update_table()
 
