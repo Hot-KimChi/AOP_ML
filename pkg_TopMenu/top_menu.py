@@ -33,7 +33,7 @@ class TopMenu:
         btn_gen.grid(row=0, column=0)
 
         btn_sum = Button(self.window, width=30, height=3, text='SQL Viewer',
-                         command=lambda: Viewer())
+                         command=lambda: Viewer(self.database, self.list_probe))
         btn_sum.grid(row=0, column=1)
         #
         # btn_tx_sum = Button(self.window, width=30, height=3, text='Tx Summary', command=TxSumm)

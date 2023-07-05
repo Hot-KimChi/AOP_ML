@@ -1,10 +1,10 @@
 import os
-
-from tkinter import *
-import tkinter as tk
-from tkinter import ttk
 import configparser
 import warnings
+
+import tkinter as tk
+from tkinter import *
+from tkinter import ttk
 
 warnings.filterwarnings("ignore")
 
@@ -54,7 +54,6 @@ class LogIn:
         self.combo_login["values"] = self.list_database
         self.combo_login.current(0)
 
-        return config
 
     def print_login_info(self):
         print("-------------------------")
