@@ -5,13 +5,21 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
+# from pkg_Viewer.select_table import Select_Table
+
 
 class Viewer:
+    """
+    SQL Viewer 버튼이 눌렸을 경우, 해당 클래스가 실행.
+    1) Probe Name 선택 후
+    2) SQL Table Name 을 선택하고 난 이후 Select Table 버튼 누름.
+    - SSR_table을 선택했을 경우, measSSID table을 먼저 선택하게끔 설정.
+    """
+
     def __init__(self, database, list_probe):
         super().__init__()
         self.database = database
         self.list_probe = list_probe
-
 
         config_path = os.path.join("pkg_login", "../AOP_config.cfg")
         config = configparser.ConfigParser()
@@ -19,10 +27,8 @@ class Viewer:
         server_table_M3 = config["server table"]["M3 server table"]
         list_M3_table = server_table_M3.split(',')
 
-
         # global sel_cnt
         # sel_cnt = 0
-
 
         window_view = tk.Toplevel()
         window_view.title(f"{self.database}" + ' / Viewer')
@@ -37,7 +43,7 @@ class Viewer:
 
         label_probename = Label(frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
-        self.combo_probename = ttk.Combobox(frame1, value=list_probe, height=0, state='readonly')
+        self.combo_probename = ttk.Combobox(frame1, value=self.list_probe, height=0, state='readonly')
         self.combo_probename.place(x=115, y=5)
 
         label_DB_table = Label(frame1, text='SQL Table Name')
@@ -45,18 +51,11 @@ class Viewer:
         self.combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
         self.combo_DBtable.place(x=115, y=25)
 
-        btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._viewer_sequence)
+        btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._get_sequence)
         btn_view.place(x=350, y=5)
 
-        # if combo_DBtable == 'SSR_table':
-        #     combo_list = ttk.Combobox(frame2, value=df.columns, height=0, state='readonly')
-        #     combo_list.place(x=115, y=5)
-        #     # combo_probename = ttk.Combobox(frame2, value=list_probe, height=0, state='readonly')
-        #     # combo_probename.place(x=115, y=5)
-
-        # Add some style
+        # Add some style / Pick a theme
         style = ttk.Style()
-        # Pick a theme
         style.theme_use("default")
 
         # Configure our treeview colors
@@ -72,8 +71,15 @@ class Viewer:
         window_view.mainloop()
 
 
-    def _viewer_sequence(self):
-        self.fn_select_table()
+    def _get_sequence(self):
+        selected_probeinfo = self.combo_probename.get().replace("", "")
+        idx = selected_probeinfo.find("|")
+        self.selected_probeId = selected_probeinfo[:idx]
+        self.selected_DBtable = self.combo_DBtable.get()
+
+        print(self.selected_probeId, self.selected_DBtable)
+
+        self.select_table()
         self.fn_update_table()
 
     def fn_tree_update(self, df=None, selected_input=None, frame=None, treeline=20):

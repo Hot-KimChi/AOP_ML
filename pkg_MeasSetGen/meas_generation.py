@@ -10,7 +10,7 @@ from pkg_MeasSetGen.param_gen import ParamGen
 
 class MeasSetGen:
     """
-    MeasSetGeneration 버튼이 눌렀을 경우, 해당 클래스가 실행.
+    MeasSetGeneration 버튼이 눌렸을 경우, 해당 클래스가 실행.
     1) select & Load 버튼: _get_sequence 함수 실행
     2) To MS-SQL
     """
@@ -41,7 +41,7 @@ class MeasSetGen:
 
     def _get_sequence(self):
 
-        ## probeid에서 probename / probeid 로 구분
+        ## probename / probeid 로 구분
         self.probe = self.combo_probe.get().replace(" ", "")
 
         ## 파일 선택할 수 있는 algorithm
