@@ -67,12 +67,16 @@ class LogIn:
     def get_login_info(self):
         self.database = self.combo_login.get()
         self.print_login_info()
-        return self.server_address, self.ID, self.password, self.database
+
+        os.environ["SERVER_ADDRESS"] = self.server_address
+        os.environ["USER_NAME"] = self.ID
+        os.environ["PASSWORD"] = self.password
+        os.environ["DATABASE"] = self.database
 
 
     def _get_sequence(self):
         self.get_login_info()
-        TopMenu(self.server_address, self.ID, self.password, self.database)
+        TopMenu()
 
 
 if __name__ == '__main__':

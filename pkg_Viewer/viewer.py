@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-# from pkg_Viewer.select_table import Select_Table
+from pkg_Viewer.select_table import Select_Table
 
 
 class Viewer:
@@ -74,12 +74,13 @@ class Viewer:
     def _get_sequence(self):
         selected_probeinfo = self.combo_probename.get().replace("", "")
         idx = selected_probeinfo.find("|")
-        self.selected_probeId = selected_probeinfo[:idx]
-        self.selected_DBtable = self.combo_DBtable.get()
+        selected_probeId = selected_probeinfo[:idx]
+        selected_DBtable = self.combo_DBtable.get()
 
-        print(self.selected_probeId, self.selected_DBtable)
+        Select_Table(self.frame2)
 
-        self.select_table()
+
+
         self.fn_update_table()
 
     def fn_tree_update(self, df=None, selected_input=None, frame=None, treeline=20):

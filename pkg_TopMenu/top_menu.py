@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import *
 
@@ -17,11 +18,11 @@ class TopMenu:
 
     """
 
-    def __init__(self, server, ID, password, database):
-        self.server = server
-        self.ID = ID
-        self.password = password
-        self.database = database
+    def __init__(self):
+        self.server = os.environ["SERVER_ADDRESS"]
+        self.ID = os.environ["USER_NAME"]
+        self.password = os.environ["PASSWORD"]
+        self.database = os.environ["DATABASE"]
 
         self.window = tk.Toplevel()
         self.window.title(f"{self.database}" + ' / Menu')
