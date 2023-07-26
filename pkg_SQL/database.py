@@ -1,21 +1,21 @@
+import os
 import pandas as pd
 import pymssql
 
 
 class DBInfor(object):
-    def __init__(self, server_address, server_id, password, database):
-        self.server_address = server_address
-        self.ID = server_id
-        self.password = password
-        self.database = database
+    def __init__(self):
+        self.server_address = os.environ["SERVER_ADDRESS"]
+        self.ID = os.environ["USER_NAME"]
+        self.password = os.environ["PASSWORD"]
+        self.database = os.environ["DATABASE"]
 
 
 class SQL(DBInfor):
-    def __init__(self, server_address, server_id, password, database,
-                 command=None, selected_DBtable=None, selected_probeId=None,
+    def __init__(self, command=None, selected_DBtable=None, selected_probeId=None,
                  selected_measSSId=None, selected_param=None, sel_data=None):
 
-        super().__init__(server_address, server_id, password, database)
+        super().__init__()
 
         self.command = command
         self.selected_DBtable = selected_DBtable

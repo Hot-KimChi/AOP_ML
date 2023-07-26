@@ -19,9 +19,7 @@ class TopMenu:
     """
 
     def __init__(self):
-        self.server = os.environ["SERVER_ADDRESS"]
-        self.ID = os.environ["USER_NAME"]
-        self.password = os.environ["PASSWORD"]
+
         self.database = os.environ["DATABASE"]
 
         self.window = tk.Toplevel()
@@ -52,8 +50,7 @@ class TopMenu:
     def load_probeinfo(self):
 
         ## SQL class 객체 생성.
-        connect = SQL(server_address=self.server, server_id=self.ID,
-                      password=self.password, database=self.database, command=1)
+        connect = SQL(command=1)
         df = connect.sql_get()
         df_probeIds = df[['probeId']]
 

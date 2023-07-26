@@ -8,15 +8,22 @@ class Select_Table:
     """
     선택한 parameters(probeID, DB_table)를 기반으로 MS-SQL 데이터 load
     """
-    def __init__(self, frame_down):
-        ## selected_probeId에 선택 & 선택된 DBtable에서 데이터 가져오기.
-        connect = SQL(command = 0)                  ## SQL class 객체 생성.
-        self.df = connect.sql_get()
-
+    def __init__(self, frame_down, probeId, DBTable):
         self.frame_down = frame_down
+        self.probeId = probeId
+        self.DBTable = DBTable
+
+        print(self.probeId, self.DBTable)
 
 
-    def select_table(self):
+        ## selected_probeId에 선택 & 선택된 DBtable에서 데이터 가져오기.
+        connect = SQL(command=0, selected_DBtable=self.DBTable, selected_probeId=self.probeId)                    ## SQL class 객체 생성.
+        self.df = connect.sql_get()
+        print(self.df)
+
+
+
+    def select_param(self):
 
         list_params = self.df.columns.values.tolist()
 

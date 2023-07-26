@@ -1587,7 +1587,7 @@ class Viewer(object):
         
         
     def fn_detail_table(self):
-        connect = SQL(command = 2)                  ## SQL class 객체 생성.
+        connect = SQL(command=2)                  ## SQL class 객체 생성.
         self.df = connect.fn_sql_get()
         ShowTable.fn_show_table(selected_DBtable, df=self.df)
 

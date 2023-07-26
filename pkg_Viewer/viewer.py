@@ -17,7 +17,7 @@ class Viewer:
     """
 
     def __init__(self, database, list_probe):
-        super().__init__()
+
         self.database = database
         self.list_probe = list_probe
 
@@ -77,11 +77,9 @@ class Viewer:
         selected_probeId = selected_probeinfo[:idx]
         selected_DBtable = self.combo_DBtable.get()
 
-        Select_Table(self.frame2)
+        select_table = Select_Table(frame_down=self.frame2, probeId=selected_probeId, DBTable=selected_DBtable)
+        select_table.select_param()
 
-
-
-        self.fn_update_table()
 
     def fn_tree_update(self, df=None, selected_input=None, frame=None, treeline=20):
         try:
