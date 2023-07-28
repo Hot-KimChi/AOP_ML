@@ -72,13 +72,12 @@ class Viewer:
 
 
     def _get_sequence(self):
-        selected_probeinfo = self.combo_probename.get().replace("", "")
+        selected_probeinfo = self.combo_probename.get().replace(" ", "")        ## 공백 없애기 " " --> ""
         idx = selected_probeinfo.find("|")
-        selected_probeId = selected_probeinfo[:idx]
+        selected_probeId = selected_probeinfo[idx+1:]
         selected_DBtable = self.combo_DBtable.get()
 
         select_table = Select_Table(frame_down=self.frame2, probeId=selected_probeId, DBTable=selected_DBtable)
-        select_table.select_param()
 
 
     def fn_tree_update(self, df=None, selected_input=None, frame=None, treeline=20):
@@ -165,29 +164,6 @@ class Viewer:
 
         ## SQL class 객체 생성.
         connect = SQL(command = 3)
-        self.df = connect.fn_sql_get()
+        self.df = connect.sql_get()
 
         self.fn_tree_update(df=self.df, selected_input=sel_data, frame=self.frame2)
-
-
-    def fn_on_selected(self, event):
-        global selected_param
-        # parameter 중 한개를 선정하게 되면 filter 기능.
-        selected_param = event.widget.get()
-        list_datas = self.df[f'{selected_param}'].values.tolist()
-        # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
-        set_datas = set(list_datas)
-        filtered_datas = list(set_datas)
-
-        label_sel_data = Label(self.frame2, text='Selection')
-        label_sel_data.place(x=5, y=25)
-
-        self.combo_sel_datas = ttk.Combobox(self.frame2, value=filtered_datas, height=0, state='readonly')
-        self.combo_sel_datas.place(x=115, y=25)
-        self.combo_sel_datas.bind('<<ComboboxSelected>>', self.fn_sel_update)
-
-
-    def fn_detail_table(self):
-        connect = SQL(command = 2)                  ## SQL class 객체 생성.
-        self.df = connect.fn_sql_get()
-        ShowTable.fn_show_table(selected_DBtable, df=self.df)

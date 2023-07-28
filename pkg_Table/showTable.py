@@ -1,10 +1,13 @@
+import tkinter as tk
+from tkinter import *
+from tkinter import ttk
 
 
 ## SQL데이터 DataFrame을 이용하여 Treeview에 기록하여 출력.
 class ShowTable(object):
     def fn_show_table(selected_DBtable, df=None, extra=None):
         try:
-            n_root = tkinter.Toplevel()
+            n_root = tk.Toplevel()
             n_root.title(f"{database}  //  {selected_DBtable}")
             n_root.geometry("1850x1000")
 

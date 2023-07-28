@@ -1,8 +1,10 @@
-import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
 from pkg_SQL.database import SQL
+from pkg_Table.showTable import ShowTable
+from pkg_Viewer.update_table import tree_update
+
 
 class Select_Table:
     """
@@ -13,14 +15,13 @@ class Select_Table:
         self.probeId = probeId
         self.DBTable = DBTable
 
-        print(self.probeId, self.DBTable)
-
 
         ## selected_probeId에 선택 & 선택된 DBtable에서 데이터 가져오기.
-        connect = SQL(command=0, selected_DBtable=self.DBTable, selected_probeId=self.probeId)                    ## SQL class 객체 생성.
+        ## SQL class 객체 생성.
+        connect = SQL(command=0, selected_DBtable=self.DBTable, selected_probeId=self.probeId)
         self.df = connect.sql_get()
-        print(self.df)
 
+        self.select_param()
 
 
     def select_param(self):
@@ -33,9 +34,45 @@ class Select_Table:
 
         combo_list_columns = ttk.Combobox(self.frame_down, value=list_params, height=0, state='readonly')
         combo_list_columns.place(x=115, y=5)
-        combo_list_columns.bind('<<ComboboxSelected>>', self.fn_on_selected)
+        combo_list_columns.bind('<<ComboboxSelected>>', self.on_selected)
+        #
+        # btn_view = Button(self.frame_down, width=15, height=2, text='Select & Detail', command=self.detail_table)
+        # btn_view.place(x=350, y=5)
 
-        btn_view = Button(self.frame2, width=15, height=2, text='Select & Detail', command=self.fn_detail_table)
-        btn_view.place(x=350, y=5)
+        # self.fn_tree_update(df=self.df, frame=self.frame2)
 
-        self.fn_tree_update(df=self.df, frame=self.frame2)
+
+    def on_selected(self, event):
+
+        # parameter 중 한개를 선정하게 되면 filter 기능.
+        self.selected_param = event.widget.get()
+        list_datas = self.df[f'{self.selected_param}'].values.tolist()
+
+        # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.
+        set_datas = set(list_datas)
+        filtered_datas = list(set_datas)
+
+        label_sel_data = Label(self.frame_down, text='Selection')
+        label_sel_data.place(x=5, y=25)
+
+        self.combo_sel_datas = ttk.Combobox(self.frame_down, value=filtered_datas, height=0, state='readonly')
+        self.combo_sel_datas.place(x=115, y=25)
+        self.combo_sel_datas.bind('<<ComboboxSelected>>', self.sel_update)
+
+
+    def sel_update(self, event):
+
+        sel_data = self.combo_sel_datas.get()
+
+        ## SQL class 객체 생성.
+        connect = SQL(command=3, selected_param=self.selected_param,
+                      selected_DBtable=self.DBTable, selected_probeId=self.probeId)
+        self.df = connect.sql_get()
+
+        tree_update(df=self.df, selected_input=sel_data, frame=self.frame_down)
+
+
+    # def detail_table(self):
+    #     connect = SQL(command=2)  ## SQL class 객체 생성.
+    #     self.df = connect.sql_get()
+    #     ShowTable.fn_show_table(selected_DBtable, df=self.df)
