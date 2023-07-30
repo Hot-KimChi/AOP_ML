@@ -69,7 +69,7 @@ class Select_Table:
                       selected_DBtable=self.DBTable, selected_probeId=self.probeId)
         self.df = connect.sql_get()
 
-        tree_update(df=self.df, selected_input=sel_data, frame=self.frame_down)
+        tree_update(df=self.df, selected_input=self.sel_data, frame=self.frame_down)
 
 
     # def detail_table(self):
