@@ -20,6 +20,7 @@ class Select_Table:
         ## SQL class 객체 생성.
         connect = SQL(command=0, selected_DBtable=self.DBTable, selected_probeId=self.probeId)
         self.df = connect.sql_get()
+        self.sel_cnt = 0
 
         self.select_param()
 
@@ -66,6 +67,8 @@ class Select_Table:
 
     def sel_update(self, event):
 
+        self.sel_cnt = self.sel_cnt + 1
+
         sel_data = self.combo_sel_datas.get()
 
         ## SQL class 객체 생성.
@@ -73,7 +76,7 @@ class Select_Table:
                       selected_DBtable=self.DBTable)
         self.df = connect.sql_get()
 
-        table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down)
+        table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt)
 
         table.update_treeview()
 

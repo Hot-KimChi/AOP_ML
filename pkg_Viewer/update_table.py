@@ -3,16 +3,32 @@ from tkinter import ttk
 
 
 class DataTable:
-    def __init__(self, df=None, selected_input=None, frame=None):
+    def __init__(self, df=None, selected_input=None, frame=None, sel_cnt=0):
 
         self.df = df
         self.selected_input = selected_input
         self.frame = frame
         self.treeline = 20
-        self.creat_treeview()
+        self.sel_cnt = sel_cnt
+        self.my_tree = None                 # Initialize self.my_tree to None
 
 
-    def creat_treeview(self):
+    def create_treeview(self):
+
+        # if self.sel_cnt != 1:
+        #     self.my_tree.destroy()
+        #     self.tree_scroll_y.destroy()
+        #     self.tree_scroll_x.destroy()
+
+        # # select_count가 1번 이상일 경우, tree_table reset.
+        # if self.sel_cnt == 1:
+        #     pass
+        #
+        # else:
+        #     self.my_tree.destroy()
+        #     self.tree_scroll_y.destroy()
+        #     self.tree_scroll_x.destroy()
+
 
         ## tree_table 생성 및 update
         self.tree_scroll_y = Scrollbar(self.frame, orient="vertical")
@@ -60,8 +76,17 @@ class DataTable:
                 sel_param_click.append(self.my_tree.item(i).get('values')[0])
             str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
 
+        print(self.sel_cnt)
 
-        self.my_tree.delete(*self.my_tree.get_children())
+        if self.sel_cnt != 1:
+            # for item in self.my_tree.get_children():
+            #     self.my_tree.delete(item)
+            #
+            self.my_tree.destroy()
+            self.tree_scroll_y.destroy()
+            self.tree_scroll_x.destroy()
+
+        self.create_treeview()  # Create the treeview if it doesn't exist
 
         # Put data in treeview
         df_rows = self.df.round(3)
@@ -71,32 +96,9 @@ class DataTable:
         count = 0
         for row in df_rows:
             if count % 2 == 0:
-                self.my_tree.insert(parent='', index='end', iid=count, text="", values=row,
-                                    tags=('evenrow',))
+                self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
             else:
                 self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
             count += 1
 
-
-        # frame_list =[]
-        # frame_list = frame
-
-        # print(self.sel_cnt, self.selected_input)
-
-        ## select_count가 1번 이상일 경우, tree_table reset.
-        # if self.sel_cnt == 1:
-        #     self.sel_cnt += 1
-        #
-        # else:
-        #     self.my_tree.destroy()
-        #     self.tree_scroll_y.destroy()
-        #     self.tree_scroll_x.destroy()
-        #
-
-
-
-
-
-
-
-
+        return self.my_tree

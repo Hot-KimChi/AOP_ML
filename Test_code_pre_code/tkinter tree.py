@@ -1,15 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
+import pandas as pd
 
 class DataTable:
-    def __init__(self, df=None, selected_input=None, frame=None):
+    def __init__(self, df=None, frame=None):
         self.df = df
-        self.selected_input = selected_input
         self.frame = frame
         self.treeline = 20
         self.create_treeview()
 
     def create_treeview(self):
+        if hasattr(self, 'my_tree'):
+            self.my_tree.destroy()
+            self.tree_scroll_y.destroy()
+            self.tree_scroll_x.destroy()
+
         self.tree_scroll_y = tk.Scrollbar(self.frame, orient="vertical")
         self.tree_scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
 
@@ -22,40 +27,30 @@ class DataTable:
         self.tree_scroll_y.config(command=self.my_tree.yview)
         self.tree_scroll_x.config(command=self.my_tree.xview)
 
-        self.my_tree["column"] = list(self.df.columns)
-        self.my_tree["show"] = "headings"
+        if self.df is not None:
+            self.my_tree["column"] = list(self.df.columns)
+            self.my_tree["show"] = "headings"
 
-        for column in self.my_tree["column"]:
-            self.my_tree.column(column, width=100, minwidth=100)
-            self.my_tree.heading(column, text=column)
+            for column in self.my_tree["column"]:
+                self.my_tree.column(column, width=100, minwidth=100)
+                self.my_tree.heading(column, text=column)
 
-        self.my_tree.tag_configure('oddrow', background="lightblue")
-        self.my_tree.tag_configure('evenrow', background="white")
+            self.my_tree.tag_configure('oddrow', background="lightblue")
+            self.my_tree.tag_configure('evenrow', background="white")
 
         self.my_tree.pack(padx=20, pady=20, side='left')
 
-    def update_treeview(self):
-        self.my_tree.delete(*self.my_tree.get_children())
-
-        df_rows = self.df.round(3)
-        df_rows = df_rows.to_numpy().tolist()
-
-        count = 0
-        for row in df_rows:
-            if count % 2 == 0:
-                self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
-            else:
-                self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
-            count += 1
-
+    def update_treeview(self, new_data):
+        self.df = new_data
+        self.create_treeview()
 
 # 샘플 데이터
-sample_data = [
+sample_data = pd.DataFrame([
     ("John", 30, "Engineer"),
     ("Jane", 28, "Designer"),
     ("Tom", 35, "Manager"),
     # ... 이하 생략 ...
-]
+], columns=["Name", "Age", "Occupation"])
 
 # tkinter 창 생성
 root = tk.Tk()
@@ -70,13 +65,12 @@ data_table = DataTable(df=sample_data, frame=frame)
 
 # 새로운 데이터로 업데이트하는 버튼 클릭 시 이벤트 처리
 def on_update_button_click():
-    new_data = [
+    new_data = pd.DataFrame([
         ("Alice", 25, "Analyst"),
         ("Bob", 32, "Developer"),
         # ... 이하 생략 ...
-    ]
-    data_table.df = new_data
-    data_table.update_treeview()
+    ], columns=["Name", "Age", "Occupation"])
+    data_table.update_treeview(new_data)
 
 update_button = tk.Button(root, text="Update Treeview", command=on_update_button_click)
 update_button.pack(pady=5)
