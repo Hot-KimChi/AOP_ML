@@ -10,95 +10,67 @@ class DataTable:
         self.frame = frame
         self.treeline = 20
         self.sel_cnt = sel_cnt
-        self.my_tree = None                 # Initialize self.my_tree to None
-
-
-    def create_treeview(self):
-
-        # if self.sel_cnt != 1:
-        #     self.my_tree.destroy()
-        #     self.tree_scroll_y.destroy()
-        #     self.tree_scroll_x.destroy()
-
-        # # select_count가 1번 이상일 경우, tree_table reset.
-        # if self.sel_cnt == 1:
-        #     pass
-        #
-        # else:
-        #     self.my_tree.destroy()
-        #     self.tree_scroll_y.destroy()
-        #     self.tree_scroll_x.destroy()
-
-
-        ## tree_table 생성 및 update
-        self.tree_scroll_y = Scrollbar(self.frame, orient="vertical")
-        self.tree_scroll_y.pack(side=RIGHT, fill=Y)
-        self.tree_scroll_x = Scrollbar(self.frame, orient="horizontal")
-        self.tree_scroll_x.pack(side=BOTTOM, fill=X)
-
-
-        self.my_tree = ttk.Treeview(self.frame, height=self.treeline, yscrollcommand=self.tree_scroll_y.set,
-                                    xscrollcommand=self.tree_scroll_x.set, selectmode="extended")
-
-
-        ## event update시, func_click_item 수행.
-        # self.my_tree.bind('<ButtonRelease-1>', self.click_item)
-
-        self.tree_scroll_y.config(command=self.my_tree.yview)
-        self.tree_scroll_x.config(command=self.my_tree.xview)
-
-        self.my_tree["column"] = list(self.df.columns)
-        self.my_tree["show"] = "headings"
-
-
-        # Loop thru column list for headers
-        for column in self.my_tree["column"]:
-            self.my_tree.column(column, width=100, minwidth=100)
-            self.my_tree.heading(column, text=column)
-
-        self.my_tree.tag_configure('oddrow', background="lightblue")
-        self.my_tree.tag_configure('evenrow', background="white")
-
-        self.my_tree.pack(padx=20, pady=20, side='left')
+        # self.my_tree = self                 # Initialize self.my_tree to None
 
 
     def update_treeview(self):
+        try:
+            print(self.sel_cnt)
 
-        ## tree table안에 있는 데이터를 선택해서 제일 앞에 있는 데이터를 (x1, x2, x3) 형태로 변수 update.
-        def click_item(self, event):
-            ## multiple selection
-            selectedItem = self.my_tree.selection()
+            # Destroy the previous tree and scrollbars, if any
+            if self.sel_cnt == 1:
+                pass
 
-            # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
-            # sel_param_click = my_tree.item(selectedItem).get('values')[0]
-            sel_param_click = []
-            for i in selectedItem:
-                sel_param_click.append(self.my_tree.item(i).get('values')[0])
-            str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
-
-        print(self.sel_cnt)
-
-        if self.sel_cnt != 1:
-            # for item in self.my_tree.get_children():
-            #     self.my_tree.delete(item)
-            #
-            self.my_tree.destroy()
-            self.tree_scroll_y.destroy()
-            self.tree_scroll_x.destroy()
-
-        self.create_treeview()  # Create the treeview if it doesn't exist
-
-        # Put data in treeview
-        df_rows = self.df.round(3)
-        df_rows = df_rows.to_numpy().tolist()
-
-        # 새로운 데이터로 업데이트하는 버튼 클릭 시 이벤트 처리
-        count = 0
-        for row in df_rows:
-            if count % 2 == 0:
-                self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
             else:
-                self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
-            count += 1
+                self.my_tree.destroy()
+                self.tree_scroll_y.destroy()
+                self.tree_scroll_x.destroy()
 
-        return self.my_tree
+
+            ## tree_table 생성 및 update
+            self.tree_scroll_y = Scrollbar(self.frame, orient="vertical")
+            self.tree_scroll_y.pack(side=RIGHT, fill=Y)
+            self.tree_scroll_x = Scrollbar(self.frame, orient="horizontal")
+            self.tree_scroll_x.pack(side=BOTTOM, fill=X)
+
+            self.my_tree = ttk.Treeview(self.frame, height=self.treeline, yscrollcommand=self.tree_scroll_y.set,
+                                        xscrollcommand=self.tree_scroll_x.set, selectmode="extended")
+
+            self.tree_scroll_y.config(command=self.my_tree.yview)
+            self.tree_scroll_x.config(command=self.my_tree.xview)
+
+            self.my_tree["column"] = list(self.df.columns)
+            self.my_tree["show"] = "headings"
+
+            # Loop thru column list for headers
+            for column in self.my_tree["column"]:
+                self.my_tree.column(column, width=90, minwidth=90)
+                self.my_tree.heading(column, text=column)
+
+            self.my_tree.tag_configure('oddrow', background="lightblue")
+            self.my_tree.tag_configure('evenrow', background="white")
+
+            ## event update시, func_click_item 수행.
+            # self.my_tree.bind('<ButtonRelease-1>', self.click_item)
+
+
+            self.my_tree.pack(padx=20, pady=20, side='left')
+
+
+            # Put data in treeview
+            df_rows = self.df.round(3)
+            df_rows = df_rows.to_numpy().tolist()
+
+            # Add new data to treeview
+            count = 0
+            for row in df_rows:
+                if count % 2 == 0:
+                    self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('evenrow',))
+                else:
+                    self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
+                count += 1
+
+            return self.my_tree
+
+        except:
+            print("Error: tree_update")

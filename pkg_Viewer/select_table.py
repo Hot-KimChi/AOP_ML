@@ -76,9 +76,7 @@ class Select_Table:
                       selected_DBtable=self.DBTable)
         self.df = connect.sql_get()
 
-        table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt)
-
-        table.update_treeview()
+        DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt).update_treeview()
 
 
     # def detail_table(self):
