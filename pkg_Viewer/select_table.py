@@ -47,12 +47,13 @@ class Select_Table:
         # btn_view = Button(self.frame_down, width=15, height=2, text='Select & Detail', command=self.detail_table)
         # btn_view.place(x=350, y=5)
 
-        # self.fn_tree_update(df=self.df, frame=self.frame2)
+        # table = DataTable(df=self.df, frame=self.frame_down, sel_cnt=self.sel_cnt)
+        # table.update_treeview()
 
 
     def on_selected(self, event):
 
-        # parameter 중 한개를 선정하게 되면 filter 기능.
+        # parameter 중 데이터 load하여 user가 filter된 데이터를 선정하게 되면 sel_update binding.
         self.selected_param = event.widget.get()
         list_datas = self.df[f'{self.selected_param}'].values.tolist()
 
@@ -68,7 +69,6 @@ class Select_Table:
     def sel_update(self, event):
 
         self.sel_cnt = self.sel_cnt + 1
-
         sel_data = self.combo_sel_datas.get()
 
         ## SQL class 객체 생성.
@@ -76,10 +76,11 @@ class Select_Table:
                       selected_DBtable=self.DBTable)
         self.df = connect.sql_get()
 
-        DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt).update_treeview()
+        table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt)
 
-
-    # def detail_table(self):
-    #     connect = SQL(command=2)  ## SQL class 객체 생성.
-    #     self.df = connect.sql_get()
-    #     ShowTable.fn_show_table(selected_DBtable, df=self.df)
+        global my_tree
+        if self.sel_cnt == 1:
+            my_tree = table.update_treeview()
+        else:
+            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt, my_tree=my_tree)
+            table.update_treeview()
