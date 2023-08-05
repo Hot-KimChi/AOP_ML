@@ -12,11 +12,6 @@ class DataTable:
         self.sel_cnt = sel_cnt
         self.my_tree = my_tree
 
-    # def detail_table(self):
-    #     connect = SQL(command=2)  ## SQL class 객체 생성.
-    #     self.df = connect.sql_get()
-    #     ShowTable.fn_show_table(selected_DBtable, df=self.df)
-
 
     def update_treeview(self):
 
@@ -28,8 +23,6 @@ class DataTable:
 
         else:
             self.my_tree.destroy()
-            # self.tree_scroll_y.destroy()
-            # self.tree_scroll_x.destroy()
 
 
         # Initialize the my_tree variable
@@ -78,5 +71,11 @@ class DataTable:
             count += 1
 
         return self.my_tree
+
+
+    # def detail_table(self):
+    #     connect = SQL(command=2)  ## SQL class 객체 생성.
+    #     self.df = connect.sql_get()
+    #     ShowTable.fn_show_table(selected_DBtable, df=self.df)
 
 

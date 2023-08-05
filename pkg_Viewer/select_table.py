@@ -80,7 +80,9 @@ class Select_Table:
 
         global my_tree
         if self.sel_cnt == 1:
+            ## 초기 Treeview 생성 시,
             my_tree = table.update_treeview()
         else:
+            ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
             table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt, my_tree=my_tree)
             table.update_treeview()
