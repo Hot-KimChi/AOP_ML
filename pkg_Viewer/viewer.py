@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-from pkg_Viewer.select_table import Select_Table
+from pkg_Viewer.select_table import SelectTable
 
 
 class Viewer:
@@ -75,4 +75,4 @@ class Viewer:
         selected_probeId = selected_probeinfo[idx+1:]
         selected_DBtable = self.combo_DBtable.get()
 
-        select_table = Select_Table(frame_down=self.frame2, probeId=selected_probeId, DBTable=selected_DBtable)
+        select_table = SelectTable(frame_down=self.frame2, probeId=selected_probeId, DBTable=selected_DBtable)

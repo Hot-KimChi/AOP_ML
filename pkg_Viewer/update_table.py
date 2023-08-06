@@ -13,14 +13,27 @@ class DataTable:
         self.my_tree = my_tree
 
 
+    def click_item(self, event):
+        ## multiple selection
+        # global str_sel_param
+        selectedItem = self.my_tree.selection()
+
+        # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
+        # sel_param_click = my_tree.item(selectedItem).get('values')[0]
+        sel_param_click = []
+        for i in selectedItem:
+            sel_param_click.append(self.my_tree.item(i).get('values')[0])
+        str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
+
+        return str_sel_param
+
+
     def update_treeview(self):
 
-        print(self.sel_cnt)
 
         # Destroy the previous tree and scrollbars, if any
         if self.sel_cnt == 1:
             pass
-
         else:
             self.my_tree.destroy()
 
@@ -39,7 +52,7 @@ class DataTable:
 
 
         ## event update시, func_click_item 수행.
-        # self.my_tree.bind('<ButtonRelease-1>', self.click_item)
+        self.my_tree.bind('<ButtonRelease-1>', self.click_item)
 
         self.tree_scroll_y.config(command=self.my_tree.yview)
         self.tree_scroll_x.config(command=self.my_tree.xview)

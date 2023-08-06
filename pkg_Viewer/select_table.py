@@ -6,7 +6,7 @@ from pkg_Table.showTable import ShowTable
 from pkg_Viewer.update_table import DataTable
 
 
-class Select_Table:
+class SelectTable:
     """
     선택한 parameters(probeID, DB_table)를 기반으로 MS-SQL 데이터 load
     """
