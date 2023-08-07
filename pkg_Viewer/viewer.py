@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-from pkg_Viewer.select_table import SelectTable
+from pkg_Viewer.select_param import SelectParam
 
 
 class Viewer:
@@ -30,27 +30,40 @@ class Viewer:
 
         window_view = tk.Toplevel()
         window_view.title(f"{self.database}" + ' / Viewer')
-        window_view.geometry("1800x1100")
+        window_view.geometry("1600x700")
         # window_view.resizable(False, False)
 
-        frame1 = Frame(window_view, relief="solid", bd=2)
-        frame1.pack(side="top", fill="both", expand=True)
-        self.frame2 = Frame(window_view, relief="solid", bd=2)
-        self.frame2.pack(side="bottom", fill="both", expand=True)
+        self.frame1 = Frame(window_view, relief="solid", bd=2)
+        self.frame1.pack(side="top", fill="both", expand=True)
+        # self.frame2 = Frame(window_view, relief="solid", bd=2)
+        # self.frame2.pack(side="bottom", fill="both", expand=True)
 
 
-        label_probename = Label(frame1, text='Probe Name')
+        label_probename = Label(self.frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
-        self.combo_probename = ttk.Combobox(frame1, value=self.list_probe, height=0, state='readonly')
-        self.combo_probename.place(x=115, y=5)
+        self.combo_probename = ttk.Combobox(self.frame1, value=self.list_probe, height=0, state='readonly')
+        self.combo_probename.place(x=110, y=5)
 
-        label_DB_table = Label(frame1, text='SQL Table Name')
+        label_DB_table = Label(self.frame1, text='SQL Table Name')
         label_DB_table.place(x=5, y=25)
-        self.combo_DBtable = ttk.Combobox(frame1, value=list_M3_table, height=0, state='readonly')
-        self.combo_DBtable.place(x=115, y=25)
+        self.combo_DBtable = ttk.Combobox(self.frame1, value=list_M3_table, height=0, state='readonly')
+        self.combo_DBtable.place(x=110, y=25)
+        self.combo_DBtable.bind('<<ComboboxSelected>>', self._get_sequence)
 
-        btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._get_sequence)
-        btn_view.place(x=350, y=5)
+        label_filter = Label(self.frame1, text='filter Column')
+        label_filter.place(x=280, y=5)
+
+        combo_list_columns = ttk.Combobox(self.frame1, height=0, state='readonly')
+        combo_list_columns.place(x=360, y=5)
+
+        label_sel_data = Label(self.frame1, text='Selection')
+        label_sel_data.place(x=280, y=25)
+
+        self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
+        self.combo_sel_datas.place(x=360, y=25)
+
+        # btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._get_sequence)
+        # btn_view.place(x=350, y=5)
 
         # Add some style / Pick a theme
         style = ttk.Style()
@@ -69,10 +82,10 @@ class Viewer:
         window_view.mainloop()
 
 
-    def _get_sequence(self):
+    def _get_sequence(self, event):
         selected_probeinfo = self.combo_probename.get().replace(" ", "")        ## 공백 없애기 " " --> ""
         idx = selected_probeinfo.find("|")
         selected_probeId = selected_probeinfo[idx+1:]
         selected_DBtable = self.combo_DBtable.get()
 
-        select_table = SelectTable(frame_down=self.frame2, probeId=selected_probeId, DBTable=selected_DBtable)
+        select_table = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable=selected_DBtable)

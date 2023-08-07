@@ -6,12 +6,12 @@ from pkg_Table.showTable import ShowTable
 from pkg_Viewer.update_table import DataTable
 
 
-class SelectTable:
+class SelectParam:
     """
     선택한 parameters(probeID, DB_table)를 기반으로 MS-SQL 데이터 load
     """
-    def __init__(self, frame_down, probeId, DBTable):
-        self.frame_down = frame_down
+    def __init__(self, frame, probeId, DBTable):
+        self.frame1 = frame
         self.probeId = probeId
         self.DBTable = DBTable
 
@@ -30,19 +30,19 @@ class SelectTable:
         list_params = self.df.columns.values.tolist()
 
         ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
-        label_filter = Label(self.frame_down, text='filter Column')
-        label_filter.place(x=5, y=5)
+        label_filter = Label(self.frame1, text='filter Column')
+        label_filter.place(x=280, y=5)
 
-        combo_list_columns = ttk.Combobox(self.frame_down, value=list_params, height=0, state='readonly')
-        combo_list_columns.place(x=115, y=5)
+        combo_list_columns = ttk.Combobox(self.frame1, value=list_params, height=0, state='readonly')
+        combo_list_columns.place(x=360, y=5)
         combo_list_columns.bind('<<ComboboxSelected>>', self.on_selected)
 
-        label_sel_data = Label(self.frame_down, text='Selection')
-        label_sel_data.place(x=5, y=25)
+        label_sel_data = Label(self.frame1, text='Selection')
+        label_sel_data.place(x=280, y=25)
 
         ## 빈 Combobox show-up / 선택 시, parameter 데이터 업데이트
-        self.combo_sel_datas = ttk.Combobox(self.frame_down, height=0, state='readonly')
-        self.combo_sel_datas.place(x=115, y=25)
+        self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
+        self.combo_sel_datas.place(x=360, y=25)
         #
         # btn_view = Button(self.frame_down, width=15, height=2, text='Select & Detail', command=self.detail_table)
         # btn_view.place(x=350, y=5)
@@ -61,8 +61,8 @@ class SelectTable:
         set_datas = set(list_datas)
         filtered_datas = list(set_datas)
 
-        self.combo_sel_datas = ttk.Combobox(self.frame_down, value=filtered_datas, height=0, state='readonly')
-        self.combo_sel_datas.place(x=115, y=25)
+        self.combo_sel_datas = ttk.Combobox(self.frame1, value=filtered_datas, height=0, state='readonly')
+        self.combo_sel_datas.place(x=360, y=25)
         self.combo_sel_datas.bind('<<ComboboxSelected>>', self.sel_update)
 
 
@@ -76,13 +76,15 @@ class SelectTable:
                       selected_DBtable=self.DBTable)
         self.df = connect.sql_get()
 
-        table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt)
 
-        global my_tree
+
+        global my_tree, scroll_y, scroll_x
         if self.sel_cnt == 1:
             ## 초기 Treeview 생성 시,
-            my_tree = table.update_treeview()
+            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, sel_cnt=self.sel_cnt)
+            my_tree, scroll_y, scroll_x = table.update_treeview()
         else:
             ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
-            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame_down, sel_cnt=self.sel_cnt, my_tree=my_tree)
-            table.update_treeview()
+            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, sel_cnt=self.sel_cnt,
+                              my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
+            my_tree, scroll_y, scroll_x = table.update_treeview()

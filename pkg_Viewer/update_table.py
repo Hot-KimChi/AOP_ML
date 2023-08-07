@@ -3,7 +3,8 @@ from tkinter import ttk
 
 
 class DataTable:
-    def __init__(self, df=None, selected_input=None, frame=None, sel_cnt=0, my_tree=None):
+    def __init__(self, df=None, selected_input=None, frame=None, sel_cnt=0,
+                 my_tree=None, tree_scroll_y=None, tree_scroll_x=None):
         super().__init__()
         self.df = df
         self.selected_input = selected_input
@@ -11,6 +12,8 @@ class DataTable:
         self.treeline = 20
         self.sel_cnt = sel_cnt
         self.my_tree = my_tree
+        self.tree_scroll_y = tree_scroll_y
+        self.tree_scroll_x = tree_scroll_x
 
 
     def click_item(self, event):
@@ -24,6 +27,7 @@ class DataTable:
         for i in selectedItem:
             sel_param_click.append(self.my_tree.item(i).get('values')[0])
         str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
+        print(str_sel_param)
 
         return str_sel_param
 
@@ -32,10 +36,14 @@ class DataTable:
 
 
         # Destroy the previous tree and scrollbars, if any
-        if self.sel_cnt == 1:
+        if self.sel_cnt == 1 and self.selected_input == None:
             pass
+            print('pass')
         else:
             self.my_tree.destroy()
+            self.tree_scroll_y.destroy()
+            self.tree_scroll_x.destroy()
+            print('삭제')
 
 
         # Initialize the my_tree variable
@@ -49,7 +57,6 @@ class DataTable:
                                     xscrollcommand=self.tree_scroll_x.set, selectmode="extended")
 
         self.my_tree.pack(padx=20, pady=20, side='left')
-
 
         ## event update시, func_click_item 수행.
         self.my_tree.bind('<ButtonRelease-1>', self.click_item)
@@ -83,7 +90,7 @@ class DataTable:
                 self.my_tree.insert(parent='', index='end', iid=count, text="", values=row, tags=('oddrow',))
             count += 1
 
-        return self.my_tree
+        return self.my_tree, self.tree_scroll_y, self.tree_scroll_x
 
 
     # def detail_table(self):
