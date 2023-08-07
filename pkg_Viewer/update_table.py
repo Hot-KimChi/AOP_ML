@@ -36,7 +36,7 @@ class DataTable:
 
 
         # Destroy the previous tree and scrollbars, if any
-        if self.sel_cnt == 1 and self.selected_input == None:
+        if self.sel_cnt == 1:
             pass
             print('pass')
         else:

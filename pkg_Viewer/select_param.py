@@ -28,7 +28,7 @@ class SelectParam:
 
 
         self.sel_cnt = self.sel_cnt + 1
-        global my_tree, scroll_y, scroll_x
+        global sel_cnt, my_tree, scroll_y, scroll_x
         if self.sel_cnt == 1:
             ## 초기 Treeview 생성 시,
             table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
@@ -81,6 +81,7 @@ class SelectParam:
 
     def sel_update(self, event):
 
+        self.sel_cnt = self.sel_cnt + 1
         sel_data = self.combo_sel_datas.get()
 
         ## SQL class 객체 생성.
