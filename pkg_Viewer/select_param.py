@@ -26,7 +26,7 @@ class SelectParam:
         connect = SQL(command=0, selected_DBtable=self.DBTable, selected_probeId=self.probeId)
         self.df = connect.sql_get()
 
-
+        ## check
         self.sel_cnt = self.sel_cnt + 1
         global sel_cnt, my_tree, scroll_y, scroll_x
         if self.sel_cnt == 1:
