@@ -89,3 +89,4 @@ class Viewer:
         selected_DBtable = self.combo_DBtable.get()
 
         select_table = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable=selected_DBtable)
+

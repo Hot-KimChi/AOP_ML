@@ -26,10 +26,15 @@ class SelectParam:
         connect = SQL(command=0, selected_DBtable=self.DBTable, selected_probeId=self.probeId)
         self.df = connect.sql_get()
 
+
         ## check
+
         self.sel_cnt = self.sel_cnt + 1
+
         global sel_cnt, my_tree, scroll_y, scroll_x
-        if self.sel_cnt == 1:
+        sel_cnt = self.sel_cnt
+
+        if sel_cnt == 1:
             ## 초기 Treeview 생성 시,
             table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
             my_tree, scroll_y, scroll_x = table.update_treeview()
@@ -63,6 +68,8 @@ class SelectParam:
         # table = DataTable(df=self.df, frame=self.frame_down, sel_cnt=self.sel_cnt)
         # table.update_treeview()
 
+        return self.sel_cnt
+
 
     def on_selected(self, event):
 
@@ -88,6 +95,9 @@ class SelectParam:
         connect = SQL(command=3, selected_probeId=self.probeId, selected_param=self.selected_param, sel_data=sel_data,
                       selected_DBtable=self.DBTable)
         self.df = connect.sql_get()
+
+        table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, sel_cnt=self.sel_cnt)
+        table.update_treeview()
 
 
         global my_tree, scroll_y, scroll_x
