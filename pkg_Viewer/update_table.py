@@ -35,7 +35,7 @@ class DataTable:
     def update_treeview(self):
 
         # # Destroy the previous tree and scrollbars, if any
-        if self.my_tree or self.sel_cnt > 1:
+        if self.my_tree:
             self.my_tree.destroy()
             self.tree_scroll_y.destroy()
             self.tree_scroll_x.destroy()
