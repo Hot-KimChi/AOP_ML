@@ -27,6 +27,10 @@ class SelectParam:
         self.df = connect.sql_get()
 
 
+        ## check
+
+        self.sel_cnt = self.sel_cnt + 1
+
         global my_tree, scroll_y, scroll_x
         if self.sel_cnt == 1:
             ## 초기 Treeview 생성 시,
@@ -62,6 +66,8 @@ class SelectParam:
         # table = DataTable(df=self.df, frame=self.frame_down, sel_cnt=self.sel_cnt)
         # table.update_treeview()
 
+        return self.sel_cnt
+
 
     def on_selected(self, event):
 
@@ -81,6 +87,7 @@ class SelectParam:
     def sel_update(self, event):
 
         self.sel_cnt = self.sel_cnt + 1
+
         sel_data = self.combo_sel_datas.get()
 
         ## SQL class 객체 생성.
@@ -88,8 +95,13 @@ class SelectParam:
                       selected_DBtable=self.DBTable)
         self.df = connect.sql_get()
 
+        table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, sel_cnt=self.sel_cnt)
+        table.update_treeview()
+
+        print(self.sel_cnt)
 
         global my_tree, scroll_y, scroll_x
+
         if self.sel_cnt == 1:
             ## 초기 Treeview 생성 시,
             table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, sel_cnt=self.sel_cnt)

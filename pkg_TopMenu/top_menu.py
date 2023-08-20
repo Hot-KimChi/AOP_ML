@@ -34,10 +34,12 @@ class TopMenu:
         btn_sum = Button(self.window, width=30, height=3, text='SQL Viewer',
                          command=lambda: Viewer(self.database, self.list_probe))
         btn_sum.grid(row=0, column=1)
+
         #
         # btn_tx_sum = Button(self.window, width=30, height=3, text='Tx Summary', command=TxSumm)
         # btn_tx_sum.grid(row=1, column=0)
-        #
+
+        # verification step
         # btn_ML = Button(self.window, width=30, height=3, text='Verification Report', command=Verify_Report)
         # btn_ML.grid(row=1, column=1)
         #
