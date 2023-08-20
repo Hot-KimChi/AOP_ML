@@ -35,7 +35,7 @@ class TopMenu:
                          command=lambda: Viewer(self.database, self.list_probe))
         btn_sum.grid(row=0, column=1)
 
-        #
+        # 확인
         # btn_tx_sum = Button(self.window, width=30, height=3, text='Tx Summary', command=TxSumm)
         # btn_tx_sum.grid(row=1, column=0)
 
