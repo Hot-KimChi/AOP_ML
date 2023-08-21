@@ -10,11 +10,11 @@ class SelectParam:
     """
     선택한 parameters(probeID, DB_table)를 기반으로 MS-SQL 데이터 load
     """
-    def __init__(self, frame, probeId, DBTable):
+    def __init__(self, frame, probeId, DBTable, sel_cnt):
         self.frame1 = frame
         self.probeId = probeId
         self.DBTable = DBTable
-        self.sel_cnt = 0
+        self.sel_cnt = sel_cnt
 
         self.select_param()
 
@@ -66,7 +66,7 @@ class SelectParam:
         # table = DataTable(df=self.df, frame=self.frame_down, sel_cnt=self.sel_cnt)
         # table.update_treeview()
 
-        return self.sel_cnt
+        return self.sel_cnt, my_tree, scroll_x, scroll_y
 
 
     def on_selected(self, event):

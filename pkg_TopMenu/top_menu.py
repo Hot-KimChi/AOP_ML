@@ -5,6 +5,8 @@ from tkinter import *
 from pkg_SQL.database import SQL
 from pkg_MeasSetGen.meas_generation import MeasSetGen
 from pkg_Viewer.viewer import Viewer
+from pkg_Verify_Report.verify_report import Verify_Report
+
 
 class TopMenu:
 
@@ -35,13 +37,16 @@ class TopMenu:
                          command=lambda: Viewer(self.database, self.list_probe))
         btn_sum.grid(row=0, column=1)
 
+        # verification step
+        btn_verify = Button(self.window, width=30, height=3, text='Verification Report',
+                            command=lambda: Verify_Report(self.database, self.list_probe))
+        btn_verify.grid(row=1, column=0)
+
         # 확인
         # btn_tx_sum = Button(self.window, width=30, height=3, text='Tx Summary', command=TxSumm)
         # btn_tx_sum.grid(row=1, column=0)
 
-        # verification step
-        # btn_ML = Button(self.window, width=30, height=3, text='Verification Report', command=Verify_Report)
-        # btn_ML.grid(row=1, column=1)
+
         #
         # btn_ML = Button(self.window, width=30, height=3, text='Machine Learning', command=Machine_Learning)
         # btn_ML.grid(row=2, column=0)
