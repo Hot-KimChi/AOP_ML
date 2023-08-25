@@ -29,6 +29,7 @@ class Verify_Report:
         self.combo_probename = ttk.Combobox(self.frame1, value=self.list_probe, height=0, state='readonly')
         self.combo_probename.place(x=110, y=5)
         self.combo_probename.bind('<<ComboboxSelected>>', self._get_sequence)
+
         #
         # btn_view = Button(self.frame1, width=15, height=2, text='Select & Load', command=self.load_cond)
         # btn_view.place(x=350, y=5)
