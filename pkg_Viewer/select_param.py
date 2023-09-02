@@ -28,7 +28,6 @@ class SelectParam:
 
 
         ## check
-
         self.sel_cnt = self.sel_cnt + 1
 
         global my_tree, scroll_y, scroll_x
