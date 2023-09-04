@@ -39,7 +39,6 @@ class DataTable:
             self.my_tree.destroy()
             self.tree_scroll_y.destroy()
             self.tree_scroll_x.destroy()
-            print('삭제')
 
 
         # Initialize the my_tree variable
