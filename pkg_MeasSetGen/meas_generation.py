@@ -6,6 +6,7 @@ from pkg_MeasSetGen.data_inout import loadfile
 from pkg_MeasSetGen.data_inout import DataOut
 from pkg_MeasSetGen.param_update import ParamUpdate
 from pkg_MeasSetGen.param_gen import ParamGen
+from pkg_MeasSetGen.predictML import PredictML
 
 
 class MeasSetGen:
@@ -53,6 +54,10 @@ class MeasSetGen:
 
         ## 선택한 데이터를 기반으로 parameter 생성.
         self.gen_df = ParamGen(data=self.selected_df, probe=self.probe)
+
+        ## predictML for intensity case
+        predictML = PredictML(self.gen_df.df, self.probe)
+        self.gen_df = predictML.intensity_zt()
 
         ## 클래스 인스턴스를 데이터프레임으로 변환 / DataOut 클래스 이용하여 csv 파일로 추출.
         df = self.gen_df.df
