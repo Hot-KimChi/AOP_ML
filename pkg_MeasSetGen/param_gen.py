@@ -2,16 +2,11 @@ import numpy as np
 
 
 class ParamGen:
-    def __init__(self, data, probe):
+    def __init__(self, data, probeid, probename):
 
         self.df = data
-        self.probe = probe
-
-
-        idx = self.probe.find("|")
-        if idx >= 0:
-            self.probename = self.probe[:idx]
-            self.probeid = self.probe[idx + 1:]
+        self.probeid = probeid
+        self.probename = probename
 
         self.df['probeId'] = self.probeid
         self.df['probeName'] = self.probename

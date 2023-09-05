@@ -16,6 +16,8 @@ class PredictML:
         self.df = df
         self.probe = probe
 
+        print(self.probe)
+
         ## take parameters for ML from measSet_gen file.
         self.est_params = self.df[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'ElevAperIndex', 'IsTxChannelModulationEn']]
 

@@ -45,6 +45,12 @@ class MeasSetGen:
         ## probename / probeid 로 구분
         self.probe = self.combo_probe.get().replace(" ", "")
 
+        idx = self.probe.find("|")
+        if idx >= 0:
+            probename = self.probe[:idx]
+            probeid = self.probe[idx + 1:]
+
+
         ## 파일 선택할 수 있는 algorithm
         raw_data = loadfile()
 
@@ -53,10 +59,10 @@ class MeasSetGen:
         self.selected_df, self.group_params = param_update.param_merge()        ## 메서드 호출 및 반환된 값 저장.
 
         ## 선택한 데이터를 기반으로 parameter 생성.
-        self.gen_df = ParamGen(data=self.selected_df, probe=self.probe)
+        self.gen_df = ParamGen(data=self.selected_df, probeid=probeid, probename=probename)
 
         ## predictML for intensity case
-        predictML = PredictML(self.gen_df.df, self.probe)
+        predictML = PredictML(self.gen_df.df, probeid)
         self.gen_df = predictML.intensity_zt()
 
         ## 클래스 인스턴스를 데이터프레임으로 변환 / DataOut 클래스 이용하여 csv 파일로 추출.
