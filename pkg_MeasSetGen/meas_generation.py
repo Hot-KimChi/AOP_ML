@@ -62,11 +62,11 @@ class MeasSetGen:
         self.gen_df = ParamGen(data=self.selected_df, probeid=probeid, probename=probename)
 
         ## predictML for intensity case
-        predictML = PredictML(self.gen_df.df, probeid)
-        self.gen_df = predictML.intensity_zt()
+        ML = PredictML(self.gen_df.df, probeid)
+        self.gen_df = ML.intensity_zt()
 
         ## 클래스 인스턴스를 데이터프레임으로 변환 / DataOut 클래스 이용하여 csv 파일로 추출.
-        df = self.gen_df.df
+        df = self.gen_df
         DataOut(database=self.database, probe=self.probe, df=df, group_params=self.group_params)
 
 
