@@ -11,6 +11,7 @@ class PredictML:
     2) temperature case: find initial PRF(for target temperature)
     3) Power case: find to set-up PRF for preventing of transducer damage
     """
+
     def __init__(self, df, probe):
 
         self.df = df
