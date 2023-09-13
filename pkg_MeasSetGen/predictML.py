@@ -17,10 +17,10 @@ class PredictML:
         self.df = df
         self.probe = probe
 
-        print(self.probe)
 
         ## take parameters for ML from measSet_gen file.
-        self.est_params = self.df[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'ElevAperIndex', 'IsTxChannelModulationEn']]
+        self.est_params = self.df[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle',
+                                   'ProbeNumTxCycles', 'ElevAperIndex', 'IsTxChannelModulationEn']]
 
         ## load parameters from SQL database
         connect = SQL(command=4, selected_probeId=self.probe)
