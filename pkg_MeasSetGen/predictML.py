@@ -33,8 +33,8 @@ class PredictML:
 
 
     def intensity_zt(self):
-        ## predict by Machine Learning model.
-        ## load modeling by pickle file.
+        ## predict zt by Machine Learning model.
+
         loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
 
         zt_est = loaded_model.predict(self.est_params)
