@@ -43,3 +43,9 @@ class PredictML:
         self.df['zt_est'] = round(df_est, 1)
 
         return self.df
+
+
+    def temperature_PRF(self):
+        pass
+
+        return self.df
