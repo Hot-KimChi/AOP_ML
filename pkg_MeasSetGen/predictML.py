@@ -11,15 +11,16 @@ class PredictML:
     2) temperature case: find initial PRF(for target temperature)
     3) Power case: find to set-up PRF for preventing of transducer damage
     """
+
     def __init__(self, df, probe):
 
         self.df = df
         self.probe = probe
 
-        print(self.probe)
 
         ## take parameters for ML from measSet_gen file.
-        self.est_params = self.df[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle', 'ProbeNumTxCycles', 'ElevAperIndex', 'IsTxChannelModulationEn']]
+        self.est_params = self.df[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle',
+                                   'ProbeNumTxCycles', 'ElevAperIndex', 'IsTxChannelModulationEn']]
 
         ## load parameters from SQL database
         connect = SQL(command=4, selected_probeId=self.probe)
@@ -32,13 +33,19 @@ class PredictML:
 
 
     def intensity_zt(self):
-        ## predict by Machine Learning model.
-        ## load modeling by pickle file.
+        ## predict zt by Machine Learning model.
+
         loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
 
         zt_est = loaded_model.predict(self.est_params)
         df_est = pd.DataFrame(zt_est, columns=['zt_est'])
 
         self.df['zt_est'] = round(df_est, 1)
+
+        return self.df
+
+
+    def temperature_PRF(self):
+        pass
 
         return self.df

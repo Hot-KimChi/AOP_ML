@@ -44,7 +44,6 @@ class MeasSetGen:
 
         ## probename / probeid 로 구분
         self.probe = self.combo_probe.get().replace(" ", "")
-
         idx = self.probe.find("|")
         if idx >= 0:
             probename = self.probe[:idx]
