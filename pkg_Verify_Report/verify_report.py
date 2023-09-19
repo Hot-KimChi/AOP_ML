@@ -8,6 +8,8 @@ from pkg_Viewer.select_param import SelectParam
 
 
 class Verify_Report:
+    """"
+    """
     def __init__(self, database, list_probe):
 
         self.sel_cnt = 0
