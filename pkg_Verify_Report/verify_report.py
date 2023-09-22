@@ -9,7 +9,7 @@ from pkg_Viewer.select_param import SelectParam
 
 class Verify_Report:
     """
-    verify
+    verify step same as intial viewer
     """
     def __init__(self, database, list_probe):
 
