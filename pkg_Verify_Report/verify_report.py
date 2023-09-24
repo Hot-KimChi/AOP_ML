@@ -10,6 +10,8 @@ from pkg_Viewer.select_param import SelectParam
 class Verify_Report:
     """
     verify step same as initial viewer
+    1) For initial case, same as viewer.py
+    2) For selected item, SQL query execute.
     """
     def __init__(self, database, list_probe):
 
