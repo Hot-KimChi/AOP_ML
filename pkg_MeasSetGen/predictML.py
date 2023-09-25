@@ -45,7 +45,10 @@ class PredictML:
         return self.df
 
 
+    ## >>in progress
     def temperature_PRF(self):
-        pass
+        ## predict PRF by ML model.
+
+        loaded_model = joblib.load('')
 
         return self.df
