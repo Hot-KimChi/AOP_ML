@@ -50,6 +50,6 @@ class PredictML:
 
         loaded_model = joblib.load('')
 
-
+        PRF_est = loaded_model.predict(self.est_params)
 
         return self.df
