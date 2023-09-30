@@ -93,4 +93,3 @@ class Viewer:
 
         select_table = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable=selected_DBtable,
                                    sel_cnt=self.sel_cnt)
-
