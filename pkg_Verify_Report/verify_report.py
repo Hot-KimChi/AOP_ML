@@ -12,6 +12,7 @@ class Verify_Report:
     verify step same as initial viewer
     1) For initial case, same as viewer.py
         - need to update(panel part)
+        - Combo-box sequence changed.
     2) For selected item, SQL query execute.
     """
     def __init__(self, database, list_probe):
