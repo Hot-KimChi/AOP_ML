@@ -60,8 +60,8 @@ class Verify_Report:
         self.df = connect.sql_get()
 
         self.sel_cnt += 1
-        datatable = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
-        datatable.update_treeview()
+        table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
+        self.my_tree, self.tree_scroll_y, self.tree_scroll_x = table.update_treeview()
 
 
         # Add some style
@@ -83,23 +83,29 @@ class Verify_Report:
 
 
     def _get_sequence(self, event):
+
         selected_probeinfo = self.combo_probename.get().replace(" ", "")        ## 공백 없애기 " " --> ""
         idx = selected_probeinfo.find("|")
         selected_probeId = selected_probeinfo[idx+1:]
 
-        select_table = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
-                                   sel_cnt=self.sel_cnt)
+        if self.my_tree:
+            self.my_tree.destroy()
+            self.tree_scroll_y.destroy()
+            self.tree_scroll_x.destroy()
 
-        global my_tree, scroll_y, scroll_x
-        if self.sel_cnt == 1:
-            ## 초기 Treeview 생성 시,
-            table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
-            my_tree, scroll_y, scroll_x = table.update_treeview()
-        else:
-            ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
-            table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt,
-                              my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
-            my_tree, scroll_y, scroll_x = table.update_treeview()
+        select_table = SelectParam(self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
+                                   sel_cnt=self.sel_cnt)
+        #
+        # global my_tree, scroll_y, scroll_x
+        # if self.sel_cnt == 1:
+        #     ## 초기 Treeview 생성 시,
+        #     table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
+        #     my_tree, scroll_y, scroll_x = table.update_treeview()
+        # else:
+        #     ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
+        #     table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt,
+        #                       my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
+        #     my_tree, scroll_y, scroll_x = table.update_treeview()
 
 
 
