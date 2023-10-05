@@ -24,7 +24,7 @@ class Verify_Report:
 
         window_verify = tk.Toplevel()
         window_verify.title(f"{self.database}" + ' / Verify Report')
-        window_verify.geometry("1850x1000")
+        window_verify.geometry("1600x700")
         # window_verify.resizable(False, False)
 
         self.frame1 = Frame(window_verify, relief="solid", bd=2)
@@ -36,6 +36,19 @@ class Verify_Report:
         self.combo_probename = ttk.Combobox(self.frame1, value=self.list_probe, height=0, state='readonly')
         self.combo_probename.place(x=110, y=5)
         self.combo_probename.bind('<<ComboboxSelected>>', self._get_sequence)
+
+
+        label_filter = Label(self.frame1, text='filter Column')
+        label_filter.place(x=280, y=5)
+
+        combo_list_columns = ttk.Combobox(self.frame1, height=0, state='readonly')
+        combo_list_columns.place(x=360, y=5)
+
+        label_sel_data = Label(self.frame1, text='Selection')
+        label_sel_data.place(x=280, y=25)
+
+        self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
+        self.combo_sel_datas.place(x=360, y=25)
 
         #
         # btn_view = Button(self.frame1, width=15, height=2, text='Select & Load', command=self.load_cond)
@@ -77,20 +90,16 @@ class Verify_Report:
         select_table = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
                                    sel_cnt=self.sel_cnt)
 
-
         global my_tree, scroll_y, scroll_x
-
         if self.sel_cnt == 1:
             ## 초기 Treeview 생성 시,
-            table = DataTable(df=self.df, selected_input=self.sel_data, frame=self.frame1, sel_cnt=self.sel_cnt)
+            table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
             my_tree, scroll_y, scroll_x = table.update_treeview()
         else:
             ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
-            table = DataTable(df=self.df, selected_input=self.sel_data, frame=self.frame1, sel_cnt=self.sel_cnt,
+            table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt,
                               my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
             my_tree, scroll_y, scroll_x = table.update_treeview()
-
-
 
 
 
