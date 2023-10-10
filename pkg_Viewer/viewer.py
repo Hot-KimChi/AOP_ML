@@ -20,7 +20,7 @@ class Viewer:
 
         self.database = database
         self.list_probe = list_probe
-        self.state_table = False
+        self.TableOn = False
 
         config_path = os.path.join("pkg_login", "../AOP_config.cfg")
         config = configparser.ConfigParser()
@@ -89,8 +89,8 @@ class Viewer:
         selected_probeId = selected_probeinfo[idx+1:]
         selected_DBtable = self.combo_DBtable.get()
 
-        self.state_table = True
+        self.TableOn = True
 
         selparam = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable=selected_DBtable,
-                               state_table=self.state_table)
-        self.state_table, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
+                               TableOn=self.TableOn)
+        self.TableOn, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()

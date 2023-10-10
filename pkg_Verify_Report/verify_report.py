@@ -96,7 +96,7 @@ class Verify_Report:
 
         self.sel_cnt += 1
         selparam = SelectParam(self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
-                               state_table=self.sel_cnt)
+                               TableOn=self.sel_cnt)
         self.sel_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
 
 

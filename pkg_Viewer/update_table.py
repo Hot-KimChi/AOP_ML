@@ -3,14 +3,14 @@ from tkinter import ttk
 
 
 class DataTable:
-    def __init__(self, df=None, selected_input=None, frame=None, state_table=False,
+    def __init__(self, df=None, selected_input=None, frame=None, TableOn=False,
                  my_tree=None, tree_scroll_y=None, tree_scroll_x=None):
         super().__init__()
         self.df = df
         self.selected_input = selected_input
         self.frame = frame
         self.treeline = 20
-        self.state_table = state_table
+        self.TableOn = TableOn
         self.my_tree = my_tree
         self.tree_scroll_y = tree_scroll_y
         self.tree_scroll_x = tree_scroll_x
