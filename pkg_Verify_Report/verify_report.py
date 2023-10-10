@@ -50,10 +50,8 @@ class Verify_Report:
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
 
-        #
-        # btn_view = Button(self.frame1, width=15, height=2, text='Select & Load', command=self.load_cond)
-        # btn_view.place(x=350, y=5)
-
+        btn_view = Button(self.frame1, width=15, height=2, text='Remove All', command=self.remove_all)
+        btn_view.place(x=350, y=5)
 
         ## [meas_station_setup] load. / initial data update from SQL[measSSId]
         connect = SQL(command=5)
@@ -96,21 +94,28 @@ class Verify_Report:
             self.tree_scroll_x.destroy()
             self.sel_cnt = 0
 
-
         self.sel_cnt += 1
         selparam = SelectParam(self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
-                               sel_cnt=self.sel_cnt)
+                               state_table=self.sel_cnt)
         self.sel_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
+
+
+    def remove_all(self):
+        for item in self.my_tree.get_children():
+            self.my_tree.delete(item)
+
+
+
 
         #
         # global my_tree, scroll_y, scroll_x
-        # if self.sel_cnt == 1:
+        # if self.state_table == 1:
         #     ## 초기 Treeview 생성 시,
-        #     table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt)
+        #     table = DataTable(df=self.df, frame=self.frame1, state_table=self.state_table)
         #     my_tree, scroll_y, scroll_x = table.update_treeview()
         # else:
         #     ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
-        #     table = DataTable(df=self.df, frame=self.frame1, sel_cnt=self.sel_cnt,
+        #     table = DataTable(df=self.df, frame=self.frame1, state_table=self.state_table,
         #                       my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
         #     my_tree, scroll_y, scroll_x = table.update_treeview()
 
@@ -129,9 +134,9 @@ class Verify_Report:
     #     connect = SQL(command = 6)
     #     self.df = connect.sql_get()
     #
-    #     sel_cnt += 1
+    #     state_table += 1
     #
-    #     datatable = DataTable(df=self.df, frame=self.frame1, sel_cnt=sel_cnt)
+    #     datatable = DataTable(df=self.df, frame=self.frame1, state_table=state_table)
     #     Viewer.fn_tree_update(self, df=self.df, frame=self.frame2, treeline=30)
     #
     #
