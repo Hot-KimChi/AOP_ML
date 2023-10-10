@@ -91,5 +91,6 @@ class Viewer:
 
         self.sel_cnt += 1
 
-        select_table = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable=selected_DBtable,
-                                   sel_cnt=self.sel_cnt)
+        selparam = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable=selected_DBtable,
+                               sel_cnt=self.sel_cnt)
+        self.sel_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()

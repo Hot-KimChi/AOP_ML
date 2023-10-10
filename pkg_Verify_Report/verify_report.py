@@ -89,12 +89,19 @@ class Verify_Report:
         selected_probeId = selected_probeinfo[idx+1:]
 
         if self.my_tree:
+            # for item in self.my_tree.get_children():
+            #     self.my_tree.delete(item)
             self.my_tree.destroy()
             self.tree_scroll_y.destroy()
             self.tree_scroll_x.destroy()
+            self.sel_cnt = 0
 
-        select_table = SelectParam(self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
-                                   sel_cnt=self.sel_cnt)
+
+        self.sel_cnt += 1
+        selparam = SelectParam(self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
+                               sel_cnt=self.sel_cnt)
+        self.sel_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
+
         #
         # global my_tree, scroll_y, scroll_x
         # if self.sel_cnt == 1:

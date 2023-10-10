@@ -1,6 +1,6 @@
 import tkinter as tk
-import tkinter.ttk as ttk
-import tkinter.font as tkfont
+import tkinter as ttk
+import tkinter as tkfont
 
 
 class Treeview(ttk.Treeview):

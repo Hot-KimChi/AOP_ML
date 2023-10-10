@@ -1,5 +1,6 @@
 import tkinter as tk
-import tkinter.ttk as ttk
+import tkinter as ttk
+
 
 class App:
     def __init__(self):

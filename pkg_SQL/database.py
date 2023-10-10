@@ -41,7 +41,7 @@ class SQL(DBInfor):
                 else:
                     query = f'''
                     SELECT * FROM {self.selected_DBtable} WHERE probeId = {self.selected_probeId}
-                    ORDER BY 1
+                    ORDER BY 1 desc
                     '''
 
 

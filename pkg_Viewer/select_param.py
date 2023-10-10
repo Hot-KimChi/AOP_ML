@@ -16,7 +16,7 @@ class SelectParam:
         self.DBTable = DBTable
         self.sel_cnt = sel_cnt
 
-        self.select_param()
+        # self.select_param()
 
 
     def select_param(self):
