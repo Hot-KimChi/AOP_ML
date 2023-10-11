@@ -31,14 +31,12 @@ class SelectParam:
         if self.table_cnt == 1:
             ## 초기 Treeview 생성 시,
             table = DataTable(df=self.df, frame=self.frame1)
-            my_tree, scroll_y, scroll_x = table.update_treeview()
-
         else:
             ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
             table = DataTable(df=self.df, frame=self.frame1,
                               my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
-            my_tree, scroll_y, scroll_x = table.update_treeview()
 
+        my_tree, scroll_y, scroll_x = table.update_treeview()
 
         list_params = self.df.columns.values.tolist()
 
@@ -96,13 +94,12 @@ class SelectParam:
         print(self.table_cnt, sel_data)
 
         global my_tree, scroll_y, scroll_x
-
         if sel_data == None:
             ## 초기 Treeview 생성 시,
             table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1)
-            my_tree, scroll_y, scroll_x = table.update_treeview()
         else:
             ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
             table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1,
                               my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
-            my_tree, scroll_y, scroll_x = table.update_treeview()
+
+        my_tree, scroll_y, scroll_x = table.update_treeview()

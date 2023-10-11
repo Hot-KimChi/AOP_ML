@@ -31,7 +31,7 @@ class Viewer:
 
         window_view = tk.Toplevel()
         window_view.title(f"{self.database}" + ' / Viewer')
-        window_view.geometry("1600x700")
+        window_view.geometry("1800x700")
         # window_view.resizable(False, False)
 
         self.frame1 = Frame(window_view, relief="solid", bd=2)

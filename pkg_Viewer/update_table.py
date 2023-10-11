@@ -3,7 +3,7 @@ from tkinter import ttk
 
 
 class DataTable:
-    def __init__(self, df=None, selected_input=None, frame=None,
+    def __init__(self, df=None, selected_input=None, frame=None, table_cnt=None,
                  my_tree=None, tree_scroll_y=None, tree_scroll_x=None):
         super().__init__()
         self.df = df
