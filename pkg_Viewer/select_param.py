@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 
 from pkg_SQL.database import SQL
-from pkg_Table.showTable import ShowTable
 from pkg_Viewer.update_table import DataTable
 
 
@@ -10,11 +9,11 @@ class SelectParam:
     """
     선택한 parameters(probeID, DB_table)를 기반으로 MS-SQL 데이터 load
     """
-    def __init__(self, frame, probeId, DBTable, TableOn):
+    def __init__(self, frame, probeId, DBTable, table_cnt):
         self.frame1 = frame
         self.probeId = probeId
         self.DBTable = DBTable
-        self.TableOn = TableOn
+        self.table_cnt = table_cnt
 
         # self.select_param()
 
@@ -26,16 +25,17 @@ class SelectParam:
         connect = SQL(command=0, selected_DBtable=self.DBTable, selected_probeId=self.probeId)
         self.df = connect.sql_get()
 
-        print(self.TableOn)
+        print(self.table_cnt)
 
         global my_tree, scroll_y, scroll_x
-        if self.TableOn:
+        if self.table_cnt == 1:
             ## 초기 Treeview 생성 시,
-            table = DataTable(df=self.df, frame=self.frame1, TableOn=self.TableOn)
+            table = DataTable(df=self.df, frame=self.frame1)
             my_tree, scroll_y, scroll_x = table.update_treeview()
+
         else:
             ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
-            table = DataTable(df=self.df, frame=self.frame1, TableOn=self.TableOn,
+            table = DataTable(df=self.df, frame=self.frame1,
                               my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
             my_tree, scroll_y, scroll_x = table.update_treeview()
 
@@ -63,7 +63,7 @@ class SelectParam:
         # table = DataTable(df=self.df, frame=self.frame_down, state_table=self.state_table)
         # table.update_treeview()
 
-        return self.TableOn, my_tree, scroll_x, scroll_y
+        return self.table_cnt, my_tree, scroll_x, scroll_y
 
 
     def on_selected(self, event):
@@ -93,16 +93,16 @@ class SelectParam:
         # table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, state_table=self.state_table)
         # table.update_treeview()
 
-        print(self.TableOn, sel_data)
+        print(self.table_cnt, sel_data)
 
         global my_tree, scroll_y, scroll_x
 
         if sel_data == None:
             ## 초기 Treeview 생성 시,
-            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, TableOn=self.TableOn)
+            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1)
             my_tree, scroll_y, scroll_x = table.update_treeview()
         else:
             ## 2번째 Treeview 생성 시, 초기 Treeview 삭제 필요.
-            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1, TableOn=self.TableOn,
+            table = DataTable(df=self.df, selected_input=sel_data, frame=self.frame1,
                               my_tree=my_tree, tree_scroll_x=scroll_x, tree_scroll_y=scroll_y)
             my_tree, scroll_y, scroll_x = table.update_treeview()
