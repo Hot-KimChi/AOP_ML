@@ -26,7 +26,7 @@ class DataTable:
         for i in selectedItem:
             sel_param_click.append(self.my_tree.item(i).get('values')[0])
         str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
-        print(str_sel_param)
+        # print(str_sel_param)
 
         return str_sel_param
 

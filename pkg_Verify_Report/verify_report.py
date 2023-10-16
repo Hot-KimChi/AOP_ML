@@ -99,6 +99,7 @@ class Verify_Report:
 
 
     def verify_query(self):
+        table = DataTable(df=self.df, frame=self.frame1, my_tree=self.my_tree)
+        str_sel_param = table.click_item(event=)
 
-
-
+        print(str_sel_param)
