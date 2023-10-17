@@ -58,8 +58,8 @@ class Verify_Report:
         self.df = connect.sql_get()
 
         self.table_cnt += 1
-        table = DataTable(df=self.df, frame=self.frame1, table_cnt=self.table_cnt)
-        self.my_tree, self.tree_scroll_y, self.tree_scroll_x = table.update_treeview()
+        self.table = DataTable(df=self.df, frame=self.frame1, table_cnt=self.table_cnt)
+        self.my_tree, self.tree_scroll_y, self.tree_scroll_x = self.table.update_treeview()
 
 
         # Add some style
@@ -99,7 +99,6 @@ class Verify_Report:
 
 
     def verify_query(self):
-        table = DataTable(df=self.df, frame=self.frame1, my_tree=self.my_tree)
-        str_sel_param = table.click_item(event=)
 
-        print(str_sel_param)
+        print(self.table.str_sel_param)
+

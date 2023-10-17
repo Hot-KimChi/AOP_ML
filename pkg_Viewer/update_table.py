@@ -3,6 +3,10 @@ from tkinter import ttk
 
 
 class DataTable:
+
+    ## 클래스 멤버 변수로 선언
+    str_sel_param = ""
+
     def __init__(self, df=None, selected_input=None, frame=None, table_cnt=None,
                  my_tree=None, tree_scroll_y=None, tree_scroll_x=None):
         super().__init__()
@@ -25,10 +29,10 @@ class DataTable:
         sel_param_click = []
         for i in selectedItem:
             sel_param_click.append(self.my_tree.item(i).get('values')[0])
-        str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
+        self.str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
         # print(str_sel_param)
 
-        return str_sel_param
+        return self.str_sel_param
 
 
     def update_treeview(self):
