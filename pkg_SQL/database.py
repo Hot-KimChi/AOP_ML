@@ -33,7 +33,7 @@ class SQL(DBInfor):
         try:
             conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
 
-            if self.command > 7:
+            if self.command > 9:
                 query = "f'''" + self.command + "'''"
 
             elif self.command == 0:
@@ -152,7 +152,8 @@ class SQL(DBInfor):
                         dbo.SSR_table.XP_Value_1, dbo.SSR_table.reportValue_1, dbo.SSR_table.Difference_1, 
                         dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, 
                         dbo.SSR_table.reportValue_2, dbo.SSR_table.Difference_2, 
-                        ROW_NUMBER() over (partition by num order by {self.sorted_param} desc) as RankNo, dbo.meas_res_summary.isDataUsable
+                        ROW_NUMBER() over (partition by num order by {self.sorted_param} desc) as RankNo, 
+                        dbo.meas_res_summary.isDataUsable
 
                     FROM dbo.Tx_summary
 
@@ -168,7 +169,7 @@ class SQL(DBInfor):
 
                     LEFT OUTER JOIN dbo.SSR_table
                         ON dbo.SSR_table.probeName NOT LIKE '%notuse%' AND dbo.WCS.wcsID = dbo.SSR_table.WCSId 
-                        AND dbo.SSR_table.measSSId IN({self.selected_measSSId})
+                        AND dbo.SSR_table.measSSId IN ({self.selected_measSSId})
 
                     where reportTerm_1 = {self.report_term}
                     ) T
@@ -176,6 +177,8 @@ class SQL(DBInfor):
                 where RankNo = 1 and ProbeID = {self.selected_probeId}
                 order by num
                 '''
+
+            print(query)
 
 
             Raw_data = pd.read_sql(sql=query, con=conn)

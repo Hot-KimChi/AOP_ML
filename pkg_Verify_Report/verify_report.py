@@ -5,6 +5,7 @@ from tkinter import ttk
 from pkg_SQL.database import SQL
 from pkg_Viewer.update_table import DataTable
 from pkg_Viewer.select_param import SelectParam
+from pkg_Verify_Report.verify_query import verify_query
 
 
 class Verify_Report:
@@ -50,7 +51,7 @@ class Verify_Report:
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
 
-        btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.verify_query)
+        btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_query)
         btn_view.place(x=600, y=5)
 
         ## initial data update from SQL[measSSId]
@@ -98,7 +99,12 @@ class Verify_Report:
         self.table_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
 
 
-    def verify_query(self):
+    def execute_query(self):
 
         print(self.table.str_sel_param)
+        # MI case
+        MI_case = verify_query('reportValue_1', self.table.str_sel_param, 'MI', '11291794')
+        MI_case.parsing()
+
+
 
