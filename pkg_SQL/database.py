@@ -144,7 +144,7 @@ class SQL(DBInfor):
                 query = f'''
                 SELECT * FROM (
                     SELECT  TOP (100) PERCENT 
-                        dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, 
+                        dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.ProbeID, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, 
                         dbo.Tx_summary.CurrentState,dbo.Tx_summary.Dual_Mode, dbo.Tx_summary.BeamStyleIndex, dbo.Tx_summary.TxFrequency, 
                         dbo.Tx_summary.ElevAperIndex, dbo.Tx_summary.NumTxCycles, dbo.WCS.NumTxCycles AS WCS_Cycle, 
                         dbo.Tx_summary.TxpgWaveformStyle, dbo.Tx_summary.TxChannelModulationEn, dbo.Tx_summary.IsCPAEn, 
@@ -162,16 +162,22 @@ class SQL(DBInfor):
                         AND dbo.Tx_summary.TxFreqIndex = dbo.WCS.TxFrequencyIndex AND dbo.Tx_summary.ElevAperIndex = dbo.WCS.ElevAperIndex 
                         AND dbo.Tx_summary.TxpgWaveformStyle = dbo.WCS.WaveformStyle AND dbo.Tx_summary.TxChannelModulationEn = dbo.WCS.ChModulationEn 
                         AND dbo.Tx_summary.CurrentState = dbo.WCS.CurrentState AND dbo.Tx_summary.Dual_Mode = dbo.WCS.InterpolateFactor 
-                        AND dbo.Tx_summary.IsCPAEn = dbo.WCS.IsCPAEn AND dbo.Tx_summary.RLE = dbo.WCS.TxPulseRleA AND dbo.Tx_summary.NumTxCycles = dbo.WCS.NumTxCycles
+                        AND dbo.Tx_summary.IsCPAEn = dbo.WCS.IsCPAEn 
+                        AND (dbo.Tx_summary.TxpgWaveformStyle <> 0						-- TxpgWaveformStyle가 0이 아닌 경우
+                            OR (dbo.Tx_summary.TxpgWaveformStyle = 0					-- TxpgWaveformStyle가 0인 경우
+                            AND dbo.Tx_summary.RLE = dbo.WCS.TxPulseRleA))				-- TxPulseRleA와 RLE를 비교
+                        AND (dbo.Tx_summary.CurrentState = 'D'							-- CurrentState가 D인 경우
+                            OR (dbo.Tx_summary.CurrentState <> 'D'						-- CurrentState가 D가 아닌 경우
+                            AND dbo.Tx_summary.NumTxCycles = dbo.WCS.NumTxCycles))		-- NumTxCycles와 NumTxCycles를 비교
 
                     LEFT OUTER JOIN dbo.meas_res_summary
                         ON dbo.WCS.wcsID = dbo.meas_res_summary.VerifyID
 
                     LEFT OUTER JOIN dbo.SSR_table
                         ON dbo.SSR_table.probeName NOT LIKE '%notuse%' AND dbo.WCS.wcsID = dbo.SSR_table.WCSId 
-                        AND dbo.SSR_table.measSSId IN ({self.selected_measSSId})
+                        AND dbo.SSR_table.measSSId IN {self.selected_measSSId}
 
-                    where reportTerm_1 = {self.report_term}
+                    where reportTerm_1 = '{self.report_term}'
                     ) T
 
                 where RankNo = 1 and ProbeID = {self.selected_probeId}
@@ -179,7 +185,6 @@ class SQL(DBInfor):
                 '''
 
             print(query)
-
 
             Raw_data = pd.read_sql(sql=query, con=conn)
 
