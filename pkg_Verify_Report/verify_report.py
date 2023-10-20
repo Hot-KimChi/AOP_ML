@@ -102,9 +102,16 @@ class Verify_Report:
     def execute_query(self):
 
         print(self.table.str_sel_param)
+
         # MI case
-        MI_case = verify_query('reportValue_1', self.table.str_sel_param, 'MI', '11291794')
+        MI_case = verify_query('reportValue_1', self.table.str_sel_param, 'MI', '11711157')
         MI_case.parsing()
 
+        # Ispta.3 case
+        Ispta_case = verify_query('reportValue_2', self.table.str_sel_param, 'MI', '11711157')
+        Ispta_case.parsing()
 
+        # Temperature case
+        Temp_case = verify_query('reportValue_1', self.table.str_sel_param, 'Temp', '11711157')
+        Temp_case.parsing()
 

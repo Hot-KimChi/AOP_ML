@@ -184,7 +184,7 @@ class SQL(DBInfor):
                 order by num
                 '''
 
-            print(query)
+            # print(query)
 
             Raw_data = pd.read_sql(sql=query, con=conn)
 

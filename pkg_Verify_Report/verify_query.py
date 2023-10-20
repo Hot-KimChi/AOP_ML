@@ -20,7 +20,6 @@ class verify_query:
         probeId = ''.join(map(str, self.selected_probeId))
 
         print(param, measSSId, term, probeId)
-        print(type(measSSId))
 
         connect = SQL(command=8, sorted_param=param, selected_measSSId=measSSId, report_term=term, selected_probeId=probeId)
         self.df = connect.sql_get()
