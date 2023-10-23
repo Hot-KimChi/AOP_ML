@@ -30,12 +30,13 @@ class DataOut:
         current_datetime = datetime.now()
         self.formatted_datetime = current_datetime.strftime("%Y%m%d_%H%M")
 
+        self.directory = f'./0_MeasSetGen_files/{self.database}'
+
         self.make_dir()
         self.data_out()
 
 
     def make_dir(self):
-        self.directory = f'./MeasSetGen_files/{self.database}'
 
         if not os.path.exists(self.directory):
             try:

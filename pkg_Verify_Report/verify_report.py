@@ -2,10 +2,13 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
+import pandas as pd
+
 from pkg_SQL.database import SQL
 from pkg_Viewer.update_table import DataTable
 from pkg_Viewer.select_param import SelectParam
 from pkg_Verify_Report.verify_query import verify_query
+
 
 
 class Verify_Report:
@@ -101,17 +104,29 @@ class Verify_Report:
 
     def execute_query(self):
 
-        print(self.table.str_sel_param)
+        print(self.table.str_sel_param, self.table.probeId)
 
         # MI case
-        MI_case = verify_query('reportValue_1', self.table.str_sel_param, 'MI', '11711157')
-        MI_case.parsing()
+        MI_case = verify_query('reportValue_1', self.table.str_sel_param, 'MI', self.table.probeId)
+        self.df_MI = MI_case.parsing()
 
         # Ispta.3 case
-        Ispta_case = verify_query('reportValue_2', self.table.str_sel_param, 'MI', '11711157')
-        Ispta_case.parsing()
+        Ispta_case = verify_query('reportValue_2', self.table.str_sel_param, 'MI', self.table.probeId)
+        self.df_Ispta = Ispta_case.parsing()
 
         # Temperature case
-        Temp_case = verify_query('reportValue_1', self.table.str_sel_param, 'Temp', '11711157')
-        Temp_case.parsing()
+        Temp_case = verify_query('reportValue_1', self.table.str_sel_param, 'Temp', self.table.probeId)
+        self.df_Temp = Temp_case.parsing()
+
+
+    def save_excel(self):
+
+        df_MI = pd.DataFrame(self.df_MI)
+        df_Ispta = pd.DataFrame(self.df_Ispta)
+        df_Temp = pd.DataFrame(self.df_Temp)
+
+        probe_name = df_MI['probeName']
+
+        output_file = f'{self.directory}/meas_setting_{self.probename}_{self.formatted_datetime}_result.xlsx'
+
 

@@ -17,11 +17,11 @@ class verify_query:
         param = ''.join(map(str, self.sorted_param))
         measSSId = ''.join(map(str, self.selected_measSSId))
         term = ''.join(map(str, self.report_term))
-        probeId = ''.join(map(str, self.selected_probeId))
+        probeId = self.selected_probeId
 
         print(param, measSSId, term, probeId)
 
         connect = SQL(command=8, sorted_param=param, selected_measSSId=measSSId, report_term=term, selected_probeId=probeId)
         self.df = connect.sql_get()
 
-        print(self.df)
+        return self.df

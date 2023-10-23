@@ -6,6 +6,7 @@ class DataTable:
 
     ## 클래스 멤버 변수로 선언
     str_sel_param = ""
+    probeId = ""
 
     def __init__(self, df=None, selected_input=None, frame=None, table_cnt=None,
                  my_tree=None, tree_scroll_y=None, tree_scroll_x=None):
@@ -27,12 +28,14 @@ class DataTable:
         # 딕셔너리의 값 중에서 제일 앞에 있는 element 값 추출. ex) measSSId 추출.
         # sel_param_click = my_tree.item(selectedItem).get('values')[0]
         sel_param_click = []
+        probeID_click = []
         for i in selectedItem:
             sel_param_click.append(self.my_tree.item(i).get('values')[0])
+            probeID_click.append(self.my_tree.item(i).get('values')[9])
         self.str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
-        # print(str_sel_param)
+        self.probeId = probeID_click[0]
 
-        return self.str_sel_param
+        return self.str_sel_param, self.probeId
 
 
     def update_treeview(self):
