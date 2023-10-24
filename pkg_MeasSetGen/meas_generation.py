@@ -66,7 +66,10 @@ class MeasSetGen:
 
         ## 클래스 인스턴스를 데이터프레임으로 변환 / DataOut 클래스 이용하여 csv 파일로 추출.
         df = self.gen_df
-        DataOut(database=self.database, probe=self.probe, df=df, group_params=self.group_params)
+
+        dataout = DataOut(case=0, database=self.database, probe=self.probe, df1=df, group_params=self.group_params)
+        dataout.make_dir()
+        dataout.save_excel()
 
 
 if __name__ == '__main__':
