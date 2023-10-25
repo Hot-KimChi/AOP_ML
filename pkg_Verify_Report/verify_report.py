@@ -108,15 +108,15 @@ class Verify_Report:
 
         # MI case
         MI_case = verify_query('reportValue_1', self.table.str_sel_param, 'MI', self.table.probeId)
-        self.df_MI = MI_case.parsing()
+        df_MI = MI_case.parsing()
 
         # Ispta.3 case
         Ispta_case = verify_query('reportValue_2', self.table.str_sel_param, 'MI', self.table.probeId)
-        self.df_Ispta = Ispta_case.parsing()
+        df_Ispta = Ispta_case.parsing()
 
         # Temperature case
         Temp_case = verify_query('reportValue_1', self.table.str_sel_param, 'Temp', self.table.probeId)
-        self.df_Temp = Temp_case.parsing()
+        df_Temp = Temp_case.parsing()
 
-        dataout = DataOut(case=1, database=self.database, probe=self.pro)
+        dataout = DataOut(case=1, database=self.database, df1=df_MI, df2=df_Ispta, df3=df_Temp)
 
