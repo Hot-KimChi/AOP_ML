@@ -2,6 +2,7 @@ import os
 from tkinter import filedialog
 import pandas as pd
 from datetime import datetime
+import xlsxwriter
 
 
 def loadfile():
@@ -73,10 +74,12 @@ class DataOut:
             df_Ispta = pd.DataFrame(self.df2)
             df_Temp = pd.DataFrame(self.df3)
 
-            self.probename = df_MI['probeName']
+            probename = df_MI['ProbeName'][0]
+            probename = probename.strip()       ##문자열 앞뒤의 공백만 제거.
+
 
             # 엑셀 파일로 출력
-            output_file = f'{self.directory}/verification_report_{self.probename}_{self.formatted_datetime}_result.xlsx'
+            output_file = f'./0_Verification_Reports/{self.database}/{probename}_{self.formatted_datetime}_result.xlsx'
 
             with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
                 df_MI.to_excel(writer, sheet_name='MI', index=False)

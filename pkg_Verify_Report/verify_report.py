@@ -119,4 +119,6 @@ class Verify_Report:
         df_Temp = Temp_case.parsing()
 
         dataout = DataOut(case=1, database=self.database, df1=df_MI, df2=df_Ispta, df3=df_Temp)
+        dataout.make_dir()
+        dataout.save_excel()
 
