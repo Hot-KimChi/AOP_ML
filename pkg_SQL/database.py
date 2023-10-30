@@ -177,7 +177,7 @@ class SQL(DBInfor):
                         ON dbo.SSR_table.probeName NOT LIKE '%notuse%' AND dbo.WCS.wcsID = dbo.SSR_table.WCSId 
                         AND dbo.SSR_table.measSSId IN {self.selected_measSSId}
 
-                    where reportTerm_1 = '{self.report_term}'
+                    where reportTerm_1 = '{self.report_term}' or reportTerm_1 IS NULL
                     ) T
 
                 where RankNo = 1 and ProbeID = {self.selected_probeId}
