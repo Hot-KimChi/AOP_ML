@@ -93,4 +93,4 @@ class Viewer:
 
         selparam = SelectParam(frame=self.frame1, probeId=selected_probeId, DBTable=selected_DBtable,
                                table_cnt=self.table_cnt)
-        self.table_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
+        self.table, self.table_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
