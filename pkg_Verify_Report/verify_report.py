@@ -114,6 +114,8 @@ class Verify_Report:
         Ispta_case = verify_query('reportValue_2', self.table.str_sel_param, 'MI', self.table.probeId)
         df_Ispta = Ispta_case.parsing()
 
+        # MI dataframe merge with Ispta.3 dataframe
+
         # Temperature case
         Temp_case = verify_query('reportValue_1', self.table.str_sel_param, 'Temp', self.table.probeId)
         df_Temp = Temp_case.parsing()
