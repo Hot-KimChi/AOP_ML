@@ -18,7 +18,7 @@ class DataOut:
 
     """
 
-    def __init__(self, case, database, df1, df2=None, df3=None, probe=None, group_params=None):
+    def __init__(self, case, database, df1, df2=None, probe=None, group_params=None):
 
         self.database = database
 
@@ -26,7 +26,6 @@ class DataOut:
         self.formatted_datetime = current_datetime.strftime("%Y%m%d_%H%M")
         self.df1 = df1
         self.df2 = df2
-        self.df3 = df3
 
         self.case = case
 
@@ -70,11 +69,11 @@ class DataOut:
 
         if self.case == 1:
 
-            df_MI = pd.DataFrame(self.df1)
-            df_Ispta = pd.DataFrame(self.df2)
-            df_Temp = pd.DataFrame(self.df3)
+            df_Intensity = pd.DataFrame(self.df1)
+            df_Temperature = pd.DataFrame(self.df2)
 
-            probename = df_MI['ProbeName'][0]
+
+            probename = df_Intensity['ProbeName'][0]
             probename = probename.strip()       ##문자열 앞뒤의 공백만 제거.
 
 
@@ -82,6 +81,5 @@ class DataOut:
             output_file = f'./0_Verification_Reports/{self.database}/{probename}_{self.formatted_datetime}_result.xlsx'
 
             with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-                df_MI.to_excel(writer, sheet_name='MI', index=False)
-                df_Ispta.to_excel(writer, sheet_name='Ispta.3', index=False)
-                df_Temp.to_excel(writer, sheet_name='Temperature', index=False)
+                df_Intensity.to_excel(writer, sheet_name='Intensity', index=False)
+                df_Temperature.to_excel(writer, sheet_name='Temperature', index=False)
