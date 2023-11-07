@@ -115,9 +115,11 @@ class Verify_Report:
         df_Ispta = Ispta_case.parsing()
 
         # MI dataframe merge with Ispta.3 dataframe
-        MI_column_by_index = df_MI.iloc[:, 0:10]  # 1은 'B' 열을 나타냅니다 (0부터 시작하는 인덱스)
-        Ispta_column_by_index = df_Ispta.iloc[:, 12:14]
-        df_intensity = pd.concat([MI_column_by_index, Ispta_column_by_index], axis=1)
+        MI_column_by_index = df_MI.iloc[:, 0:22]  # 0부터 시작하는 인덱스
+
+        Ispta_column_by_index_Id = df_Ispta.iloc[:, 16:18]
+        Ispta_column_by_index_value = df_Ispta.iloc[:, 23:27]
+        df_intensity = pd.concat([MI_column_by_index, Ispta_column_by_index_Id, Ispta_column_by_index_value], axis=1)
 
         # Temperature case
         Temp_case = verify_query('reportValue_1', self.table.str_sel_param, 'Temp', self.table.probeId)
