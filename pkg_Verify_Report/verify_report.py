@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 
 import pandas as pd
 
@@ -100,6 +101,71 @@ class Verify_Report:
         selparam = SelectParam(self.frame1, probeId=selected_probeId, DBTable='meas_station_setup',
                                table_cnt=self.table_cnt)
         self.table, self.table_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
+
+
+    def parsing_sql(self):
+        try:
+            # 파일 대화 상자를 통해 CSV 파일 선택
+            filename = filedialog.askopenfilename(filetypes=[('Text files', '*.txt')])
+
+            # 파일을 DataFrame으로 읽기
+            data = pd.read_csv(filename)
+            df = pd.DataFrame(data)
+
+            # 데이터베이스 연결
+            connect = SQL(command=9, )
+            cursor = conn.cursor()
+
+            # 데이터 프레임을 순회하며 SQL 쿼리 실행
+            for row in df.itertuples():
+                query = '''
+                            INSERT INTO meas_setting (
+                                       [measSetComments]
+                                      ,[probeId]
+                                      ,[beamstyleIndex]
+                                      ,[bsIndexTrace]
+                                      ,[txFrequencyHz]
+                                      ,[focusRangeCm]
+                                      ,[maxTxVoltageVolt]
+                                      ,[ceilTxVoltageVolt]
+                                      ,[profTxVoltageVolt]
+                                      ,[totalVoltagePt]
+                                      ,[numMeasVoltage]
+                                      ,[numTxElements]
+                                      ,[txpgWaveformStyle]
+                                      ,[numTxCycles]
+                                      ,[elevAperIndex]
+                                      ,[zStartDistCm]
+                                      ,[zMeasNum]
+                                      ,[IsTxAperModulationEn]
+                                      ,[dumpSwVersion]
+                                      ,[DTxFreqIndex]
+                                      ,[VTxIndex]
+                                      ,[IsCPAEn]
+                                      ,[TxPulseRleA]
+                                      ,[SysPulserSelA]
+                                      ,[CpaDelayOffsetClkA]
+                                      )
+                                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                            '''
+
+                cursor.execute(query, (row.measSetComments, row.probeId, row.beamstyleIndex, row.bsIndexTrace,
+                                       row.txFrequencyHz, row.focusRangeCm, row.maxTxVoltageVolt,
+                                       row.ceilTxVoltageVolt, row.profTxVoltageVolt, row.totalVoltagePt,
+                                       row.numMeasVoltage, row.numTxElements, row.txpgWaveformStyle,
+                                       row.numTxCycles, row.elevAperIndex, row.zStartDistCm, row.zMeasNum,
+                                       row.IsTxAperModulationEn, row.dumpSwVersion, row.DTxFreqIndex,
+                                       row.VTxIndex, row.IsCPAEn, row.TxPulseRleA, row.SysPulserSelA,
+                                       row.CpaDelayOffsetClkA)
+                               )
+
+            # 트랜잭션 커밋 및 연결 종료
+            conn.commit()
+            conn.close()
+
+        except Exception as e:
+            print(f"Error: {e}")
+
 
 
     def execute_query(self):
