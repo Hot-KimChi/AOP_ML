@@ -203,9 +203,35 @@ class SQL(DBInfor):
         ## parsing MS-SQL database: Tx_summary_table
         elif self.command == 9:
             query = '''
+                    INSERT INTO meas_setting (
+                                   [measSetComments]
+                                  ,[probeId]
+                                  ,[beamstyleIndex]
+                                  ,[bsIndexTrace]
+                                  ,[txFrequencyHz]
+                                  ,[focusRangeCm]
+                                  ,[maxTxVoltageVolt]
+                                  ,[ceilTxVoltageVolt]
+                                  ,[profTxVoltageVolt]
+                                  ,[totalVoltagePt]
+                                  ,[numMeasVoltage]
+                                  ,[numTxElements]
+                                  ,[txpgWaveformStyle]
+                                  ,[numTxCycles]
+                                  ,[elevAperIndex]
+                                  ,[zStartDistCm]
+                                  ,[zMeasNum]
+                                  ,[IsTxAperModulationEn]
+                                  ,[dumpSwVersion]
+                                  ,[DTxFreqIndex]
+                                  ,[VTxIndex]
+                                  ,[IsCPAEn]
+                                  ,[TxPulseRleA]
+                                  ,[SysPulserSelA]
+                                  ,[CpaDelayOffsetClkA]
+                                  )
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             '''
-
-
 
         return query
 

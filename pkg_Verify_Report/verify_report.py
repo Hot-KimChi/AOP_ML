@@ -118,36 +118,7 @@ class Verify_Report:
 
             # 데이터 프레임을 순회하며 SQL 쿼리 실행
             for row in df.itertuples():
-                query = '''
-                            INSERT INTO meas_setting (
-                                       [measSetComments]
-                                      ,[probeId]
-                                      ,[beamstyleIndex]
-                                      ,[bsIndexTrace]
-                                      ,[txFrequencyHz]
-                                      ,[focusRangeCm]
-                                      ,[maxTxVoltageVolt]
-                                      ,[ceilTxVoltageVolt]
-                                      ,[profTxVoltageVolt]
-                                      ,[totalVoltagePt]
-                                      ,[numMeasVoltage]
-                                      ,[numTxElements]
-                                      ,[txpgWaveformStyle]
-                                      ,[numTxCycles]
-                                      ,[elevAperIndex]
-                                      ,[zStartDistCm]
-                                      ,[zMeasNum]
-                                      ,[IsTxAperModulationEn]
-                                      ,[dumpSwVersion]
-                                      ,[DTxFreqIndex]
-                                      ,[VTxIndex]
-                                      ,[IsCPAEn]
-                                      ,[TxPulseRleA]
-                                      ,[SysPulserSelA]
-                                      ,[CpaDelayOffsetClkA]
-                                      )
-                                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                            '''
+
 
                 cursor.execute(query, (row.measSetComments, row.probeId, row.beamstyleIndex, row.bsIndexTrace,
                                        row.txFrequencyHz, row.focusRangeCm, row.maxTxVoltageVolt,
