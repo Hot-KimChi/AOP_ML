@@ -989,7 +989,6 @@ def func_viewer_database():
             df_merge.to_csv(f'./{database}/meas_setting_{selected_probename}_{LUT_count}.csv', header=True, index=False)
 
 
-
         def func_insert_data():
             try:
                 filename = filedialog.askopenfilename(initialdir='.txt')
