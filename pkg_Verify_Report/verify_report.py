@@ -106,30 +106,24 @@ class Verify_Report:
     def parsing_sql(self):
         try:
             # 파일 대화 상자를 통해 CSV 파일 선택
-            filename = filedialog.askopenfilename(filetypes=[('Text files', '*.txt')])
+            filename = filedialog.askopenfilename(initialdir='.')
+            if not filename:
+                print("파일이 선택되지 않았습니다.")
+                return
 
-            # 파일을 DataFrame으로 읽기
             data = pd.read_csv(filename)
-            df = pd.DataFrame(data)
+            if data.empty:
+                print("데이터가 비어있습니다.")
+                return
 
             # 데이터베이스 연결
-            connect = SQL(command=9, )
-            cursor = conn.cursor()
+            connect = SQL(command=9)
+            cursor = connect.sql_parse()
 
             # 데이터 프레임을 순회하며 SQL 쿼리 실행
-            for row in df.itertuples():
-
-
-                cursor.execute(query, (row.measSetComments, row.probeId, row.beamstyleIndex, row.bsIndexTrace,
-                                       row.txFrequencyHz, row.focusRangeCm, row.maxTxVoltageVolt,
-                                       row.ceilTxVoltageVolt, row.profTxVoltageVolt, row.totalVoltagePt,
-                                       row.numMeasVoltage, row.numTxElements, row.txpgWaveformStyle,
-                                       row.numTxCycles, row.elevAperIndex, row.zStartDistCm, row.zMeasNum,
-                                       row.IsTxAperModulationEn, row.dumpSwVersion, row.DTxFreqIndex,
-                                       row.VTxIndex, row.IsCPAEn, row.TxPulseRleA, row.SysPulserSelA,
-                                       row.CpaDelayOffsetClkA)
-                               )
-
+            try:
+                for _, row in data.iterrows():
+                    param = ()
             # 트랜잭션 커밋 및 연결 종료
             conn.commit()
             conn.close()

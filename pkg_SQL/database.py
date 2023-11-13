@@ -47,6 +47,31 @@ class SQL(DBInfor):
             return pd.DataFrame()
 
 
+    def sql_parse(self):
+        try:
+            conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
+            query = self.build_query()
+
+            cursor = conn.cursor()
+
+            if query:
+
+                for row in self.df.itertuples():
+                    cursor.execute(query, (row.measSetComments, row.probeId, row.beamstyleIndex, row.bsIndexTrace,
+                                           row.txFrequencyHz, row.focusRangeCm, row.maxTxVoltageVolt,
+                                           row.ceilTxVoltageVolt, row.profTxVoltageVolt, row.totalVoltagePt,
+                                           row.numMeasVoltage, row.numTxElements, row.txpgWaveformStyle,
+                                           row.numTxCycles, row.elevAperIndex, row.zStartDistCm, row.zMeasNum,
+                                           row.IsTxAperModulationEn, row.dumpSwVersion, row.DTxFreqIndex,
+                                           row.VTxIndex, row.IsCPAEn, row.TxPulseRleA, row.SysPulserSelA,
+                                           row.CpaDelayOffsetClkA)
+                                   )
+
+
+
+        except:
+
+
     def build_query(self):
 
         if self.command == 0:
@@ -203,38 +228,31 @@ class SQL(DBInfor):
         ## parsing MS-SQL database: Tx_summary_table
         elif self.command == 9:
             query = '''
-                    INSERT INTO meas_setting (
-                                   [measSetComments]
-                                  ,[probeId]
-                                  ,[beamstyleIndex]
-                                  ,[bsIndexTrace]
-                                  ,[txFrequencyHz]
-                                  ,[focusRangeCm]
-                                  ,[maxTxVoltageVolt]
-                                  ,[ceilTxVoltageVolt]
-                                  ,[profTxVoltageVolt]
-                                  ,[totalVoltagePt]
-                                  ,[numMeasVoltage]
-                                  ,[numTxElements]
-                                  ,[txpgWaveformStyle]
-                                  ,[numTxCycles]
-                                  ,[elevAperIndex]
-                                  ,[zStartDistCm]
-                                  ,[zMeasNum]
-                                  ,[IsTxAperModulationEn]
-                                  ,[dumpSwVersion]
-                                  ,[DTxFreqIndex]
-                                  ,[VTxIndex]
-                                  ,[IsCPAEn]
-                                  ,[TxPulseRleA]
-                                  ,[SysPulserSelA]
-                                  ,[CpaDelayOffsetClkA]
-                                  )
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            INSERT INTO Tx_summary(
+                [Num]
+                ,[ProbeName]
+                ,[ProbeID]
+                ,[Software_version]
+                ,[Exam]
+                ,[CurrentState]
+                ,[BeamStyleIndex]
+                ,[TxFrequency]
+                ,[TxFreqIndex]
+                ,[ElevAperIndex]
+                ,[NumTxCycles]
+                ,[TxpgWaveformStyle]
+                ,[TxChannelModulationEn]
+                ,[Dual_Mode]
+                ,[SubModeIndex]
+                ,[IsProcessed]
+                ,[IsCPAEn]
+                ,[RLE] 
+            )
+            
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             '''
 
         return query
-
 
     ## SQL data get from database.
     ## parameter 중 한 개를 선정하게 되면 filter 기능.
