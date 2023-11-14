@@ -14,7 +14,7 @@ class DBInfor(object):
 class SQL(DBInfor):
     def __init__(self, command=None, selected_DBtable=None, selected_probeId=None,
                  selected_measSSId=None, selected_param=None, sel_data=None,
-                 sorted_param=None, report_term=None):
+                 sorted_param=None, report_term=None, data=None):
 
         super().__init__()
 
@@ -26,6 +26,7 @@ class SQL(DBInfor):
         self.sel_data = sel_data
         self.sorted_param = sorted_param
         self.report_term = report_term
+        self.df = data
 
 
     ## SQL 데이터베이스에 접속하여 데이터 load.
@@ -37,7 +38,10 @@ class SQL(DBInfor):
             if query:
                 # print(query)
                 Raw_data = pd.read_sql(sql=query, con=conn)
+
+                conn.commit()
                 conn.close()
+
                 return Raw_data
             else:
                 return pd.DataFrame()
@@ -55,21 +59,21 @@ class SQL(DBInfor):
             cursor = conn.cursor()
 
             if query:
-
                 for row in self.df.itertuples():
-                    cursor.execute(query, (row.measSetComments, row.probeId, row.beamstyleIndex, row.bsIndexTrace,
-                                           row.txFrequencyHz, row.focusRangeCm, row.maxTxVoltageVolt,
-                                           row.ceilTxVoltageVolt, row.profTxVoltageVolt, row.totalVoltagePt,
-                                           row.numMeasVoltage, row.numTxElements, row.txpgWaveformStyle,
-                                           row.numTxCycles, row.elevAperIndex, row.zStartDistCm, row.zMeasNum,
-                                           row.IsTxAperModulationEn, row.dumpSwVersion, row.DTxFreqIndex,
-                                           row.VTxIndex, row.IsCPAEn, row.TxPulseRleA, row.SysPulserSelA,
-                                           row.CpaDelayOffsetClkA)
-                                   )
+                    cursor.execute(query, (row.ProbeName, row.ProbeID, row.Software_version, row.Exam, row.CurrentState,
+                                           row.BeamStyleIndex, row.TxFrequency, row.TxFreqIndex, row.ElevAperIndex, row.NumTxCycles,
+                                           row.TxpgWaveformStyle, row.TxChannelModulationEn, row.Dual_Mode, row.SubModeIndex, row.IsProcessed,
+                                           row.IsCPAEn, row.RLE, row.VTxIndex
+                                           )
+                                    )
 
+            # 트랜잭션 커밋 및 연결 종료
+            conn.commit()
+            conn.close()
 
+        except Exception as e:
+            print(f"Error: {e}")
 
-        except:
 
 
     def build_query(self):
@@ -229,8 +233,7 @@ class SQL(DBInfor):
         elif self.command == 9:
             query = '''
             INSERT INTO Tx_summary(
-                [Num]
-                ,[ProbeName]
+                [ProbeName]
                 ,[ProbeID]
                 ,[Software_version]
                 ,[Exam]
@@ -246,10 +249,14 @@ class SQL(DBInfor):
                 ,[SubModeIndex]
                 ,[IsProcessed]
                 ,[IsCPAEn]
-                ,[RLE] 
+                ,[RLE]
+                ,[VTxIndex] 
             )
             
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, 
+                    %s, %s, %s)
             '''
 
         return query

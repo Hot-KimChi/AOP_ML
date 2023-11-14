@@ -45,18 +45,24 @@ class Verify_Report:
 
         label_filter = Label(self.frame1, text='filter Column')
         label_filter.place(x=280, y=5)
-
         combo_list_columns = ttk.Combobox(self.frame1, height=0, state='readonly')
         combo_list_columns.place(x=360, y=5)
 
         label_sel_data = Label(self.frame1, text='Selection')
         label_sel_data.place(x=280, y=25)
-
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
 
         btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_query)
-        btn_view.place(x=600, y=5)
+        btn_view.place(x=550, y=5)
+
+        label_SW = Label(self.frame1, text='Software Version')
+        label_SW.place(x=1000, y=5)
+        self.entry_SW = Entry(self.frame1, width=15, bg='light blue')
+        self.entry_SW.place(x=1000, y=25)
+
+        btn_read = Button(self.frame1, width=15, height=2, text='Read Summary', command=self.parsing_sql)
+        btn_read.place(x=1150, y=5)
 
         ## initial data update from SQL[measSSId]
         connect = SQL(command=5)
@@ -105,28 +111,48 @@ class Verify_Report:
 
     def parsing_sql(self):
         try:
-            # 파일 대화 상자를 통해 CSV 파일 선택
+            selected_probeinfo = self.combo_probename.get().replace(" ", "")        ## 공백 없애기 " " --> ""
+            idx = selected_probeinfo.find("|")
+            selected_probeId = selected_probeinfo[idx + 1:]
+            selected_probename = selected_probeinfo[:idx]
+
+            #파일 대화 상자를 통해 CSV 파일 선택
             filename = filedialog.askopenfilename(initialdir='.')
             if not filename:
                 print("파일이 선택되지 않았습니다.")
                 return
 
-            data = pd.read_csv(filename)
+            data = pd.read_csv(filename, delimiter='\t')
+
+            data['ProbeName'] = selected_probename
+            data['ProbeID'] = selected_probeId
+            data['Software_version'] = self.entry_SW.get()
+            data['CurrentState'] = data['Mode']
+            data['IsProcessed'] = 1
+
+            list_rle = []
+            for wf, rle in zip(data['TxpgWaveformStyle'], data['RLE']):
+                if wf != 0:
+                    list_rle.append(-1)
+                elif wf == 0:
+                    list_rle.append(rle)
+            data['RLE'] = list_rle
+
+            dual_mode = []
+            for mode in data['Mode']:
+                dual_mode.append(len(mode))
+            data['Dual_Mode'] = dual_mode
+
             if data.empty:
                 print("데이터가 비어있습니다.")
                 return
 
-            # 데이터베이스 연결
-            connect = SQL(command=9)
-            cursor = connect.sql_parse()
+            # data.to_csv('new.txt', index=False, sep='\t')
 
-            # 데이터 프레임을 순회하며 SQL 쿼리 실행
-            try:
-                for _, row in data.iterrows():
-                    param = ()
-            # 트랜잭션 커밋 및 연결 종료
-            conn.commit()
-            conn.close()
+            # 데이터베이스 연결
+            connect = SQL(command=9, data=data)
+            connect.sql_parse()
+
 
         except Exception as e:
             print(f"Error: {e}")
