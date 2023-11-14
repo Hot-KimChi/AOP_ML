@@ -130,6 +130,7 @@ class Verify_Report:
             data['CurrentState'] = data['Mode']
             data['IsProcessed'] = 1
 
+            # RLE data re-write
             list_rle = []
             for wf, rle in zip(data['TxpgWaveformStyle'], data['RLE']):
                 if wf != 0:
@@ -138,6 +139,7 @@ class Verify_Report:
                     list_rle.append(rle)
             data['RLE'] = list_rle
 
+            # Dual_mode를 mode lenth로 update
             dual_mode = []
             for mode in data['Mode']:
                 dual_mode.append(len(mode))
@@ -147,16 +149,12 @@ class Verify_Report:
                 print("데이터가 비어있습니다.")
                 return
 
-            # data.to_csv('new.txt', index=False, sep='\t')
-
             # 데이터베이스 연결
             connect = SQL(command=9, data=data)
             connect.sql_parse()
 
-
         except Exception as e:
             print(f"Error: {e}")
-
 
 
     def execute_query(self):
