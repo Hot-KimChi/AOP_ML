@@ -233,7 +233,7 @@ class SQL(DBInfor):
         elif self.command == 9:
             query = '''
             INSERT INTO Tx_summary(
-                [ProbeName]
+                 [ProbeName]
                 ,[ProbeID]
                 ,[Software_version]
                 ,[Exam]

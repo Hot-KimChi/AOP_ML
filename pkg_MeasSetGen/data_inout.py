@@ -78,7 +78,7 @@ class DataOut:
 
 
             # 엑셀 파일로 출력
-            output_file = f'./0_Verification_Reports/{self.database}/{probename}_{self.formatted_datetime}_result.xlsx'
+            output_file = f'./1_Verification_Reports/{self.database}/{probename}_{self.formatted_datetime}_result.xlsx'
 
             with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
                 df_Intensity.to_excel(writer, sheet_name='Intensity', index=False)
