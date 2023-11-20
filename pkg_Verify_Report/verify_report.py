@@ -48,20 +48,20 @@ class Verify_Report:
         self.entry_SW.place(x=110, y=25)
 
         label_filter = Label(self.frame1, text='filter Column')
-        label_filter.place(x=580, y=5)
+        label_filter.place(x=280, y=5)
         combo_list_columns = ttk.Combobox(self.frame1, height=0, state='readonly')
-        combo_list_columns.place(x=660, y=5)
+        combo_list_columns.place(x=360, y=5)
 
         label_sel_data = Label(self.frame1, text='Selection')
-        label_sel_data.place(x=580, y=25)
+        label_sel_data.place(x=280, y=25)
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
-        self.combo_sel_datas.place(x=660, y=25)
-
-        btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_query)
-        btn_view.place(x=850, y=5)
+        self.combo_sel_datas.place(x=360, y=25)
 
         btn_read = Button(self.frame1, width=15, height=2, text='Load Summary File', command=self.parsing_sql)
-        btn_read.place(x=300, y=5)
+        btn_read.place(x=550, y=5)
+
+        btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_query)
+        btn_view.place(x=700, y=5)
 
         ## initial data update from SQL[measSSId]
         connect = SQL(command=5)
