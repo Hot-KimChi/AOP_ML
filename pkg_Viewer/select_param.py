@@ -40,21 +40,15 @@ class SelectParam:
 
         list_params = self.df.columns.values.tolist()
 
-        ''' 선택된 columns을 combobox형태로 생성 & binding event통해 선택 시, func_on_selected 실행.'''
-        label_filter = Label(self.frame1, text='filter Column')
-        label_filter.place(x=280, y=5)
-
+        ## filter column update
         combo_list_columns = ttk.Combobox(self.frame1, value=list_params, height=0, state='readonly')
         combo_list_columns.place(x=360, y=5)
         combo_list_columns.bind('<<ComboboxSelected>>', self.on_selected)
 
-        label_sel_data = Label(self.frame1, text='Selection')
-        label_sel_data.place(x=280, y=25)
-
         ## 빈 Combobox show-up / 선택 시, parameter 데이터 업데이트
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
-        #
+
         # btn_view = Button(self.frame_down, width=15, height=2, text='Select & Detail', command=self.detail_table)
         # btn_view.place(x=350, y=5)
 

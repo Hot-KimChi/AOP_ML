@@ -36,9 +36,6 @@ class Viewer:
 
         self.frame1 = Frame(window_view, relief="solid", bd=2)
         self.frame1.pack(side="top", fill="both", expand=True)
-        # self.frame2 = Frame(window_view, relief="solid", bd=2)
-        # self.frame2.pack(side="bottom", fill="both", expand=True)
-
 
         label_probename = Label(self.frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
@@ -62,9 +59,6 @@ class Viewer:
 
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
-
-        # btn_view = Button(frame1, width=15, height=2, text='Select Table', command=self._get_sequence)
-        # btn_view.place(x=350, y=5)
 
         # Add some style / Pick a theme
         style = ttk.Style()

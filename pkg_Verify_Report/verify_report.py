@@ -12,7 +12,7 @@ from pkg_Verify_Report.verify_query import verify_query
 from pkg_MeasSetGen.data_inout import DataOut
 
 
-class Verify_Report:
+class Verify_Report():
     """
     verify step same as initial viewer
     1) For initial case, same as viewer.py
@@ -21,7 +21,7 @@ class Verify_Report:
     2) For selected item, SQL query execute.
     """
     def __init__(self, database, list_probe):
-
+        # super().__init__(database, list_probe)
         self.table_cnt = 0
 
         self.database = database
