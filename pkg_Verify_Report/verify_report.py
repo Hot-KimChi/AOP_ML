@@ -8,7 +8,7 @@ import pandas as pd
 from pkg_SQL.database import SQL
 from pkg_Viewer.update_table import DataTable
 from pkg_Viewer.select_param import SelectParam
-from pkg_Verify_Report.verify_query import verify_query
+from pkg_Verify_Report.execute_query_report import Execute_Query_Report
 from pkg_MeasSetGen.data_inout import DataOut
 
 
@@ -57,7 +57,7 @@ class Verify_Report():
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
 
-        btn_read = Button(self.frame1, width=15, height=2, text='Load Summary File', command=self.parsing_sql)
+        btn_read = Button(self.frame1, width=15, height=2, text='Load Summary File', command=self.Tx_summ_process)
         btn_read.place(x=550, y=5)
 
         btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_report)
@@ -108,7 +108,7 @@ class Verify_Report():
         self.table, self.table_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
 
 
-    def parsing_sql(self):
+    def Tx_summ_process(self):
         try:
             selected_probeinfo = self.combo_probename.get().replace(" ", "")        ## 공백 없애기 " " --> ""
             idx = selected_probeinfo.find("|")
@@ -162,11 +162,11 @@ class Verify_Report():
         print(self.table.str_sel_param, self.table.probeId)
 
         # MI case
-        MI_case = verify_query('reportValue_1', self.table.str_sel_param, 'MI', self.table.probeId)
+        MI_case = Execute_Query_Report('reportValue_1', self.table.str_sel_param, 'MI', self.table.probeId)
         df_MI = MI_case.parsing()
 
         # Ispta.3 case
-        Ispta_case = verify_query('reportValue_2', self.table.str_sel_param, 'MI', self.table.probeId)
+        Ispta_case = Execute_Query_Report('reportValue_2', self.table.str_sel_param, 'MI', self.table.probeId)
         df_Ispta = Ispta_case.parsing()
 
         # MI dataframe merge with Ispta.3 dataframe
@@ -177,7 +177,7 @@ class Verify_Report():
         df_intensity = pd.concat([MI_column_by_index, Ispta_column_by_index_Id, Ispta_column_by_index_value], axis=1)
 
         # Temperature case
-        Temp_case = verify_query('reportValue_1', self.table.str_sel_param, 'Temp', self.table.probeId)
+        Temp_case = Execute_Query_Report('reportValue_1', self.table.str_sel_param, 'Temp', self.table.probeId)
         df_Temp = Temp_case.parsing()
 
         dataout = DataOut(case=1, database=self.database, df1=df_intensity, df2=df_Temp)
