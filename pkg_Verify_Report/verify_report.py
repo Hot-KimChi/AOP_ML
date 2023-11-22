@@ -60,7 +60,7 @@ class Verify_Report():
         btn_read = Button(self.frame1, width=15, height=2, text='Load Summary File', command=self.parsing_sql)
         btn_read.place(x=550, y=5)
 
-        btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_query)
+        btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_report)
         btn_view.place(x=700, y=5)
 
         ## initial data update from SQL[measSSId]
@@ -128,6 +128,7 @@ class Verify_Report():
             data['Software_version'] = self.entry_SW.get()
             data['CurrentState'] = data['Mode']
             data['IsProcessed'] = 1
+            data['IsLatest'] = 1
 
             # RLE data re-write
             list_rle = []
@@ -149,14 +150,14 @@ class Verify_Report():
                 return
 
             # 데이터베이스 연결
-            connect = SQL(command=9, data=data)
+            connect = SQL(command=9, selected_probeId=selected_probeId, data=data)
             connect.sql_parse()
 
         except Exception as e:
             print(f"Error: {e}")
 
 
-    def execute_query(self):
+    def execute_report(self):
 
         print(self.table.str_sel_param, self.table.probeId)
 

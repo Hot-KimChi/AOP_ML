@@ -231,7 +231,10 @@ class SQL(DBInfor):
 
         ## parsing MS-SQL database: Tx_summary_table
         elif self.command == 9:
-            query = '''
+            query = f'''
+            UPDATE dbo.Tx_summary SET IsLatest = 0
+            WHERE ProbeID = {self.selected_probeId}
+             
             INSERT INTO Tx_summary(
                  [ProbeName]
                 ,[ProbeID]
@@ -250,13 +253,14 @@ class SQL(DBInfor):
                 ,[IsProcessed]
                 ,[IsCPAEn]
                 ,[RLE]
-                ,[VTxIndex] 
+                ,[VTxIndex]
+                ,[IsLatest] 
             )
             
             VALUES (%s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, 
-                    %s, %s, %s)
+                    %s, %s, %s, %s)
             '''
 
         return query
