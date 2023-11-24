@@ -149,6 +149,10 @@ class Verify_Report():
                 print("데이터가 비어있습니다.")
                 return
 
+            ## 해당 데이터 다른 table에 띄우기
+
+
+
             # 데이터베이스 연결
             connect = SQL(command=9, selected_probeId=selected_probeId, data=data)
             connect.sql_parse()
