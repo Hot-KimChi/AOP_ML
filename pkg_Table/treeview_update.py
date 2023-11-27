@@ -20,6 +20,23 @@ class DataTable:
         self.tree_scroll_x = tree_scroll_x
 
 
+    def setup_style(self):
+
+        # Add some style / Pick a theme
+        style = ttk.Style()
+        style.theme_use("default")
+
+        # Configure our treeview colors
+        style.configure("Treeview",
+                        background="#D3D3D3",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#D3D3D3"
+                        )
+        # Change selected color
+        style.map('Treeview', background=[('selected', '#347083')])
+
+
     def click_item(self, event):
         ## multiple selection
         # global str_sel_param
@@ -46,7 +63,6 @@ class DataTable:
             self.tree_scroll_y.destroy()
             self.tree_scroll_x.destroy()
 
-
         # Initialize the my_tree variable
         ## tree_table 생성 및 update
         self.tree_scroll_y = Scrollbar(self.frame, orient="vertical")
@@ -56,7 +72,6 @@ class DataTable:
 
         self.my_tree = ttk.Treeview(self.frame, height=self.treeline, yscrollcommand=self.tree_scroll_y.set,
                                     xscrollcommand=self.tree_scroll_x.set, selectmode="extended")
-
         self.my_tree.pack(padx=20, pady=20, side='left')
 
         ## event update시, func_click_item 수행.
@@ -76,6 +91,8 @@ class DataTable:
         self.my_tree.tag_configure('oddrow', background="lightblue")
         self.my_tree.tag_configure('evenrow', background="white")
 
+        ## setup_Treeview style
+        self.setup_style()
 
         # Put data in treeview
         df_rows = self.df.round(3)
@@ -92,11 +109,3 @@ class DataTable:
             count += 1
 
         return self.my_tree, self.tree_scroll_y, self.tree_scroll_x
-
-
-    # def detail_table(self):
-    #     connect = SQL(command=2)  ## SQL class 객체 생성.
-    #     self.df = connect.sql_get()
-    #     ShowTable.fn_show_table(selected_DBtable, df=self.df)
-
-

@@ -1,8 +1,7 @@
-from tkinter import *
 from tkinter import ttk
 
 from pkg_SQL.database import SQL
-from pkg_Viewer.update_table import DataTable
+from pkg_Table.treeview_update import DataTable
 
 
 class SelectParam:

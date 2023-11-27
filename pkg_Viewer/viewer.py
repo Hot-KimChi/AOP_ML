@@ -60,20 +60,6 @@ class Viewer:
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
 
-        # Add some style / Pick a theme
-        style = ttk.Style()
-        style.theme_use("default")
-
-        # Configure our treeview colors
-        style.configure("Treeview",
-                        background="#D3D3D3",
-                        foreground="black",
-                        rowheight=25,
-                        fieldbackground="#D3D3D3"
-                        )
-        # Change selected color
-        style.map('Treeview', background=[('selected', '#347083')])
-
         window_view.mainloop()
 
 

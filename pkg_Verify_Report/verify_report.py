@@ -6,7 +6,7 @@ from tkinter import filedialog
 import pandas as pd
 
 from pkg_SQL.database import SQL
-from pkg_Viewer.update_table import DataTable
+from pkg_Table.treeview_update import DataTable
 from pkg_Viewer.select_param import SelectParam
 from pkg_Verify_Report.execute_query_report import Execute_Query_Report
 from pkg_MeasSetGen.data_inout import DataOut
@@ -70,22 +70,6 @@ class Verify_Report():
         self.table_cnt += 1
         self.table = DataTable(df=self.df, frame=self.frame1, table_cnt=self.table_cnt)
         self.my_tree, self.tree_scroll_y, self.tree_scroll_x = self.table.update_treeview()
-
-
-        # Add some style
-        style = ttk.Style()
-        # Pick a theme
-        style.theme_use("default")
-
-        # Configure our treeview colors
-        style.configure("Treeview",
-                        background="#D3D3D3",
-                        foreground="black",
-                        rowheight=25,
-                        fieldbackground="#D3D3D3"
-                        )
-        # Change selected color
-        style.map('Treeview', background=[('selected', '#347083')])
 
         window_verify.mainloop()
 
