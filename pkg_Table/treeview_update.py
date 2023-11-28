@@ -52,6 +52,8 @@ class DataTable:
         self.str_sel_param = '(' + ','.join(str(x) for x in sel_param_click) + ')'
         self.probeId = probeID_click[0]
 
+        print(self.str_sel_param)
+
         return self.str_sel_param, self.probeId
 
 

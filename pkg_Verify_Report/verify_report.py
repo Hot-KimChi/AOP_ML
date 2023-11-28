@@ -9,6 +9,7 @@ from pkg_SQL.database import SQL
 from pkg_Table.treeview_update import DataTable
 from pkg_Viewer.select_param import SelectParam
 from pkg_Verify_Report.execute_query_report import Execute_Query_Report
+from pkg_Verify_Report.pre_process import PreProcess
 from pkg_MeasSetGen.data_inout import DataOut
 
 
@@ -35,7 +36,6 @@ class Verify_Report():
         self.frame1 = Frame(window_verify, relief="solid", bd=2)
         self.frame1.pack(side="top", fill="both", expand=True)
 
-
         label_probename = Label(self.frame1, text='Probe Name')
         label_probename.place(x=5, y=5)
         self.combo_probename = ttk.Combobox(self.frame1, value=self.list_probe, height=0, state='readonly')
@@ -57,7 +57,7 @@ class Verify_Report():
         self.combo_sel_datas = ttk.Combobox(self.frame1, height=0, state='readonly')
         self.combo_sel_datas.place(x=360, y=25)
 
-        btn_read = Button(self.frame1, width=15, height=2, text='Load Summary File', command=self.Tx_summ_process)
+        btn_read = Button(self.frame1, width=15, height=2, text='Load Summary File', command=self.load_Txsumm)
         btn_read.place(x=550, y=5)
 
         btn_view = Button(self.frame1, width=15, height=2, text='Verify Report', command=self.execute_report)
@@ -92,57 +92,15 @@ class Verify_Report():
         self.table, self.table_cnt, self.my_tree, self.tree_scroll_y, self.tree_scroll_x = selparam.select_param()
 
 
-    def Tx_summ_process(self):
-        try:
-            selected_probeinfo = self.combo_probename.get().replace(" ", "")        ## 공백 없애기 " " --> ""
-            idx = selected_probeinfo.find("|")
-            selected_probeId = selected_probeinfo[idx + 1:]
-            selected_probename = selected_probeinfo[:idx]
+    def load_Txsumm(self):
 
-            #파일 대화 상자를 통해 CSV 파일 선택
-            filename = filedialog.askopenfilename(initialdir='.')
-            if not filename:
-                print("파일이 선택되지 않았습니다.")
-                return
+        selected_probeinfo = self.combo_probename.get().replace(" ", "")  ## 공백 없애기 " " --> ""
+        idx = selected_probeinfo.find("|")
+        selected_probeId = selected_probeinfo[idx + 1:]
+        selected_probename = selected_probeinfo[:idx]
+        SW = self.entry_SW.get()
 
-            data = pd.read_csv(filename, delimiter='\t')
-
-            data['ProbeName'] = selected_probename
-            data['ProbeID'] = selected_probeId
-            data['Software_version'] = self.entry_SW.get()
-            data['CurrentState'] = data['Mode']
-            data['IsProcessed'] = 1
-            data['IsLatest'] = 1
-
-            # RLE data re-write
-            list_rle = []
-            for wf, rle in zip(data['TxpgWaveformStyle'], data['RLE']):
-                if wf != 0:
-                    list_rle.append(-1)
-                elif wf == 0:
-                    list_rle.append(rle)
-            data['RLE'] = list_rle
-
-            # Dual_mode를 mode lenth로 update
-            dual_mode = []
-            for mode in data['Mode']:
-                dual_mode.append(len(mode))
-            data['Dual_Mode'] = dual_mode
-
-            if data.empty:
-                print("데이터가 비어있습니다.")
-                return
-
-            ## 해당 데이터 다른 table에 띄우기
-
-
-
-            # 데이터베이스 연결
-            connect = SQL(command=9, selected_probeId=selected_probeId, data=data)
-            connect.sql_parse()
-
-        except Exception as e:
-            print(f"Error: {e}")
+        PreProcess(self.database, selected_probeId, selected_probename, SW)
 
 
     def execute_report(self):
