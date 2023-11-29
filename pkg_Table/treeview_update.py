@@ -74,6 +74,7 @@ class DataTable:
                 self.my_tree.item(i, tags=())  # 'selected_row' 태그 제거
                 # 원래의 배경 색상을 복원합니다
                 original_background_color = 'lightblue' if int(i) % 2 == 0 else 'white'
+                print(i)
                 tags = ('evenrow',) if int(i) % 2 == 0 else ('oddrow',)
                 self.my_tree.item(i, tags=tags)
                 self.my_tree.item(i, {'tags': tags, 'values': self.my_tree.item(i, 'values'), 'text': "", 'open': 0,
