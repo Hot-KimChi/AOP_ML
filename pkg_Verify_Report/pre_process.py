@@ -23,6 +23,10 @@ class PreProcess:
         self.selected_probeId = selected_probeId
         self.SW = SW
 
+        self.init_color = "SystemButtonFace"
+        self.current_color = self.init_color
+        self.btn_cnt = 0
+
         self._get_sequence()
 
 
@@ -41,7 +45,7 @@ class PreProcess:
         self.frame1 = Frame(window_detail, relief="solid", bd=2)
         self.frame1.pack(side="top", fill="both", expand=True)
 
-        self.btn_all = Button(self.frame1, width=15, height=2, text='All', command=self.all_button_click)
+        self.btn_all = Button(self.frame1, width=15, height=2, text='Choose Condition', bg=self.init_color, command=self.all_button_click)
         self.btn_all.place(x=10, y=5)
 
         btn_read = Button(self.frame1, width=15, height=2, text='To SQL', command=self.data_parser)
@@ -53,22 +57,24 @@ class PreProcess:
 
 
     def all_button_click(self):
-        current_text = self.btn_all["text"]
 
-        if "All" in current_text:
-            clk_cnt = 0
+        if self.btn_cnt == 0:
+            new_color = "blue"
+            new_text = "All_Selected"
+            new_text_color = "white"
+            self.btn_cnt = 1
+            self.table.select_all_rows()
         else:
-            clk_cnt = int(current_text.split()[-1])
+            new_color = "SystemButtonFace"
+            new_text = "Choose Condition"
+            new_text_color = "black"
+            self.btn_cnt = 0
+            self.table.deselect_all_rows()
 
-        print(clk_cnt)
+        self.btn_all.configure(bg=new_color, fg=new_text_color, text=new_text)
+        # Change selected color
 
-        new_text = "All_Selected"
-        self.btn_all["text"] = new_text
-
-        if clk_cnt % 2 == 0:
-            self.btn_all.configure(text=current_text)
-        else:
-            self.btn_all.configure(bg="blue", fg="white", text=new_text)
+        print(new_color, new_text, self.btn_cnt)
 
 
     def Tx_summ_process(self):

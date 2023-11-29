@@ -56,9 +56,31 @@ class DataTable:
 
         return self.str_sel_param, self.probeId
 
+    def select_all_rows(self):
+        # Select all rows in the Treeview
+        self.my_tree.selection_set(self.my_tree.get_children())
+        # Change the background color of all selected rows
+        for i in self.my_tree.selection():
+            self.my_tree.item(i, tags=('selected_row',))
+
+
+
+    def deselect_all_rows(self):
+        # Treeview에서 모든 행 선택 해제
+        for i in self.my_tree.selection():
+            self.my_tree.selection_remove(i)
+            # 행의 태그 'selected_row'가 존재하면 배경 색상을 변경합니다
+            if 'selected_row' in self.my_tree.item(i, 'tags'):
+                self.my_tree.item(i, tags=())  # 'selected_row' 태그 제거
+                # 원래의 배경 색상을 복원합니다
+                original_background_color = 'lightblue' if int(i) % 2 == 0 else 'white'
+                tags = ('evenrow',) if int(i) % 2 == 0 else ('oddrow',)
+                self.my_tree.item(i, tags=tags)
+                self.my_tree.item(i, {'tags': tags, 'values': self.my_tree.item(i, 'values'), 'text': "", 'open': 0,
+                                      'background': original_background_color})
+
 
     def update_treeview(self):
-
         # # Destroy the previous tree and scrollbars, if any
         if self.my_tree:
             self.my_tree.destroy()
@@ -95,6 +117,9 @@ class DataTable:
 
         ## setup_Treeview style
         self.setup_style()
+
+        # Add a tag for all selected rows
+        self.my_tree.tag_configure('selected_row', background='#347083', foreground='white')
 
         # Put data in treeview
         df_rows = self.df.round(3)
