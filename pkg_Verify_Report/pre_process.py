@@ -46,7 +46,7 @@ class PreProcess:
         self.frame1.pack(side="top", fill="both", expand=True)
 
         self.btn_all = Button(self.frame1, width=15, height=2, text='Choose Condition', bg=self.init_color, command=self.all_button_click)
-        self.btn_all.place(x=10, y=5)
+        self.btn_all.place(x=15, y=5)
 
         btn_read = Button(self.frame1, width=15, height=2, text='To SQL', command=self.data_parser)
         btn_read.place(x=150, y=5)
@@ -72,9 +72,6 @@ class PreProcess:
             self.table.deselect_all_rows()
 
         self.btn_all.configure(bg=new_color, fg=new_text_color, text=new_text)
-        # Change selected color
-
-        print(new_color, new_text, self.btn_cnt)
 
 
     def Tx_summ_process(self):
