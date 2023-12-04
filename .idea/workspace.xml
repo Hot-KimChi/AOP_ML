@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="machine learning class update" />
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="1) Done&#10;- &#10;2) in progress &#10;- deselected alg modify">
+      <change beforePath="$PROJECT_DIR$/.idea/AOP_ML.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AOP_ML.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,6 +23,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -28,39 +33,54 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/PycharmProjects/ML_DL_study&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "D:/PycharmProjects/ML_DL_study",
+    "settings.editor.selected.configurable": "IntelliLang.Configuration"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\PycharmProjects\AOP_ML\pkg_LogIn" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\AOP_ML\pkg_Table" />
       <recent name="D:\PycharmProjects\AOP_ML" />
       <recent name="D:\PycharmProjects\AOP_ML\pkg_LogIn" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AOP_ML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task id="LOCAL-00001" summary="update package files">
-      <created>1684220265226</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1684220265226</updated>
-    </task>
-    <task id="LOCAL-00002" summary="update package files&#10;- database file">
-      <created>1684246532205</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1684246532205</updated>
-    </task>
     <task active="true" id="Default" summary="디폴트 작업">
       <changelist id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="update package files&#10;- database file" />
       <created>1684508202259</created>
@@ -68,168 +88,350 @@
       <option name="presentableId" value="Default" />
       <updated>1684508202259</updated>
     </task>
-    <task id="LOCAL-00003" summary="update modeling files">
-      <created>1684508245369</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
+    <task id="LOCAL-00048" summary="in-progress: predictML_2nd update&#10;1) intensity estimation">
+      <created>1693904726534</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
       <option name="project" value="LOCAL" />
-      <updated>1684508245369</updated>
+      <updated>1693904726534</updated>
     </task>
-    <task id="LOCAL-00004" summary="find original index add">
-      <created>1684594663413</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
+    <task id="LOCAL-00049" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update">
+      <created>1693982627199</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
       <option name="project" value="LOCAL" />
-      <updated>1684594663413</updated>
+      <updated>1693982627199</updated>
     </task>
-    <task id="LOCAL-00005" summary="change class and feature.">
-      <created>1684767367604</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
+    <task id="LOCAL-00050" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update">
+      <created>1694526219679</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
       <option name="project" value="LOCAL" />
-      <updated>1684767367604</updated>
+      <updated>1694526219680</updated>
     </task>
-    <task id="LOCAL-00006" summary="update algorithm structure">
-      <created>1685199092020</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
+    <task id="LOCAL-00051" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update(Temperature case)">
+      <created>1694587633056</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
       <option name="project" value="LOCAL" />
-      <updated>1685199092020</updated>
+      <updated>1694587633057</updated>
     </task>
-    <task id="LOCAL-00007" summary="update algorithm">
-      <created>1685370587923</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
+    <task id="LOCAL-00052" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update(Temperature case)">
+      <created>1694786655092</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
       <option name="project" value="LOCAL" />
-      <updated>1685370587923</updated>
+      <updated>1694786655092</updated>
     </task>
-    <task id="LOCAL-00008" summary="update code structure">
-      <created>1685438031499</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
+    <task id="LOCAL-00053" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update(Temperature case)">
+      <created>1694872499240</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
       <option name="project" value="LOCAL" />
-      <updated>1685438031499</updated>
+      <updated>1694872499240</updated>
     </task>
-    <task id="LOCAL-00009" summary="update MeasSetGen">
-      <created>1685524230963</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
+    <task id="LOCAL-00054" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update(Temperature case)">
+      <created>1695648816683</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
       <option name="project" value="LOCAL" />
-      <updated>1685524230963</updated>
+      <updated>1695648816683</updated>
     </task>
-    <task id="LOCAL-00010" summary="update model file">
-      <created>1685630842928</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
+    <task id="LOCAL-00055" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update(Temperature case)">
+      <created>1695719895861</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
       <option name="project" value="LOCAL" />
-      <updated>1685630842928</updated>
+      <updated>1695719895869</updated>
     </task>
-    <task id="LOCAL-00011" summary="update model file">
-      <created>1685689176254</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
+    <task id="LOCAL-00056" summary="1) in progress &#10;- verify_report.py modify">
+      <created>1696493721398</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
       <option name="project" value="LOCAL" />
-      <updated>1685689176254</updated>
+      <updated>1696493721399</updated>
     </task>
-    <task id="LOCAL-00012" summary="update model file">
-      <created>1685803811828</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
+    <task id="LOCAL-00057" summary="1) in progress &#10;- verify_report.py modify&#10;- _get_sequence function modify">
+      <created>1696497625688</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
       <option name="project" value="LOCAL" />
-      <updated>1685803811828</updated>
+      <updated>1696497625688</updated>
     </task>
-    <task id="LOCAL-00013" summary="update sequence structure">
-      <created>1686407364011</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
+    <task id="LOCAL-00058" summary="1) in progress &#10;- verify_report.py modify&#10;- _get_sequence function modify">
+      <created>1696927388558</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
       <option name="project" value="LOCAL" />
-      <updated>1686407364011</updated>
+      <updated>1696927388558</updated>
     </task>
-    <task id="LOCAL-00014" summary="update sequence structure">
-      <created>1686491735447</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
+    <task id="LOCAL-00059" summary="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify&#10;- _get_sequence function modify">
+      <created>1696945233942</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
       <option name="project" value="LOCAL" />
-      <updated>1686491735447</updated>
+      <updated>1696945233942</updated>
     </task>
-    <task id="LOCAL-00015" summary="update sequence structure II">
-      <created>1686580777414</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
+    <task id="LOCAL-00060" summary="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify">
+      <created>1697000944958</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
       <option name="project" value="LOCAL" />
-      <updated>1686580777414</updated>
+      <updated>1697000944958</updated>
     </task>
-    <task id="LOCAL-00016" summary="update algorithm">
-      <created>1686647215189</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
+    <task id="LOCAL-00061" summary="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify&#10;- verify_query.py modify">
+      <created>1697015300055</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
       <option name="project" value="LOCAL" />
-      <updated>1686647215189</updated>
+      <updated>1697015300055</updated>
     </task>
-    <task id="LOCAL-00017" summary="change function module to class">
-      <created>1686733327532</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
+    <task id="LOCAL-00062" summary="1) in progress &#10;- verify_report.py modify&#10;- verify_query.py modify">
+      <created>1697467033169</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
       <option name="project" value="LOCAL" />
-      <updated>1686733327532</updated>
+      <updated>1697467033169</updated>
     </task>
-    <task id="LOCAL-00018" summary="change function module to class">
-      <created>1687095954034</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
+    <task id="LOCAL-00063" summary="1) Done&#10;- database.py modify &#10;2) in progress &#10;- verify_query.py modify">
+      <created>1697533511651</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
       <option name="project" value="LOCAL" />
-      <updated>1687095954034</updated>
+      <updated>1697533511651</updated>
     </task>
-    <task id="LOCAL-00019" summary="update class files.">
-      <created>1687161737763</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
+    <task id="LOCAL-00064" summary="1) Done&#10;- database.py modify &#10;2) in progress &#10;- verify_query.py modify">
+      <created>1697534197474</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
       <option name="project" value="LOCAL" />
-      <updated>1687161737763</updated>
+      <updated>1697534197474</updated>
     </task>
-    <task id="LOCAL-00020" summary="update dataframe load and modify">
-      <created>1687251598883</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
+    <task id="LOCAL-00065" summary="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify&#10;- database.py modify">
+      <created>1697620712976</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
       <option name="project" value="LOCAL" />
-      <updated>1687251598883</updated>
+      <updated>1697620712977</updated>
     </task>
-    <task id="LOCAL-00021" summary="data generation part complete">
-      <created>1687333568936</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
+    <task id="LOCAL-00066" summary="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify&#10;- database.py modify">
+      <created>1697704114015</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
       <option name="project" value="LOCAL" />
-      <updated>1687333568936</updated>
+      <updated>1697704114016</updated>
     </task>
-    <task id="LOCAL-00022" summary="data generation part complete">
-      <created>1687503470795</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
+    <task id="LOCAL-00067" summary="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify&#10;- database.py modify">
+      <created>1697784729187</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
       <option name="project" value="LOCAL" />
-      <updated>1687503470795</updated>
+      <updated>1697784729188</updated>
     </task>
-    <task id="LOCAL-00023" summary="data generation part complete">
-      <created>1687702957178</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
+    <task id="LOCAL-00068" summary="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify&#10;- database.py modify">
+      <created>1698047971759</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
       <option name="project" value="LOCAL" />
-      <updated>1687702957178</updated>
+      <updated>1698047971759</updated>
     </task>
-    <task id="LOCAL-00024" summary="machine learning update">
-      <created>1687790621678</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
+    <task id="LOCAL-00069" summary="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify&#10;- database.py modify">
+      <created>1698138119941</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
       <option name="project" value="LOCAL" />
-      <updated>1687790621678</updated>
+      <updated>1698138119941</updated>
     </task>
-    <task id="LOCAL-00025" summary="machine learning class update">
-      <created>1688047874092</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
+    <task id="LOCAL-00070" summary="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify">
+      <created>1698225374951</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
       <option name="project" value="LOCAL" />
-      <updated>1688047874092</updated>
+      <updated>1698225374951</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00071" summary="1) Done&#10;-  &#10;2) in progress &#10;- data_inout.py update">
+      <created>1698310615964</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1698310615964</updated>
+    </task>
+    <task id="LOCAL-00072" summary="1) Done&#10;-  &#10;2) in progress &#10;- data_inout.py update">
+      <created>1698651274878</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1698651274878</updated>
+    </task>
+    <task id="LOCAL-00073" summary="1) Done&#10;-  &#10;2) in progress &#10;- data_inout.py update">
+      <created>1698743119927</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1698743119927</updated>
+    </task>
+    <task id="LOCAL-00074" summary="1) Done&#10;-  &#10;2) in progress &#10;- data_inout.py update">
+      <created>1698828996015</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1698828996015</updated>
+    </task>
+    <task id="LOCAL-00075" summary="1) Done&#10;-  &#10;2) in progress &#10;- data_inout.py update">
+      <created>1699186477062</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1699186477062</updated>
+    </task>
+    <task id="LOCAL-00076" summary="1) Done&#10;-  &#10;2) in progress &#10;- MI / Ispta merge to Intensity sheet">
+      <created>1699347620950</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1699347620950</updated>
+    </task>
+    <task id="LOCAL-00077" summary="1) Done&#10;-  &#10;2) in progress &#10;- dataframe index modify">
+      <created>1699348325011</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1699348325011</updated>
+    </task>
+    <task id="LOCAL-00078" summary="1) Done&#10;-  &#10;2) in progress &#10;- output file sharing.">
+      <created>1699519596840</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1699519596841</updated>
+    </task>
+    <task id="LOCAL-00079" summary="1) Done&#10;-  &#10;2) in progress &#10;- output file sharing.">
+      <created>1699599599422</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1699599599422</updated>
+    </task>
+    <task id="LOCAL-00080" summary="1) Done&#10;-  &#10;2) in progress &#10;- data parsing">
+      <created>1699875399294</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1699875399304</updated>
+    </task>
+    <task id="LOCAL-00081" summary="1) Done&#10;-  &#10;2) in progress &#10;- data parsing">
+      <created>1699875427700</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1699875427700</updated>
+    </task>
+    <task id="LOCAL-00082" summary="1) Done&#10;- data parsing to MS-SQL Done&#10;2) in progress &#10;-">
+      <created>1699950088236</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1699950088236</updated>
+    </task>
+    <task id="LOCAL-00083" summary="1) Done&#10;- &#10;2) in progress &#10;- comment update">
+      <created>1699951223980</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1699951223980</updated>
+    </task>
+    <task id="LOCAL-00084" summary="1) Done&#10;- &#10;2) in progress &#10;- comment update">
+      <created>1700036146518</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1700036146518</updated>
+    </task>
+    <task id="LOCAL-00085" summary="1) Done&#10;- &#10;2) in progress &#10;- comment update">
+      <created>1700036166659</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1700036166659</updated>
+    </task>
+    <task id="LOCAL-00086" summary="1) Done&#10;- &#10;2) in progress &#10;- comment update">
+      <created>1700038245571</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1700038245572</updated>
+    </task>
+    <task id="LOCAL-00087" summary="1) Done&#10;- &#10;2) in progress &#10;- verify report template update">
+      <created>1700465736568</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1700465736578</updated>
+    </task>
+    <task id="LOCAL-00088" summary="1) Done&#10;- &#10;2) in progress &#10;- update tkinter class code">
+      <created>1700554062960</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1700554062960</updated>
+    </task>
+    <task id="LOCAL-00089" summary="1) Done&#10;- &#10;2) in progress &#10;- update verify and viewer code">
+      <created>1700557144939</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1700557144939</updated>
+    </task>
+    <task id="LOCAL-00090" summary="1) Done&#10;- &#10;2) in progress &#10;- database code modify: before parsing data, reset IsLatest parameter set = 0">
+      <created>1700642584140</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1700642584140</updated>
+    </task>
+    <task id="LOCAL-00091" summary="1) Done&#10;- &#10;2) in progress &#10;- parameter name changed.">
+      <created>1700643753256</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1700643753256</updated>
+    </task>
+    <task id="LOCAL-00092" summary="1) Done&#10;- &#10;2) in progress &#10;- data file update">
+      <created>1700729879878</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1700729879878</updated>
+    </task>
+    <task id="LOCAL-00093" summary="1) Done&#10;- &#10;2) in progress &#10;- treeview 2nd update">
+      <created>1701071884589</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1701071884589</updated>
+    </task>
+    <task id="LOCAL-00094" summary="1) Done&#10;- &#10;2) in progress &#10;- treeview 2nd update">
+      <created>1701248311228</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1701248311228</updated>
+    </task>
+    <task id="LOCAL-00095" summary="1) Done&#10;- &#10;2) in progress &#10;- treeview 2nd update">
+      <created>1701249526588</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1701249526588</updated>
+    </task>
+    <task id="LOCAL-00096" summary="1) Done&#10;- &#10;2) in progress &#10;- deselected alg modify">
+      <created>1701309057040</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1701309057040</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -244,24 +446,31 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update package files" />
-    <MESSAGE value="update package files&#10;- database file" />
-    <MESSAGE value="update modeling files" />
-    <MESSAGE value="find original index add" />
-    <MESSAGE value="change class and feature." />
-    <MESSAGE value="update algorithm structure" />
-    <MESSAGE value="update code structure" />
-    <MESSAGE value="update MeasSetGen" />
-    <MESSAGE value="update model file" />
-    <MESSAGE value="update sequence structure" />
-    <MESSAGE value="update sequence structure II" />
-    <MESSAGE value="update algorithm" />
-    <MESSAGE value="change function module to class" />
-    <MESSAGE value="update class files." />
-    <MESSAGE value="update dataframe load and modify" />
-    <MESSAGE value="data generation part complete" />
-    <MESSAGE value="machine learning update" />
-    <MESSAGE value="machine learning class update" />
-    <option name="LAST_COMMIT_MESSAGE" value="machine learning class update" />
+    <MESSAGE value="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update(Temperature case)" />
+    <MESSAGE value="1) in progress &#10;- verify_report.py modify" />
+    <MESSAGE value="1) in progress &#10;- verify_report.py modify&#10;- _get_sequence function modify" />
+    <MESSAGE value="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify&#10;- _get_sequence function modify" />
+    <MESSAGE value="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify" />
+    <MESSAGE value="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify&#10;- verify_query.py modify" />
+    <MESSAGE value="1) in progress &#10;- verify_report.py modify&#10;- verify_query.py modify" />
+    <MESSAGE value="1) Done&#10;- database.py modify &#10;2) in progress &#10;- verify_query.py modify" />
+    <MESSAGE value="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify&#10;- database.py modify" />
+    <MESSAGE value="1) Done&#10;-  &#10;2) in progress &#10;- verify_query.py modify" />
+    <MESSAGE value="1) Done&#10;-  &#10;2) in progress &#10;- data_inout.py update" />
+    <MESSAGE value="1) Done&#10;-  &#10;2) in progress &#10;- MI / Ispta merge to Intensity sheet" />
+    <MESSAGE value="1) Done&#10;-  &#10;2) in progress &#10;- dataframe index modify" />
+    <MESSAGE value="1) Done&#10;-  &#10;2) in progress &#10;- output file sharing." />
+    <MESSAGE value="1) Done&#10;-  &#10;2) in progress &#10;- data parsing" />
+    <MESSAGE value="1) Done&#10;- data parsing to MS-SQL Done&#10;2) in progress &#10;-" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- comment update" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- verify report template update" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- update tkinter class code" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- update verify and viewer code" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- database code modify: before parsing data, reset IsLatest parameter set = 0" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- parameter name changed." />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- data file update" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- treeview 2nd update" />
+    <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- deselected alg modify" />
+    <option name="LAST_COMMIT_MESSAGE" value="1) Done&#10;- &#10;2) in progress &#10;- deselected alg modify" />
   </component>
 </project>
