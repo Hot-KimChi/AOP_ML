@@ -64,7 +64,6 @@ class DataTable:
             self.my_tree.item(i, tags=('selected_row',))
 
 
-
     def deselect_all_rows(self):
         # Treeview에서 모든 행 선택 해제
         for i in self.my_tree.selection():
