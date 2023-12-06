@@ -25,7 +25,7 @@ class PreProcess:
 
         self.init_color = "SystemButtonFace"
         self.current_color = self.init_color
-        self.btn_cnt = 0
+        self.btn_all = 0
 
         self._get_sequence()
 
@@ -58,17 +58,17 @@ class PreProcess:
 
     def all_button_click(self):
 
-        if self.btn_cnt == 0:
+        if self.btn_all == 0:
             new_color = "blue"
             new_text = "All_Selected"
             new_text_color = "white"
-            self.btn_cnt = 1
+            self.btn_all = 1
             self.table.select_all_rows()
         else:
             new_color = "SystemButtonFace"
             new_text = "Choose Condition"
             new_text_color = "black"
-            self.btn_cnt = 0
+            self.btn_all = 0
             self.table.deselect_all_rows()
 
         self.btn_all.configure(bg=new_color, fg=new_text_color, text=new_text)
@@ -126,7 +126,16 @@ class PreProcess:
     def data_parser(self):
 
         print(self.table.str_sel_param)
-
+        
+        print(type(self.table.str_sel_param))
+       
+        if self.btn_all == 1:
+            selected_data = self.data
+        else:
+            selected_data = self.data.apply(tuple, axis=1).isin([self.table.str_sel_param]) 
+        
+        print(selected_data)
         # 데이터베이스 연결
-        connect = SQL(command=9, selected_probeId=self.selected_probeId, data=self.data)
-        connect.sql_parse()
+        # connect = SQL(command=9, selected_probeId=self.selected_probeId, data=selected_data)
+        # connect.sql_parse()
+        

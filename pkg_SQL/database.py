@@ -224,7 +224,7 @@ class SQL(DBInfor):
                 where reportTerm_1 = '{self.report_term}' or reportTerm_1 IS NULL
                 ) T
 
-            where RankNo = 1 and ProbeID = {self.selected_probeId}
+            where RankNo = 1 and ProbeID = {self.selected_probeId} and IsLatest = 1
             order by num
             '''
 
