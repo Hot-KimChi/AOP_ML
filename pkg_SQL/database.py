@@ -63,7 +63,7 @@ class SQL(DBInfor):
                     cursor.execute(query, (row.ProbeName, row.ProbeID, row.Software_version, row.Exam, row.CurrentState,
                                            row.BeamStyleIndex, row.TxFrequency, row.TxFreqIndex, row.ElevAperIndex, row.NumTxCycles,
                                            row.TxpgWaveformStyle, row.TxChannelModulationEn, row.Dual_Mode, row.SubModeIndex, row.IsProcessed,
-                                           row.IsCPAEn, row.RLE, row.VTxIndex
+                                           row.IsCPAEn, row.RLE, row.VTxIndex, row.IsLatest
                                            )
                                     )
 
@@ -254,7 +254,7 @@ class SQL(DBInfor):
                 ,[IsCPAEn]
                 ,[RLE]
                 ,[VTxIndex]
-                ,[IsLatest] 
+                ,[IsLatest]
             )
             
             VALUES (%s, %s, %s, %s, %s, 
