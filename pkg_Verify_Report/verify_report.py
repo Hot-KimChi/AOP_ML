@@ -100,7 +100,7 @@ class Verify_Report():
         selected_probename = selected_probeinfo[:idx]
         SW = self.entry_SW.get()
 
-        PreProcess(self.database, selected_probeId, selected_probename, SW)
+        PreProcess(self.database, selected_probename, selected_probeId, SW)
 
 
     def execute_report(self):
