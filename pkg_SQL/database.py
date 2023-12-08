@@ -58,7 +58,7 @@ class SQL(DBInfor):
 
             cursor = conn.cursor()
 
-            if query:
+            if self.command == 10:          ## DataFrame parsing.
                 for row in self.df.itertuples():
                     cursor.execute(query, (row.ProbeName, row.ProbeID, row.Software_version, row.Exam, row.CurrentState,
                                            row.BeamStyleIndex, row.TxFrequency, row.TxFreqIndex, row.ElevAperIndex, row.NumTxCycles,
@@ -66,6 +66,8 @@ class SQL(DBInfor):
                                            row.IsCPAEn, row.RLE, row.VTxIndex, row.IsLatest
                                            )
                                     )
+            elif self.command == 9:         ## IsLatest set = 0
+                cursor.execute(query)
 
             # 트랜잭션 커밋 및 연결 종료
             conn.commit()
@@ -197,7 +199,7 @@ class SQL(DBInfor):
                     dbo.SSR_table.Ambient_Temp_1, dbo.SSR_table.reportTerm_2, dbo.SSR_table.XP_Value_2, 
                     dbo.SSR_table.reportValue_2, dbo.SSR_table.Difference_2, 
                     ROW_NUMBER() over (partition by num order by {self.sorted_param} desc) as RankNo, 
-                    dbo.meas_res_summary.isDataUsable
+                    dbo.meas_res_summary.isDataUsable, dbo.Tx_summary.IsLatest
 
                 FROM dbo.Tx_summary
 
@@ -224,18 +226,22 @@ class SQL(DBInfor):
                 where reportTerm_1 = '{self.report_term}' or reportTerm_1 IS NULL
                 ) T
 
-            where RankNo = 1 and ProbeID = {self.selected_probeId} and IsLatest = 1
+            where RankNo = 1 and ProbeID = {self.selected_probeId} and IsLatest = 1 
             order by num
             '''
 
 
-        ## parsing MS-SQL database: Tx_summary_table
+        ## parsing MS-SQL database: Tx_summary_table / IsLatest = 0 update before parsing Tx summary data
         elif self.command == 9:
             query = f'''
             UPDATE dbo.Tx_summary SET IsLatest = 0
             WHERE ProbeID = {self.selected_probeId}
-             
-            INSERT INTO Tx_summary(
+           '''
+
+        ## parsing MS-SQL database: Tx_summary_table
+        elif self.command == 10:
+            query = f'''
+           INSERT INTO Tx_summary(
                  [ProbeName]
                 ,[ProbeID]
                 ,[Software_version]
@@ -262,6 +268,7 @@ class SQL(DBInfor):
                     %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s)
             '''
+
 
         return query
 

@@ -104,7 +104,7 @@ class PreProcess:
             # Dual_mode를 mode lenth로 update
             dual_mode = []
             for mode in data['Mode']:
-                dual_mode.append(len(mode))
+                dual_mode.append(len(mode)-1)
             data['Dual_Mode'] = dual_mode
 
 
@@ -134,8 +134,10 @@ class PreProcess:
             row_no = self.data['No'].isin(selected_param)
             selected_data = self.data[row_no]
         
-        print(selected_data)
         #데이터베이스 연결
-        connect = SQL(command=9, selected_probeId=self.selected_probeId, data=selected_data)
+        IsLastest_connect = SQL(command=9, selected_probeId=self.selected_probeId)
+        IsLastest_connect.sql_parse()
+        
+        connect = SQL(command=10, data=selected_data)
         connect.sql_parse()
         
