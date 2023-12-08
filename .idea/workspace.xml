@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="1) Done&#10;- &#10;2) in progress &#10;- update treeview.py" />
+    <list default="true" id="308bd367-0750-4e80-a4fd-7b4d5ecab6f2" name="변경" comment="1) Done&#10;- update function 'IsLatest'&#10;2) in progress &#10;- update treeview.py">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,13 +85,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1684508202259</updated>
-    </task>
-    <task id="LOCAL-00049" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update">
-      <created>1693982627199</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1693982627199</updated>
     </task>
     <task id="LOCAL-00050" summary="1)Done &#10;- intensity estimation by ML&#10;&#10;2) in-progress&#10;- predictML_2nd update">
       <created>1694526219679</created>
@@ -427,7 +422,14 @@
       <option name="project" value="LOCAL" />
       <updated>1701676535425</updated>
     </task>
-    <option name="localTasksCounter" value="98" />
+    <task id="LOCAL-00098" summary="1) Done&#10;- update function 'IsLatest'&#10;2) in progress &#10;- update treeview.py">
+      <created>1701948210642</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1701948210642</updated>
+    </task>
+    <option name="localTasksCounter" value="99" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -442,7 +444,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="1) in progress &#10;- verify_report.py modify" />
     <MESSAGE value="1) in progress &#10;- verify_report.py modify&#10;- _get_sequence function modify" />
     <MESSAGE value="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify&#10;- _get_sequence function modify" />
     <MESSAGE value="1) in progress &#10;- viewer.py modify&#10;- verify_report.py modify" />
@@ -467,6 +468,7 @@
     <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- treeview 2nd update" />
     <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- deselected alg modify" />
     <MESSAGE value="1) Done&#10;- &#10;2) in progress &#10;- update treeview.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="1) Done&#10;- &#10;2) in progress &#10;- update treeview.py" />
+    <MESSAGE value="1) Done&#10;- update function 'IsLatest'&#10;2) in progress &#10;- update treeview.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="1) Done&#10;- update function 'IsLatest'&#10;2) in progress &#10;- update treeview.py" />
   </component>
 </project>
