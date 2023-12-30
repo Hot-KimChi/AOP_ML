@@ -13,7 +13,7 @@ class MeasSetGen:
     """
     MeasSetGeneration 버튼이 눌렸을 경우, 해당 클래스가 실행.
     1) select & Load 버튼: _get_sequence 함수 실행
-    2) To MS-SQL / To Excel
+    2) To MS-SQL / To Excel / protocol check
     """
     def __init__(self, database, list_probe):
 
