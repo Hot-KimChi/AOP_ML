@@ -44,7 +44,7 @@ class DataOut:
 
             ## Verification_reports
             self.probename = probe
-            self.directory = f'./0_Verification_Reports/{self.database}'
+            self.directory = f'./1_Verification_Reports/{self.database}'
 
 
     def make_dir(self):
