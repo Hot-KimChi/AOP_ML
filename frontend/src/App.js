@@ -4,9 +4,9 @@ import { useState } from 'react'
 
 function App() {
 
-  const server_list = ["K2", "Juniper"];
-  const [title, title_pro] = useState('남자코트추천')
+  let server_list = ["K2", "Juniper"];
   
+
 
   return (
     <div className="App">
