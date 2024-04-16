@@ -22,7 +22,7 @@ class Viewer:
         self.list_probe = list_probe
         self.table_cnt = 0
 
-        config_path = os.path.join("pkg_login", "../AOP_config.cfg")
+        config_path = os.path.join(r".\backend\AOP_config.cfg")
         config = configparser.ConfigParser()
         config.read(config_path)
         server_table_M3 = config["server table"]["M3 server table"]

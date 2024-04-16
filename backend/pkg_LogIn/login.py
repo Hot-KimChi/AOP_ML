@@ -40,7 +40,8 @@ class LogIn:
 
 
     def load_config(self):
-        config_path = os.path.join("pkg_login", "../AOP_config.cfg")
+        config_path = os.path.join(r".\backend\AOP_config.cfg")
+        
         config = configparser.ConfigParser()
         config.read(config_path)
 
