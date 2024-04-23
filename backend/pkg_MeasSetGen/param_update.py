@@ -12,7 +12,7 @@ class ParamUpdate:
         self.df = df
 
         ## parameter selection
-        list_param = ['RequestDate', 'ProbeName', 'Mode', 'GroupIndex', 'SubModeIndex', 'BeamStyleIndex',
+        list_param = ['RequestDate', 'ProjectVersion', 'Mode', 'SubModeIndex', 'BeamStyleIndex',
                       'SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles',
                       'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'ElevAperIndex',
                       'SystemPulserSel', 'VTxIndex', 'TxPulseArbitraryWF']
@@ -33,14 +33,15 @@ class ParamUpdate:
         df_D_mode = df.loc[df['Mode'] == 'D']
         df_CEUS_mode = df.loc[df['Mode'] == 'Contrast']
 
-        ## 4개 모드 데이터프레임 합치기 / 합쳐진 데이터프레임 index reset / 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
+        ## 4개 모드 데이터프레임 합치기 / 합쳐진 데이터프레임 index reset 
+        ## 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
         df_total = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode, df_CEUS_mode])
         df_total = df_total.reset_index(drop=True)
         df_total = df_total.fillna(0)
 
         ## groupby count 를 위해 parameter setting
         group_params = ['IsTxChannelModulationEn', 'ProbeNumTxCycles', 'SysTxFreqIndex', 'TxpgWaveformStyle',
-                       'TxPulseArbitraryWF', 'ElevAperIndex', 'GroupIndex', 'TxFocusLocCm']
+                       'TxPulseArbitraryWF', 'ElevAperIndex', 'TxFocusLocCm']
 
         ## 중복된 column 갯수 세기 --> 중복된 열 삭제됨.
         dup_count = df_total.groupby(group_params, as_index=False).size()

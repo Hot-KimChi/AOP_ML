@@ -16,7 +16,7 @@ class ParamGen:
         self.df['totalVoltagePt'] = 20
         self.df['zStartDistCm'] = 0.5
         self.df['DTxFreqIndex'] = 0
-        self.df['dumpSwVersion'] = self.df['RequestDate']
+        self.df['dumpSwVersion'] = self.df['RequestDate'] + '_' + self.df['ProjectVersion']
         self.df['measSetComments'] = f'Beamstyle_{self.probename}_Intensity'
 
         self._get_sequence()
