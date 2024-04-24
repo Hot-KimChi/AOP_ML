@@ -35,7 +35,17 @@ class ParamUpdate:
 
         ## 4개 모드 데이터프레임 합치기 / 합쳐진 데이터프레임 index reset 
         ## 데이터 Null --> [0]으로 변환(데이터의 정렬, groupby null 값 문제 발생)
-        df_total = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode, df_CEUS_mode])
+        ## 1) df_B = df_M 일 경우, M 삭제
+        B_numTxElements = list(df_B_mode['NumTxElements'])
+        M_numTxElements = list(df_M_mode['NumTxElements'])
+        BC_numTxElements = list(df_C_mode['NumTxElements'])
+        D_numTxElements = list(df_D_mode['NumTxElements'])
+                
+        if B_numTxElements == M_numTxElements:
+            df_total = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode, df_CEUS_mode])
+        
+        
+        
         df_total = df_total.reset_index(drop=True)
         df_total = df_total.fillna(0)
 
@@ -52,4 +62,9 @@ class ParamUpdate:
         df_total = df_total.sort_values(by=group_params, ascending=True).reset_index()
         df_total['Count'] = dup_count['size']
 
+
+        ## Test code
+        df_total.to_csv('test.csv')
+
+        
         return df_total, group_params
