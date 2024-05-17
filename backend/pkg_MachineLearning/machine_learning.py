@@ -167,7 +167,7 @@ class Machine_Learning:
             from scipy.stats import uniform, randint
 
 
-            ## hyperparameter 세팅 시, 진행.
+            # # hyperparameter 세팅 시, 진행.
             # n_estimators = randint(20, 100)                 ## number of trees in the random forest
             # max_features = ['auto', 'sqrt']                 ## number of features in consideration at every split
             # max_depth = [int(x) for x in
@@ -175,12 +175,12 @@ class Machine_Learning:
             # min_samples_split = [2, 6, 10]                  ## minimum sample number to split a node
             # # min_samples_leaf = [1, 3, 4]                  ## minimum sample number that can be stored in a leaf node
             # # bootstrap = [True, False]                     ## method used to sample data points
-            #
+            
             # random_grid = {'n_estimators': n_estimators,
             #                'max_features': max_features,
             #                'max_depth': max_depth,
             #                'min_samples_split': min_samples_split}
-            #
+            
             #                # 'min_samples_leaf': min_samples_leaf,
             #                # 'bootstrap': bootstrap}
             ## RandomizedSearchCV에서 fit이 완료.
