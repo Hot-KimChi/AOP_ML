@@ -15,7 +15,7 @@ class ParamUpdate:
         list_param = ['RequestDate', 'ProjectVersion', 'Mode', 'SubModeIndex', 'BeamStyleIndex',
                       'SysTxFreqIndex', 'TxpgWaveformStyle', 'TxFocusLocCm', 'NumTxElements', 'ProbeNumTxCycles',
                       'IsTxChannelModulationEn', 'IsPresetCpaEn', 'CpaDelayOffsetClk', 'ElevAperIndex',
-                      'SystemPulserSel', 'VTxIndex', 'TxPulseArbitraryWF']
+                      'SystemPulserSel', 'VTxIndex', 'TxPulseRle']
         self.selected_df = self.df.loc[:, list_param]
 
         self.param_merge()
@@ -41,9 +41,9 @@ class ParamUpdate:
         BC_numTxElements = list(df_C_mode['NumTxElements'])
         D_numTxElements = list(df_D_mode['NumTxElements'])
                 
-        if B_numTxElements == M_numTxElements:
-            df_total = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode, df_CEUS_mode])
-        
+        # if B_numTxElements == M_numTxElements:
+        df_total = pd.concat([df_B_mode, df_M_mode, df_C_mode, df_D_mode, df_CEUS_mode])
+    
         
         
         df_total = df_total.reset_index(drop=True)
@@ -51,7 +51,7 @@ class ParamUpdate:
 
         ## groupby count 를 위해 parameter setting
         group_params = ['IsTxChannelModulationEn', 'ProbeNumTxCycles', 'SysTxFreqIndex', 'TxpgWaveformStyle',
-                       'TxPulseArbitraryWF', 'ElevAperIndex', 'TxFocusLocCm']
+                       'TxPulseRle', 'ElevAperIndex', 'TxFocusLocCm']
 
         ## 중복된 column 갯수 세기 --> 중복된 열 삭제됨.
         dup_count = df_total.groupby(group_params, as_index=False).size()
