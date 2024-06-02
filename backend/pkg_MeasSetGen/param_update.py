@@ -32,7 +32,16 @@ class ParamUpdate:
 
         df = self.selected_df
         
-
+        """
+        1) focus 갯수를 파악하여 group index count --> 정렬하기 / 포커스가 올라가다가 내려가면 그룹인덱스가 다음 인덱스로 넘어감.
+        2) 만약에 UE에서 중복이 된 condition을 request하면 어떻게 하는가? --> 나중에 해결
+        3) 
+        
+        """
+        
+        
+        
+        
         ##### B & M mode process #####
         df_B_mode = df.loc[(df['Mode'] == 'B')]
         df_M_mode = df.loc[(df['Mode'] == 'M')]
