@@ -56,6 +56,21 @@ class ParamUpdate:
         df_total_BM = df_total_BM.reset_index(drop=True)
         df_total_BM = df_total_BM.fillna(0)
 
+        # 중복 열 제거
+        cols_to_drop = [
+            "SysTxFreqIndex",
+            "TxpgWaveformStyle",
+            "ProbeNumTxCycles",
+            "IsTxChannelModulationEn",
+            "IsPresetCpaEn",
+            "ElevAperIndex",
+            "NumTxElements",
+        ]
+        df_total_BM = df_total_BM.drop_duplicates(subset=cols_to_drop, keep="first")
+
+        ## Test code
+        df_total_BM.to_csv("test_BM.csv")
+
         # GroupIndex 열 생성
         group_index = 1
         group_indices = []
@@ -69,18 +84,7 @@ class ParamUpdate:
             prev_value = value
         df_total_BM["GroupIndex"] = group_indices
 
-        # 중복 열 제거
-        cols_to_drop = [
-            "SysTxFreqIndex",
-            "TxpgWaveformStyle",
-            "ProbeNumTxCycles",
-            "IsTxChannelModulationEn",
-            "IsPresetCpaEn",
-            "ElevAperIndex",
-            "NumTxElements",
-        ]
-        df_total = df_total_BM.drop_duplicates(subset=cols_to_drop, keep="first")
-
+        df_total = df_total_BM
         ## Test code
         df_total.to_csv("test.csv")
 
