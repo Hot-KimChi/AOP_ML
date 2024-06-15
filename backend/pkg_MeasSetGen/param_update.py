@@ -62,12 +62,15 @@ class ParamUpdate:
             "NumTxElements",
         ]
 
+        df_BM.to_csv("ORG_df_BM.csv")
+        
         # 중복 개수 열 추가
-        df_BM = df_BM.drop_duplicates(subset=cols_to_drop, keep="first")
-
-        duplicated_mask = df_BM.duplicated(subset=cols_to_drop, keep=False)
-        duplicated_mask.to_csv("dup.csv")
+        duplicated_mask = df_BM.duplicated(subset=cols_to_drop, keep=False, numeric_only=True)
+        duplicated_mask.to_csv("duplicated_mask.csv")
         df_BM["Duplicate_Count"] = duplicated_mask.map({True: 1, False: 0})
+        
+        df_BM = df_BM.drop_duplicates(subset=cols_to_drop, keep="first")
+        
 
         # Duplicate_Count가 1이고 Mode가 'M'인 행 삭제 / Count_group_index를 데이터프레임에 추가
         df_BM = df_BM[(df_BM["Duplicate_Count"] != 1) | (df_BM["Mode"] != "M")]
