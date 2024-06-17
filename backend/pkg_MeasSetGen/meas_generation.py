@@ -58,7 +58,7 @@ class MeasSetGen:
         raw_data = loadfile()
         param_update = ParamUpdate(raw_data)  ## 클래스 인스턴스 생성
         self.selected_df, self.group_params = (
-            param_update.param_merge()
+            param_update.remove_duplicate()
         )  ## 메서드 호출 및 반환된 값 저장.
 
         ## 선택한 데이터를 기반으로 parameter 생성.
