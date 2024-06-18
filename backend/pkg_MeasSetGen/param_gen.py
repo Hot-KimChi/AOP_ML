@@ -1,8 +1,11 @@
 import numpy as np
+from datetime import datetime
 
 
 class ParamGen:
     def __init__(self, data, probeid, probename):
+
+        today = datetime.today()
 
         self.df = data
         self.probeid = probeid
@@ -16,13 +19,12 @@ class ParamGen:
         self.df['totalVoltagePt'] = 20
         self.df['zStartDistCm'] = 0.5
         self.df['DTxFreqIndex'] = 0
-        self.df['dumpSwVersion'] = self.df['RequestDate'] + '_' + self.df['ProjectVersion']
+        self.df['dumpSwVersion'] = today.strftime('%Y-%m-%d')
         self.df['measSetComments'] = f'Beamstyle_{self.probename}_Intensity'
 
-        self._get_sequence()
-
-
-    def _get_sequence(self):
+        
+    def gen_sequence(self):
+        
         self.numvoltpt()
         self.findOrgIdx()
         self.bsIdx()
@@ -30,18 +32,15 @@ class ParamGen:
         self.cnt_cycle()
         self.calc_profvolt()
         self.zMeasNum()
+        
+        return self.df
 
 
     def numvoltpt(self):
         ## Contrast mode 일 경우, numMeasVoltage 10 그 외에는 8
-        numvoltpt = []
-        for mode in self.df['Mode']:
-            if mode == 'Contrast':
-                numvoltpt.append(10)
-            else:
-                numvoltpt.append(8)
-        self.df['numMeasVoltage'] = numvoltpt
-
+        ##  = self.df['Mode'].apply(lambda mode: 10 if mode == 'Contrast' else 8)
+        self.df['numMeasVoltage'] = 10
+        
         return self.df
 
 
@@ -74,12 +73,12 @@ class ParamGen:
 
         bsIndexTrace = []
 
-        for orgidx, cnt in zip(self.df['OrgBeamstyleIdx'], self.df['Count']):
-            if orgidx == 0 and cnt >= 2:
+        for orgidx, duplicate in zip(self.df['OrgBeamstyleIdx'], self.df['isDuplicate']):
+            if orgidx == 0 and duplicate == 1:
                 bsIndexTrace.append(15)
-            elif orgidx == 1 and cnt >= 2:
+            elif orgidx == 1 and duplicate == 1:
                 bsIndexTrace.append(20)
-            elif orgidx == 5 and cnt >= 2:
+            elif orgidx == 5 and duplicate == 1:
                 bsIndexTrace.append(10)
             else:
                 bsIndexTrace.append(0)
@@ -115,14 +114,12 @@ class ParamGen:
     def cnt_cycle(self):
 
         list_cycle = []
-        for i in range(len(self.df['TxpgWaveformStyle'])):
-            if self.df['TxpgWaveformStyle'][i] == 0:
-                rle = self.df['TxPulseArbitraryWF'].str.split(":")[i]
-                list_flt = list(map(float, rle))
-                ## 아래 code도 가능.
-                ## floatList = [float(x) for x in list_option]
+        for waveform, rle, cycle in zip(self.df['TxpgWaveformStyle'], self.df['TxPulseRle'], self.df['ProbeNumTxCycles']):
+            if waveform == 0:
+                raw_rle = str(rle).split(":")
+                list_flt = list(map(float, raw_rle))
                 abs_value = np.abs(list_flt)
-
+                
                 calc = []
                 for value in abs_value:
                     if 1 < value:
@@ -133,12 +130,38 @@ class ParamGen:
                 list_cycle.append(cycle)
 
             else:
-                cycle = self.df['ProbeNumTxCycles'][i]
                 list_cycle.append(cycle)
-
+        
         self.df['ProbeNumTxCycles'] = list_cycle
 
         return self.df
+       
+        
+        # list_cycle = []
+        # for i in range(len(self.df['TxpgWaveformStyle'])):
+        #     if self.df['TxpgWaveformStyle'][i] == 0:
+        #         rle = self.df['TxPulseRle'].str.split(":")[i]
+        #         list_flt = list(map(float, rle))
+        #         ## 아래 code도 가능.
+        #         ## floatList = [float(x) for x in list_option]
+        #         abs_value = np.abs(list_flt)
+
+        #         calc = []
+        #         for value in abs_value:
+        #             if 1 < value:
+        #                 calc.append(round(value - 1, 4))
+        #             else:
+        #                 calc.append(value)
+        #         cycle = round(sum(calc), 2)
+        #         list_cycle.append(cycle)
+
+        #     else:
+        #         cycle = self.df['ProbeNumTxCycles'][i]
+        #         list_cycle.append(cycle)
+
+        # self.df['ProbeNumTxCycles'] = list_cycle
+
+        # return self.df
 
 
     ## function: calc_profTxVoltage 구현

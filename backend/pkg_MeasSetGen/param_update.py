@@ -34,11 +34,9 @@ class ParamUpdate:
         ## sorting 은 안하는 것으로 결정.
         # --> UE에서 #F에 따른 데이터를 구분하지 않기에.
 
-
-    
     def remove_duplicate(self):
         ## B / C / D / M 모드 구분하여 중복 삭제하고 난 후, merge.
-        
+
         df = self.selected_df
 
         ##### B & M mode process #####
@@ -53,7 +51,7 @@ class ParamUpdate:
         df_BM = df_BM.reset_index(drop=True)
         # df_BM = df_BM.fillna(0)
 
-        # 중복 열 제거
+        # 중복열 param 등록
         cols_to_drop = [
             "SysTxFreqIndex",
             "TxpgWaveformStyle",
@@ -65,11 +63,10 @@ class ParamUpdate:
             "NumTxElements",
         ]
 
-        # 중복 개수 열 추가
+        # 중복 개수 열 확인
         duplicated_mask = df_BM.duplicated(subset=cols_to_drop, keep=False)
         df_BM["isDuplicate"] = duplicated_mask.map({True: 1, False: 0})
-        # df_BM = df_BM.drop_duplicates(subset=cols_to_drop, keep="first")
-
+        
         # isDuplicate가 1이고 Mode가 'M'인 행 삭제 / count-group-index진행
         df_BM = df_BM[(df_BM["isDuplicate"] != 1) | (df_BM["Mode"] != "M")]
 
@@ -79,8 +76,7 @@ class ParamUpdate:
         df_CD = df_CD.reset_index(drop=True)
         df_CD = df_CD.fillna(0)
 
-        # 중복 개수 열 추가
-        # df_CD = df_CD.drop_duplicates(subset=cols_to_drop, keep="first")
+        # 중복 개수 열 확인
         duplicated_mask = df_CD.duplicated(subset=cols_to_drop, keep=False)
         df_CD["isDuplicate"] = duplicated_mask.map({True: 1, False: 0})
 
@@ -89,16 +85,13 @@ class ParamUpdate:
 
 
         df_total = pd.concat([df_BM, df_CD, df_CEUS_mode])
-
-        ## Test code
-        df_total.to_csv("test.csv")
-
+        
         return df_total
 
 
     def countGroupIdx(self, df):
         # GroupIndex 열 생성
-        
+
         group_index = 1
         group_indices = []
         prev_value = None
