@@ -53,7 +53,8 @@ class MeasSetGen:
         raw_data = loadfile()
         param_update = ParamUpdate(raw_data)                    ## 클래스 인스턴스 생성
         df_total = param_update.remove_duplicate()      ## [B / M] [C / D] 중복 데이터 삭제
-        self.selected_df = param_update.countGroupIdx(df_total)
+        df_total = param_update.countGroupIdx(df_total)
+        self.selected_df = param_update.updateDuplicate(df_total)
         self.selected_df.fillna("NULL")
         
         

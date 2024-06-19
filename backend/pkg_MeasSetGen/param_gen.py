@@ -39,171 +39,94 @@ class ParamGen:
     def numvoltpt(self):
         ## Contrast mode 일 경우, numMeasVoltage 10 그 외에는 8
         ##  = self.df['Mode'].apply(lambda mode: 10 if mode == 'Contrast' else 8)
+        
         self.df['numMeasVoltage'] = 10
         
         return self.df
 
 
-    ## find freq index
     def findOrgIdx(self):
+        ## find freq index
 
-        orgindex = []
-
-        for mode, subidx in zip(self.df['Mode'], self.df['SubModeIndex']):
-            if mode == 'B' and subidx == 0:
-                orgindex.append(0)
-            elif mode == 'B' and subidx == 1:
-                orgindex.append(1)
-            elif mode == 'Cb' and subidx == 0:
-                orgindex.append(5)
-            elif mode == 'D' and subidx == 0:
-                orgindex.append(10)
-            elif mode == 'M' and subidx == 0:
-                orgindex.append(15)
-            elif mode == 'M' and subidx == 1:
-                orgindex.append(20)
-
-        self.df['OrgBeamstyleIdx'] = orgindex
-
+        mode_submode_map = {
+            ('B', 0): 0, ('B', 1): 1, ('B', 2): 1, ('B', 3): 1, ('B', 4): 1,  
+            ('Cb', 0): 5, 
+            ('D', 0): 10, 
+            ('M', 0): 15, ('M', 1): 20
+        }
+        
+        self.df['OrgBeamstyleIdx'] = self.df.apply(lambda row: mode_submode_map.get((row['Mode'], row['SubModeIndex']), -1), axis=1)
+        
         return self.df
 
 
-    ## bsIndexTrace algorithm
     def bsIdx(self):
-
-        bsIndexTrace = []
-
-        for orgidx, duplicate in zip(self.df['OrgBeamstyleIdx'], self.df['isDuplicate']):
-            if orgidx == 0 and duplicate == 1:
-                bsIndexTrace.append(15)
-            elif orgidx == 1 and duplicate == 1:
-                bsIndexTrace.append(20)
-            elif orgidx == 5 and duplicate == 1:
-                bsIndexTrace.append(10)
-            else:
-                bsIndexTrace.append(0)
-
-        self.df['bsIndexTrace'] = bsIndexTrace
-
+    ## bsIndexTrace algorithm
+    
+        def bsIndex(orgidx, duplicate):
+            if duplicate == 1:
+                return {0: 15, 1: 20, 5: 10}.get(orgidx, 0)
+            return 0
+        
+        self.df['bsIndexTrace'] = self.df.apply(lambda row: bsIndex(row['OrgBeamstyleIdx'], row['isDuplicate']), axis=1)
+        
         return self.df
 
 
-    ## FrequencyIndex to FrequencyHz
     def freqidx2Hz(self):
-        try:
-            frequencyTable = [1000000, 1111100, 1250000, 1333300, 1428600, 1538500, 1666700, 1818200, 2000000, 2222200,
-                              2500000, 2666700, 2857100, 3076900, 3333300, 3636400, 3809500, 4000000, 4210500, 4444400,
-                              4705900, 5000000, 5333300, 5714300, 6153800, 6666700, 7272700, 8000000, 8888900, 10000000,
-                              11428600, 13333333, 16000000, 20000000, 26666667, 11428600, 11428600, 11428600, 11428600,
-                              11428600,
-                              11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600]
+    ## FrequencyIndex to FrequencyHz
+        
+        frequencyTable = [1000000, 1111100, 1250000, 1333300, 1428600, 1538500, 1666700, 1818200, 2000000, 2222200,
+                        2500000, 2666700, 2857100, 3076900, 3333300, 3636400, 3809500, 4000000, 4210500, 4444400,
+                        4705900, 5000000, 5333300, 5714300, 6153800, 6666700, 7272700, 8000000, 8888900, 10000000,
+                        11428600, 13333333, 16000000, 20000000, 26666667, 11428600, 11428600, 11428600, 11428600,
+                        11428600,
+                        11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600, 11428600]
 
-            frequencyHz = []
-            for i in self.df['SysTxFreqIndex'].values:
-                frequencyHz.append(frequencyTable[i])
-
-            self.df['TxFrequencyHz'] = frequencyHz
-
-        except:
-            print("Error: fn_freqidx2Hz")
-
+        self.df['TxFrequencyHz'] = self.df['SysTxFreqIndex'].apply(lambda i: frequencyTable[i])
+        
         return self.df
 
 
-    ## Calc_cycle for RLE code
     def cnt_cycle(self):
-
-        list_cycle = []
-        for waveform, rle, cycle in zip(self.df['TxpgWaveformStyle'], self.df['TxPulseRle'], self.df['ProbeNumTxCycles']):
+    ## Calc_cycle for RLE code
+    
+        def calculate_cycle(waveform, rle, cycle):
             if waveform == 0:
-                raw_rle = str(rle).split(":")
-                list_flt = list(map(float, raw_rle))
-                abs_value = np.abs(list_flt)
-                
-                calc = []
-                for value in abs_value:
-                    if 1 < value:
-                        calc.append(round(value - 1, 4))
-                    else:
-                        calc.append(value)
-                cycle = round(sum(calc), 2)
-                list_cycle.append(cycle)
+                raw_rle = map(float, str(rle).split(":"))
+                calc = [round(value - 1, 4) if value > 1 else value for value in map(abs, raw_rle)]
+                return round(sum(calc), 2)
+            return cycle
 
-            else:
-                list_cycle.append(cycle)
-        
-        self.df['ProbeNumTxCycles'] = list_cycle
-
+        self.df['ProbeNumTxCycles'] = self.df.apply(lambda row: calculate_cycle(row['TxpgWaveformStyle'], row['TxPulseRle'], row['ProbeNumTxCycles']), axis=1)
+    
         return self.df
-       
-        
-        # list_cycle = []
-        # for i in range(len(self.df['TxpgWaveformStyle'])):
-        #     if self.df['TxpgWaveformStyle'][i] == 0:
-        #         rle = self.df['TxPulseRle'].str.split(":")[i]
-        #         list_flt = list(map(float, rle))
-        #         ## 아래 code도 가능.
-        #         ## floatList = [float(x) for x in list_option]
-        #         abs_value = np.abs(list_flt)
-
-        #         calc = []
-        #         for value in abs_value:
-        #             if 1 < value:
-        #                 calc.append(round(value - 1, 4))
-        #             else:
-        #                 calc.append(value)
-        #         cycle = round(sum(calc), 2)
-        #         list_cycle.append(cycle)
-
-        #     else:
-        #         cycle = self.df['ProbeNumTxCycles'][i]
-        #         list_cycle.append(cycle)
-
-        # self.df['ProbeNumTxCycles'] = list_cycle
-
-        # return self.df
 
 
-    ## function: calc_profTxVoltage 구현
     def calc_profvolt(self):
-        try:
-            profTxVoltageVolt = []
-            for str_maxV, str_ceilV, str_totalpt in zip(self.df['maxTxVoltageVolt'], self.df['ceilTxVoltageVolt'],
-                                                        self.df['totalVoltagePt']):
-                idx = 2
-                maxV = float(str_maxV)
-                ceilV = float(str_ceilV)
-                totalpt = int(str_totalpt)
+    ## function: calc_profTxVoltage 구현
+    
+        def prof_tx_voltage(maxV, ceilV, totalpt, idx=2):
+            return round((min(maxV, ceilV)) ** ((totalpt - 1 - idx) / (totalpt - 1)), 2)
 
-                profTxVoltageVolt.append(round((min(maxV, ceilV)) ** ((totalpt - 1 - idx) / (totalpt - 1)), 2))
-
-            self.df['profTxVoltageVolt'] = profTxVoltageVolt
-
-        except:
-            print('error: func_profvolt')
-
+        self.df['profTxVoltageVolt'] = self.df.apply(lambda row: prof_tx_voltage(row['maxTxVoltageVolt'], row['ceilTxVoltageVolt'], row['totalVoltagePt']), axis=1)
+        
         return self.df
 
 
-    ## function: calc zMeasNum 구현
     def zMeasNum(self):
-        try:
-            zStartDistCm = 0.5
-            zMeasNum = []
+    ## function: calc zMeasNum 구현
+    
+        def z_meas_num(focus):
+            if focus <= 3:
+                return (5 - 0.5) * 10
+            elif focus <= 6:
+                return (8 - 0.5) * 10
+            elif focus <= 9:
+                return (12 - 0.5) * 10
+            else:
+                return (14 - 0.5) * 10
 
-            for focus in self.df['TxFocusLocCm']:
-                if (focus <= 3):
-                    zMeasNum.append((5 - zStartDistCm) * 10)
-                elif (focus <= 6):
-                    zMeasNum.append((8 - zStartDistCm) * 10)
-                elif (focus <= 9):
-                    zMeasNum.append((12 - zStartDistCm) * 10)
-                else:
-                    zMeasNum.append((14 - zStartDistCm) * 10)
-
-            self.df['zMeasNum'] = zMeasNum
-
-        except:
-            print('error: func_zMeaNum')
-
+        self.df['zMeasNum'] = self.df['TxFocusLocCm'].apply(z_meas_num)
+        
         return self.df
