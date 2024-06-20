@@ -89,7 +89,7 @@ class ParamUpdate:
         return df_total
 
 
-    def countGroupIdx(self, df):
+    def createGroupIdx(self, df):
         # GroupIndex 열 생성
 
         group_index = 1
