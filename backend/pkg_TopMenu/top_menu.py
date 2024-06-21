@@ -28,6 +28,9 @@ class TopMenu:
         self.window.title(f"{self.database}" + ' / Menu')
         self.window.geometry("440x300")
         self.window.resizable(False, False)
+        
+        # 고정 폭 글꼴 설정
+        self.window.option_add('*Font', 'Consolas 10')
 
         btn_gen = Button(self.window, width=30, height=3, text='MeasSetGeneration',
                          command=lambda: MeasSetGen(self.database, self.list_probe))
@@ -75,42 +78,15 @@ class TopMenu:
         return self.list_probe
         
 
-    def format_probe_string(self, probename, probeid, total_width=24):
-        self.list_probe = []
+    def format_probe_string(self, probename, probeid):
 
-        for _, row in df.iterrows():
-            probename = str(row['probeName'])
-            probeid = str(row['probeId'])
-            
-            # 전체 길이 계산 (probename + 공백 + | + 공백 + probeid)
-            total_length = len(probename) + 1 + 1 + 4 + len(probeid)
-            
-            # '|'의 위치 계산 (전체 길이의 중앙)
-            pipe_position = total_length // 2
-            
-            # probename 왼쪽 정렬, '|' 중앙, probeid 오른쪽 정렬
-            formatted_string = f"{probename:<{pipe_position}}|    {probeid:>{total_length - pipe_position - 5}}"
-            
-            self.list_probe.append(formatted_string)
+        # '|'의 위치 계산 (전체 길이의 중앙)
+        pipe_position = 11
 
-            return self.list_probe
+        # probename 왼쪽 정렬, '|' 중앙, probeid 오른쪽 정렬
+        formatted_string = f"{probename:<{pipe_position}}|{'':2}{probeid}"
 
-        # df_probeIds = df[['probeId']]
-
-        # ## ProbeID and ProbeName를 list로 변환.
-        # list_probeIds = df_probeIds.values.tolist()
-        # list_probeinfor = df.values.tolist()
-
-        # numprobe = len(list_probeinfor)
-
-        # list_probenames = list(zip(*list_probeinfor))[0]
-        # self.list_probe = list()
-
-        # # Probelist를 probeName + probeId 생성
-        # for i in range(numprobe):
-        #     self.list_probe.append('    |    '.join(map(str, list_probeinfor[i])))
-
-        # return self.list_probe
+        return formatted_string
 
 
 if __name__ == '__main__':

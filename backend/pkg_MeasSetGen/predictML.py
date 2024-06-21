@@ -35,7 +35,7 @@ class PredictML:
     def intensity_zt(self):
         ## predict zt by Machine Learning model.
 
-        loaded_model = joblib.load('Model/RandomForest_v1_python37.pkl')
+        loaded_model = joblib.load('backend/Model/RandomForest_v1_python37.pkl')
 
         zt_est = loaded_model.predict(self.est_params)
         df_est = pd.DataFrame(zt_est, columns=['zt_est'])

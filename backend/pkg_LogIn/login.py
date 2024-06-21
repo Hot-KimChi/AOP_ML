@@ -21,6 +21,9 @@ class LogIn:
         self.window.title("DB 선택")
         self.window.geometry("280x150")
         self.window.resizable(False, False)
+        
+        # 고정 폭 글꼴 설정
+        self.window.option_add('*Font', 'Consolas 10')
 
         label = Label(self.window, text="데이터베이스를 선택하세요")
         label.place(x=10, y=10)
