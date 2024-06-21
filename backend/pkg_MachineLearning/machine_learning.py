@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import *
 from tkinter import ttk
 import joblib
 
@@ -9,6 +8,7 @@ from sklearn.metrics import mean_absolute_error
 
 
 class Machine_Learning:
+    
     """
     머신러닝 클래스
     1) Randomforest
@@ -24,16 +24,19 @@ class Machine_Learning:
         window_ML.title(f"{database}" + ' / Machine Learning')
         window_ML.geometry("410x200")
         window_ML.resizable(False, False)
+        
+        # 고정 폭 글꼴 설정
+        self.window.option_add("*Font", "Consolas 10")
 
-        frame1 = Frame(window_ML, relief="solid", bd=2)
+        frame1 = tk.Frame(window_ML, relief="solid", bd=2)
         frame1.pack(side="top", fill="both", expand=True)
 
-        label_ML = Label(frame1, text='Machine Learning')
+        label_ML = tk.Label(frame1, text='Machine Learning')
         label_ML.place(x=5, y=5)
         self.combo_ML = ttk.Combobox(frame1, value=list_ML, width=35, height=0, state='readonly')
         self.combo_ML.place(x=5, y=25)
 
-        btn_load = Button(frame1, width=15, height=2, text='Select & Train', command=self._fn_ML_sequence)
+        btn_load = tk.Button(frame1, width=15, height=2, text='Select & Train', command=self._fn_ML_sequence)
         btn_load.place(x=280, y=5)
 
         window_ML.mainloop()

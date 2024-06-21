@@ -17,38 +17,44 @@ class PredictML:
         self.df = df
         self.probe = probe
 
-
         ## take parameters for ML from measSet_gen file.
-        self.est_params = self.df[['TxFrequencyHz', 'TxFocusLocCm', 'NumTxElements', 'TxpgWaveformStyle',
-                                   'ProbeNumTxCycles', 'ElevAperIndex', 'IsTxChannelModulationEn']]
+        self.est_params = self.df[
+            [
+                "TxFrequencyHz",
+                "TxFocusLocCm",
+                "NumTxElements",
+                "TxpgWaveformStyle",
+                "ProbeNumTxCycles",
+                "ElevAperIndex",
+                "IsTxChannelModulationEn",
+            ]
+        ]
 
         ## load parameters from SQL database
         connect = SQL(command=4, selected_probeId=self.probe)
         est_geo = connect.sql_get()
 
-        self.est_params[['probePitchCm']] = est_geo['probePitchCm']
-        self.est_params[['probeRadiusCm']] = est_geo['probeRadiusCm']
-        self.est_params[['probeElevAperCm0']] = est_geo['probeElevAperCm0']
-        self.est_params[['probeElevFocusRangCm']] = est_geo['probeElevFocusRangCm']
-
+        self.est_params[["probePitchCm"]] = est_geo["probePitchCm"]
+        self.est_params[["probeRadiusCm"]] = est_geo["probeRadiusCm"]
+        self.est_params[["probeElevAperCm0"]] = est_geo["probeElevAperCm0"]
+        self.est_params[["probeElevFocusRangCm"]] = est_geo["probeElevFocusRangCm"]
 
     def intensity_zt(self):
         ## predict zt by Machine Learning model.
 
-        loaded_model = joblib.load('backend/Model/RandomForest_v1_python37.pkl')
+        loaded_model = joblib.load("backend/Model/RandomForest_v1_python37.pkl")
 
         zt_est = loaded_model.predict(self.est_params)
-        df_est = pd.DataFrame(zt_est, columns=['zt_est'])
+        df_est = pd.DataFrame(zt_est, columns=["zt_est"])
 
-        self.df['zt_est'] = round(df_est, 1)
+        self.df["zt_est"] = round(df_est, 1)
 
         return self.df
-
 
     def temperature_PRF(self):
         ## predict PRF by ML model.
 
-        loaded_model = joblib.load('')
+        loaded_model = joblib.load("")
 
         PRF_est = loaded_model.predict(self.est_params)
 

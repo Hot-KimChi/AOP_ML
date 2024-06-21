@@ -66,10 +66,9 @@ class ParamUpdate:
         # 중복 개수 열 확인
         duplicated_mask = df_BM.duplicated(subset=cols_to_drop, keep=False)
         df_BM["isDuplicate"] = duplicated_mask.map({True: 1, False: 0})
-        
+
         # isDuplicate가 1이고 Mode가 'M'인 행 삭제 / count-group-index진행
         df_BM = df_BM[(df_BM["isDuplicate"] != 1) | (df_BM["Mode"] != "M")]
-
 
         ## C and D-mode 데이터만 선택하여 데이터프레임으로 생성
         df_CD = pd.concat([df_C_mode, df_D_mode])
@@ -83,11 +82,9 @@ class ParamUpdate:
         # isDuplicate가 1이고 Mode가 'M'인 행 삭제 / count-group-index진행
         df_CD = df_CD[(df_CD["isDuplicate"] != 1) | (df_CD["Mode"] != "D")]
 
-
         df_total = pd.concat([df_BM, df_CD, df_CEUS_mode])
-        
-        return df_total
 
+        return df_total
 
     def createGroupIdx(self, df):
         # GroupIndex 열 생성
@@ -105,11 +102,12 @@ class ParamUpdate:
         df["groupIndex"] = group_indices
 
         return df
-    
-    
+
     def updateDuplicate(self, df):
         # 각 groupIndex 내에서 하나라도 isDuplicate가 0이면 해당 그룹의 모든 isDuplicate를 0으로 설정
-        
-        df['isDuplicate'] = df.groupby('groupIndex')['isDuplicate'].transform(lambda x: 0 if 0 in x.values else 1)
-        
-        return df                
+
+        df["isDuplicate"] = df.groupby("groupIndex")["isDuplicate"].transform(
+            lambda x: 0 if 0 in x.values else 1
+        )
+
+        return df
