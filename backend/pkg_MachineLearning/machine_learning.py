@@ -3,9 +3,9 @@ import tkinter as tk
 from tkinter import ttk
 import joblib
 
-from sklearn.model_selection import train_test_split
+from pkg_MachineLearning.preProcess_ML import preProcess
+
 from sklearn.model_selection import cross_validate
-from sklearn.metrics import mean_absolute_error
 
 
 class Machine_Learning:
@@ -46,14 +46,14 @@ class Machine_Learning:
             width=15,
             height=2,
             text="Select & Train",
-            command=self._fn_ML_sequence,
+            command=self._sequence_ML,
         )
         btn_load.place(x=280, y=5)
 
         window_ML.mainloop()
 
-    def _fn_ML_sequence(self):
-        self.fn_preprocessML()
+    def _sequence_ML(self):
+        data, target = preProcess()
         self.fn_modelML()
         self.fn_ML_fit()
         self.fn_ML_save()

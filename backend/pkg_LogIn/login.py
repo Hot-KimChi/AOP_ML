@@ -58,6 +58,7 @@ class LogIn:
         self.list_database = databases.split(",")
 
         self.name_MLs = config["Machine Learning"]["Model"]
+        self.database_ML = config["database_ML"]["name"]
 
         self.combo_login["values"] = self.list_database
         self.combo_login.current(0)
@@ -79,6 +80,7 @@ class LogIn:
         os.environ["PASSWORD"] = self.password
         os.environ["DATABASE"] = self.database
         os.environ["MLs"] = self.name_MLs
+        os.environ["DB_ML"] = self.database_ML
 
     def _get_sequence(self):
         self.get_login_info()
