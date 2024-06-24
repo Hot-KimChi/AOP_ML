@@ -63,7 +63,7 @@ def fetchData():
         return SQL_list
 
 
-def preProcess():
+def merge_selectionFeature():
 
     SQL_list = fetchData()
     ## 결합할 데이터프레임 list: SQL_list

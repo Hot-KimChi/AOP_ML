@@ -3,7 +3,10 @@ import tkinter as tk
 from tkinter import ttk
 import joblib
 
-from pkg_MachineLearning.preProcess_ML import preProcess
+from backend.pkg_MachineLearning.fetch_selectFeature import merge_selectionFeature
+from backend.pkg_MachineLearning.data_splitting import dataSplit
+from backend.pkg_MachineLearning.data_preprocessing import DataPreprocessor
+from backend.pkg_MachineLearning.model_selection import ModelSelector
 
 from sklearn.model_selection import cross_validate
 
@@ -53,49 +56,21 @@ class Machine_Learning:
         window_ML.mainloop()
 
     def _sequence_ML(self):
-        data, target = preProcess()
-        self.fn_modelML()
+
+        # Combo 선택한 ML update
+        selectionML = self.combo_ML.get().replace(" ", "")
+
+        # 데이터 가져와서 feature selection / data 나누기
+        data, target = merge_selectionFeature()
+        train_input, test_input, train_target, test_target = dataSplit()
+
+        # 데이터 전처리
+        preprocessor = DataPreprocessor(train_input, test_input)
+
+        model = ModelSelector(data, target, selectionML)
+        model.select_model()
+
+        model.train_and_evaluate()
         self.fn_ML_fit()
         self.fn_ML_save()
         self.fn_diff_check()
-
-    def fn_ML_fit(self):
-        ## DNN 인 경우, 아래와 같이 training
-        if "DNN" in self.selected_ML:
-            pass
-
-        else:
-            scores = cross_validate(
-                self.model,
-                self.train_input,
-                self.train_target,
-                return_train_score=True,
-                n_jobs=-1,
-            )
-            print()
-            print(scores)
-            import numpy as np
-
-            print(
-                f"{self.selected_ML} - Train R^2:",
-                np.round_(np.mean(scores["train_score"]), 3),
-            )
-            print(
-                f"{self.selected_ML} - Train_validation R^2:",
-                np.round_(np.mean(scores["test_score"]), 3),
-            )
-
-            self.model.fit(self.train_input, self.train_target)
-            print(
-                f"{self.selected_ML} - Test R^2:",
-                np.round_(self.model.score(self.test_input, self.test_target), 3),
-            )
-            self.prediction = np.round_(self.model.predict(self.test_input), 2)
-
-            ## feature import table pop-up
-            if self.selected_ML == "RandomForestRegressor":
-                self.fn_feature_import()
-            else:
-                pass
-
-    # def predict_ML(self):
