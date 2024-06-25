@@ -4,20 +4,20 @@ import pandas as pd
 
 
 def fetchData():
-    ## 데이터베이스에서 데이터를 가져오는 함수
-
+    # 데이터베이스에서 데이터를 가져오는 함수
     server_address = os.environ["SERVER_ADDRESS"]
     ID = os.environ["USER_NAME"]
     password = os.environ["PASSWORD"]
-    list_database = os.environ["DB_ML"]
+    databases = os.environ["DB_ML"]
+    list_database = databases.split(",")
 
     print(list_database)
 
     SQL_list = []
-    ## K2, Juniper, NX3, NX2 and FROSK
-    for i in list_database:
-        print(i)
-        conn = pymssql.connect(server_address, ID, password, database=i)
+    # K2, Juniper, NX3, NX2 and FROSK
+    for db in list_database:
+        print(f"[{db}]")
+        conn = pymssql.connect(server_address, ID, password, database=db)
 
         query = f"""
             SELECT * FROM
@@ -57,19 +57,18 @@ def fetchData():
 
         Raw_data = pd.read_sql(sql=query, con=conn)
         print(Raw_data["probeName"].value_counts(dropna=False))
-        # AOP_data = Raw_data.dropna()
         SQL_list.append(Raw_data)
+        conn.close()
 
-        return SQL_list
+    return SQL_list
 
 
 def merge_selectionFeature():
-
     SQL_list = fetchData()
-    ## 결합할 데이터프레임 list: SQL_list
+    # 결합할 데이터프레임 list: SQL_list
     AOP_data = pd.concat(SQL_list, ignore_index=True)
 
-    ## 결측치 제거 및 대체
+    # 결측치 제거 및 대체
     AOP_data["probeRadiusCm"] = AOP_data["probeRadiusCm"].fillna(0)
     AOP_data["probeElevAperCm1"] = AOP_data["probeElevAperCm1"].fillna(0)
     AOP_data["probeElevFocusRangCm1"] = AOP_data["probeElevFocusRangCm1"].fillna(0)
@@ -77,7 +76,7 @@ def merge_selectionFeature():
     AOP_data = AOP_data.dropna()
 
     print(AOP_data.count())
-    AOP_data.to_csv("AOP_data.csv")
+    AOP_data.to_csv("AOP_Raw_data.csv")
 
     feature_list = [
         "txFrequencyHz",
@@ -94,7 +93,7 @@ def merge_selectionFeature():
         "probeElevFocusRangCm",
         "probeElevFocusRangCm1",
     ]
-    ## feature 2개 추가.
+    # feature 2개 추가.
     data = AOP_data[feature_list].to_numpy()
     target = AOP_data["zt"].to_numpy()
 

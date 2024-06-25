@@ -3,10 +3,12 @@ import tkinter as tk
 from tkinter import ttk
 import joblib
 
-from backend.pkg_MachineLearning.fetch_selectFeature import merge_selectionFeature
-from backend.pkg_MachineLearning.data_splitting import dataSplit
-from backend.pkg_MachineLearning.data_preprocessing import DataPreprocessor
-from backend.pkg_MachineLearning.model_selection import ModelSelector
+from pkg_MachineLearning.fetch_selectFeature import merge_selectionFeature
+from pkg_MachineLearning.data_splitting import dataSplit
+from pkg_MachineLearning.data_preprocessing import DataPreprocessor
+from pkg_MachineLearning.model_selection import ModelSelector
+from pkg_MachineLearning.training_evaluation import ModelEvaluator
+from pkg_MachineLearning.plotting import Plotter
 
 from sklearn.model_selection import cross_validate
 
@@ -59,18 +61,25 @@ class Machine_Learning:
 
         # Combo 선택한 ML update
         selectionML = self.combo_ML.get().replace(" ", "")
+        selectionML = selectionML.strip()
 
         # 데이터 가져와서 feature selection / data 나누기
         data, target = merge_selectionFeature()
-        train_input, test_input, train_target, test_target = dataSplit()
+        train_input, test_input, train_target, test_target = dataSplit(data, target)
 
-        # 데이터 전처리
+        # 데이터 전처리(train_scaled, test_scaled을 train_input, test_input으로 공통적으로 사용)
         preprocessor = DataPreprocessor(train_input, test_input)
+        train_input, test_input = preprocessor.preprocess(model_type=selectionML)
 
-        model = ModelSelector(data, target, selectionML)
-        model.select_model()
+        # 모델 선택
+        selector = ModelSelector(model_type=selectionML)
+        model = selector.select_model(train_input)
 
-        model.train_and_evaluate()
-        self.fn_ML_fit()
-        self.fn_ML_save()
-        self.fn_diff_check()
+        # 모델 훈련 및 평가: train and test score에 대해서 출력까지 수행.
+        evaluator = ModelEvaluator(
+            model, train_input, train_target, test_input, test_target
+        )
+        evaluator.evaluate_model()
+
+        # 결과 플롯팅
+        Plotter.plot_regression_results(test_target, evaluator.prediction)
