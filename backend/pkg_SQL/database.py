@@ -12,9 +12,18 @@ class DBInfor(object):
 
 
 class SQL(DBInfor):
-    def __init__(self, command=None, selected_DBtable=None, selected_probeId=None,
-                 selected_measSSId=None, selected_param=None, sel_data=None,
-                 sorted_param=None, report_term=None, data=None):
+    def __init__(
+        self,
+        command=None,
+        selected_DBtable=None,
+        selected_probeId=None,
+        selected_measSSId=None,
+        selected_param=None,
+        sel_data=None,
+        sorted_param=None,
+        report_term=None,
+        data=None,
+    ):
 
         super().__init__()
 
@@ -28,11 +37,12 @@ class SQL(DBInfor):
         self.report_term = report_term
         self.df = data
 
-
     ## SQL 데이터베이스에 접속하여 데이터 load.
     def sql_get(self):
         try:
-            conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
+            conn = pymssql.connect(
+                self.server_address, self.ID, self.password, self.database
+            )
             query = self.build_query()
 
             if query:
@@ -50,23 +60,42 @@ class SQL(DBInfor):
             print(f"Error: sql_get function{e}")
             return pd.DataFrame()
 
-
     def sql_parse(self):
         try:
-            conn = pymssql.connect(self.server_address, self.ID, self.password, self.database)
+            conn = pymssql.connect(
+                self.server_address, self.ID, self.password, self.database
+            )
             query = self.build_query()
 
             cursor = conn.cursor()
 
-            if self.command == 10:          ## DataFrame parsing.
+            if self.command == 10:  ## DataFrame parsing.
                 for row in self.df.itertuples():
-                    cursor.execute(query, (row.ProbeName, row.ProbeID, row.Software_version, row.Exam, row.CurrentState,
-                                           row.BeamStyleIndex, row.TxFrequency, row.TxFreqIndex, row.ElevAperIndex, row.NumTxCycles,
-                                           row.TxpgWaveformStyle, row.TxChannelModulationEn, row.Dual_Mode, row.SubModeIndex, row.IsProcessed,
-                                           row.IsCPAEn, row.RLE, row.VTxIndex, row.IsLatest
-                                           )
-                                    )
-            elif self.command == 9:         ## IsLatest set = 0
+                    cursor.execute(
+                        query,
+                        (
+                            row.ProbeName,
+                            row.ProbeID,
+                            row.Software_version,
+                            row.Exam,
+                            row.CurrentState,
+                            row.BeamStyleIndex,
+                            row.TxFrequency,
+                            row.TxFreqIndex,
+                            row.ElevAperIndex,
+                            row.NumTxCycles,
+                            row.TxpgWaveformStyle,
+                            row.TxChannelModulationEn,
+                            row.Dual_Mode,
+                            row.SubModeIndex,
+                            row.IsProcessed,
+                            row.IsCPAEn,
+                            row.RLE,
+                            row.VTxIndex,
+                            row.IsLatest,
+                        ),
+                    )
+            elif self.command == 9:  ## IsLatest set = 0
                 cursor.execute(query)
 
             # 트랜잭션 커밋 및 연결 종료
@@ -76,83 +105,75 @@ class SQL(DBInfor):
         except Exception as e:
             print(f"Error: {e}")
 
-
-
     def build_query(self):
 
         if self.command == 0:
-            if self.selected_DBtable == 'SSR_table':
-                query = f'''
+            if self.selected_DBtable == "SSR_table":
+                query = f"""
                 SELECT * FROM meas_station_setup WHERE probeId = {self.selected_probeId}
                 ORDER BY 1 desc
-                '''
+                """
             else:
-                query = f'''
+                query = f"""
                 SELECT * FROM {self.selected_DBtable} WHERE probeId = {self.selected_probeId}
                 ORDER BY 1 desc
-                '''
-
+                """
 
         elif self.command == 1:
-            query = '''
+            query = """
             SELECT probeName, probeId FROM probe_geo 
             order by probeName, probeId
-            '''
-
+            """
 
         elif self.command == 2:
-            if self.selected_DBtable == 'SSR_table':
-                query = f'''
+            if self.selected_DBtable == "SSR_table":
+                query = f"""
                 SELECT * FROM {self.selected_DBtable} WHERE measSSId IN {self.selected_measSSId}
                 ORDER BY measSSId, 1
-                '''
+                """
 
             else:
-                query = f'''
+                query = f"""
                 SELECT * FROM {self.selected_DBtable} WHERE probeId = {self.selected_probeId}
                 ORDER BY 1
-                '''
-
+                """
 
         elif self.command == 3:
-            if self.selected_DBtable == 'SSR_table':
-                query = f'''
+            if self.selected_DBtable == "SSR_table":
+                query = f"""
                 SELECT * FROM meas_station_setup WHERE probeid = {self.selected_probeId} and {self.selected_param} = '{self.sel_data}' 
                 ORDER BY 1 desc
-                '''
+                """
             else:
-                query = f'''
+                query = f"""
                 SELECT * FROM {self.selected_DBtable} WHERE probeid = {self.selected_probeId} and {self.selected_param} = '{self.sel_data}' 
                 ORDER BY 1 desc
-                '''
-
+                """
 
         ## probe_geo database load.
         elif self.command == 4:
-            query = f'''
-            SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevFocusRangCm] FROM probe_geo WHERE probeid = {self.selected_probeId}
+            query = f"""
+            SELECT [probePitchCm], [probeRadiusCm], [probeElevAperCm0], [probeElevAperCm1], [probeElevFocusRangCm], [probeElevFocusRangCm1]
+            FROM probe_geo WHERE probeid = {self.selected_probeId}
             ORDER BY 1
-            '''
-
+            """
 
         ## meas_station_setup database load
         elif self.command == 5:
-            query = f'''
+            query = f"""
                 SELECT * FROM meas_station_setup
                 ORDER BY 1 desc
-                '''
-
+                """
 
         ## For selected probeId, load meas_station_setup
         elif self.command == 6:
-            query = f'''
+            query = f"""
             SELECT * FROM meas_station_setup WHERE probeid = {self.selected_probeId}
             ORDER BY 1 desc
-            '''
-
+            """
 
         elif self.command == 7:
-            query = f'''
+            query = f"""
             SELECT
             T.tempvrfid AS WCSId,
             T.tempVrfResID,
@@ -182,12 +203,11 @@ class SQL(DBInfor):
 
             WHERE S.measSSId IN ({self.selected_measSSId}) and T.MeasPurpose IN ('TMM', 'Still Air')
             order by tempVrfResID, MeasPurpose, WCSId
-            '''
-
+            """
 
         ## verification Report Step
         elif self.command == 8:
-            query = f'''
+            query = f"""
             SELECT * FROM (
                 SELECT  TOP (100) PERCENT 
                     dbo.Tx_summary.Num, dbo.Tx_summary.ProbeName, dbo.Tx_summary.ProbeID, dbo.Tx_summary.Software_version, dbo.Tx_summary.Exam, 
@@ -228,19 +248,18 @@ class SQL(DBInfor):
 
             where RankNo = 1 and ProbeID = {self.selected_probeId} and IsLatest = 1 
             order by num
-            '''
-
+            """
 
         ## parsing MS-SQL database: Tx_summary_table / IsLatest = 0 update before parsing Tx summary data
         elif self.command == 9:
-            query = f'''
+            query = f"""
             UPDATE dbo.Tx_summary SET IsLatest = 0
             WHERE ProbeID = {self.selected_probeId}
-           '''
+           """
 
         ## parsing MS-SQL database: Tx_summary_table
         elif self.command == 10:
-            query = f'''
+            query = f"""
            INSERT INTO Tx_summary(
                  [ProbeName]
                 ,[ProbeID]
@@ -267,8 +286,7 @@ class SQL(DBInfor):
                     %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s)
-            '''
-
+            """
 
         return query
 
@@ -278,7 +296,7 @@ class SQL(DBInfor):
         try:
             selected_param = param
             print(selected_param)
-            list_datas = df['Software_version'].values.tolist()
+            list_datas = df["Software_version"].values.tolist()
 
             # list_datas = df[f'{selected_param}'].values.tolist()
             # list에서 unique한 데이터를 추출하기 위해 set으로 변경하여 고유값으로 변경 후, 다시 list로 변경.

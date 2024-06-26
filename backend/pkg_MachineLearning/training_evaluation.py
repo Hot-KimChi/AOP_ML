@@ -1,5 +1,8 @@
 from sklearn.model_selection import cross_validate
 import numpy as np
+import os, sys
+import joblib
+import sklearn
 
 
 class ModelEvaluator:
@@ -44,6 +47,23 @@ class ModelEvaluator:
         )
         print(f"{self.model.__class__.__name__} - Test R^2:", test_score)
         self.prediction = np.round_(self.model.predict(self.test_input), 2)
+
+    def modelSave(self):
+        newpath = "./backend/Model"
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
+
+        python_version = f"{sys.version_info.major}{sys.version_info.minor}"
+        sklearn_version = sklearn.__version__
+        model_name = self.model.__class__.__name__
+
+        if "DNN" in self.model:
+            self.model.save(f"{newpath}/{model_name}_v1_python{python_version}_tf.h5")
+        else:
+            joblib.dump(
+                self.model,
+                f"{newpath}/{model_name}_v1_python{python_version}_sklearn{sklearn_version}.pkl",
+            )
 
     # def train_dnn_model(self):
     #     from tensorflow import keras

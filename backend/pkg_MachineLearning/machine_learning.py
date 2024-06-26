@@ -73,13 +73,14 @@ class Machine_Learning:
 
         # 모델 선택
         selector = ModelSelector(model_type=selectionML)
-        model = selector.select_model(train_input)
+        selectedModel = selector.select_model(train_input)
 
         # 모델 훈련 및 평가: train and test score에 대해서 출력까지 수행.
         evaluator = ModelEvaluator(
-            model, train_input, train_target, test_input, test_target
+            selectedModel, train_input, train_target, test_input, test_target
         )
         evaluator.evaluate_model()
+        evaluator.modelSave()
 
         # 결과 플롯팅
         Plotter.plot_regression_results(test_target, evaluator.prediction)

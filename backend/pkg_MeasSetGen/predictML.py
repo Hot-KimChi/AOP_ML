@@ -37,12 +37,16 @@ class PredictML:
         self.est_params[["probePitchCm"]] = est_geo["probePitchCm"]
         self.est_params[["probeRadiusCm"]] = est_geo["probeRadiusCm"]
         self.est_params[["probeElevAperCm0"]] = est_geo["probeElevAperCm0"]
+        self.est_params[["probeElevAperCm1"]] = est_geo["probeElevAperCm1"]
         self.est_params[["probeElevFocusRangCm"]] = est_geo["probeElevFocusRangCm"]
+        self.est_params[["probeElevFocusRangCm1"]] = est_geo["probeElevFocusRangCm1"]
 
-    def intensity_zt(self):
+    def intensity_zt_est(self):
         ## predict zt by Machine Learning model.
 
-        loaded_model = joblib.load("backend/Model/RandomForest_v1_python37.pkl")
+        loaded_model = joblib.load(
+            r".\backend\Model\RandomForestRegressor_v1_python310_sklearn1.4.2.pkl"
+        )
 
         zt_est = loaded_model.predict(self.est_params)
         df_est = pd.DataFrame(zt_est, columns=["zt_est"])
@@ -51,7 +55,7 @@ class PredictML:
 
         return self.df
 
-    def temperature_PRF(self):
+    def temperature_PRF_est(self):
         ## predict PRF by ML model.
 
         loaded_model = joblib.load("")

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 
 class Plotter:
@@ -70,6 +71,41 @@ class Plotter:
         _ = plt.ylabel("Count")
 
         plt.show()
+
+    @staticmethod
+    def plot_feature_importance(model, feature_list):
+        try:
+            df_import = pd.DataFrame()
+            df_import = df_import.append(
+                pd.DataFrame(
+                    [np.round((model.feature_importances_) * 100, 2)],
+                    columns=feature_list,
+                ),
+                ignore_index=True,
+            )
+
+            print("Feature Importances:")
+            print(df_import)
+
+            importances = model.feature_importances_
+            indices = np.argsort(importances)[::-1]
+            x = np.arange(len(importances))
+
+            plt.figure(figsize=(10, 8))
+            plt.title("Feature Importance")
+            plt.bar(x, importances[indices], align="center")
+            labels = (
+                feature_list
+                if feature_list
+                else [f"Feature {i}" for i in range(len(importances))]
+            )
+            plt.xticks(x, np.array(labels)[indices], rotation=90)
+            plt.xlim([-1, len(importances)])
+            plt.tight_layout()
+            plt.show()
+
+        except AttributeError:
+            print("Feature importances can only be computed for tree-based models.")
 
 
 # 사용 예시

@@ -70,21 +70,18 @@ class MeasSetGen:
             data=self.selected_df, probeid=probeid, probename=probename
         )
         self.gen_df = param_gen.gen_sequence()
-        self.gen_df.to_csv("gen.csv")
+        self.gen_df.to_csv("measSetGen_df.csv")
 
         ## predictML for intensity case
-        ML = PredictML(self.gen_df, probeid)
-        self.gen_df = ML.intensity_zt()
+        predictionML = PredictML(self.gen_df, probeid)
+        self.gen_df = predictionML.intensity_zt_est()
 
         ## 클래스 인스턴스를 데이터프레임으로 변환 / DataOut 클래스 이용하여 csv 파일로 추출.
-        df = self.gen_df
-
         dataout = DataOut(
             case=0,
             database=self.database,
-            probe=probe,
-            df1=df,
-            group_params=self.group_params,
+            probename=probename,
+            df1=self.gen_df,
         )
         dataout.make_dir()
         dataout.save_excel()
