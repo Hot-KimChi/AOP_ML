@@ -6,15 +6,62 @@ import xlsxwriter
 
 
 def loadfile():
-    ### 데이터 파일 읽어오기.
+    ## 데이터 파일 읽어오기.
     data = filedialog.askopenfilename(initialdir=".txt")
     encoding_data = pd.read_csv(data, sep="\t", encoding="cp949")
 
     return encoding_data
 
 
+def arrangeParam(func):
+    ## parameter 순서 변경.
+    def wrapper(self):
+        arrange_param = [
+            "measSetComments",
+            "probeId",
+            "OrgBeamstyleIdx",
+            "bsIndexTrace",
+            "TxFrequencyHz",
+            "TxFocusLocCm",
+            "maxTxVoltageVolt",
+            "ceilTxVoltageVolt",
+            "profTxVoltageVolt",
+            "totalVoltagePt",
+            "numMeasVoltage",
+            "NumTxElements",
+            "TxpgWaveformStyle",
+            "ProbeNumTxCycles",
+            "ElevAperIndex",
+            "zStartDistCm",
+            "zMeasNum",
+            "IsTxChannelModulationEn",
+            "dumpSwVersion",
+            "DTxFreqIndex",
+            "VTxIndex",
+            "IsPresetCpaEn",
+            "TxPulseRle",
+            "SystemPulserSel",
+            "CpaDelayOffsetClk",
+            "groupIndex",
+            "zt_est",
+            "probeName",
+            "Mode",
+            "SubModeIndex",
+            "BeamStyleIndex",
+            "SysTxFreqIndex",
+            "isDuplicate",
+        ]
+
+        self.df = self.df.reindex(columns=arrange_param)
+        return func(self)
+
+    return wrapper
+
+
 class DataOut:
-    """ """
+    """
+    폴더 생성 후, 파일 저장.
+    """
 
     def __init__(self, case, database, df1, df2=None, probename=None):
 
@@ -44,6 +91,7 @@ class DataOut:
             except OSError as e:
                 print(f"디렉토리 '{self.directory}' 생성 중 오류가 발생했습니다:", e)
 
+    @arrangeParam
     def save_excel(self):
         if self.case == 0:
             self.df.to_csv(
@@ -63,12 +111,3 @@ class DataOut:
             with pd.ExcelWriter(output_file, engine="xlsxwriter") as writer:
                 df_Intensity.to_excel(writer, sheet_name="Intensity", index=False)
                 df_Temperature.to_excel(writer, sheet_name="Temperature", index=False)
-                
-    def sorting_param(self):
-        sort_param = ["Mode", 	SubModeIndex	BeamStyleIndex	SysTxFreqIndex	TxpgWaveformStyle	
-                      TxFocusLocCm	NumTxElements	ProbeNumTxCycles	IsTxChannelModulationEn	IsPresetCpaEn	
-                      CpaDelayOffsetClk	ElevAperIndex	SystemPulserSel	VTxIndex	TxPulseRle	isDuplicate	groupIndex	
-                      probeId	probeName	maxTxVoltageVolt	ceilTxVoltageVolt	totalVoltagePt	zStartDistCm	DTxFreqIndex	
-                      dumpSwVersion	measSetComments	numMeasVoltage	OrgBeamstyleIdx	bsIndexTrace	TxFrequencyHz	profTxVoltageVolt	zMeasNum	zt_est
-]
-        df_sorted = self.df.sort_values(by=['age', 'name'])
