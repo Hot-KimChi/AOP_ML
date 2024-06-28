@@ -6,7 +6,6 @@
         Diff = np.round_(self.prediction - self.test_target, 2)
         Diff_per = np.round_((self.test_target - self.prediction) / self.test_target * 100, 1)
 
-
         bad = 0
         good = 0
         print()
@@ -16,7 +15,6 @@
 
         df = pd.DataFrame()
         pass_condition = pd.DataFrame()
-
 
         # df_test_input = pd.DataFrame(test_input, columns=['txFrequencyHz',
         #                                                                          'focusRangeCm',
@@ -47,7 +45,6 @@
                 failed_condition = failed_condition.append(pd.DataFrame([self.test_input[i]],
                                                                         columns=self.feature_list),
                                                            ignore_index=True)
-
 
             else:
                 good = good + 1
