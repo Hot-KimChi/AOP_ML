@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  /* Add other styles */
+}
+
+.main {
+  flex-grow: 1;
+  /* Add other styles */
+}
+
+.content {
+  padding: 20px;
+}
