@@ -7,8 +7,8 @@ export default function Navbar({ toggleSidebar }) {
         <button className="btn btn-dark sidebar-toggle me-2" onClick={toggleSidebar}>
           <i className="fas fa-bars"></i>
         </button>
-        <Link href="/">
-          <a className="navbar-brand">AOP Database</a>
+        <Link href="/" className="navbar-brand">
+          AOP Database
         </Link>
         <div className="navbar-nav ms-auto">
           <select id="databaseSelect" className="form-select form-select-sm">

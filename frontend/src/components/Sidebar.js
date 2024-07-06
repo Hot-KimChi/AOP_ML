@@ -17,10 +17,12 @@ export default function Sidebar({ active }) {
         <ul className="nav flex-column">
           {menuItems.map((item, index) => (
             <li className="nav-item" key={index}>
-              <Link href={item.href}>
-                <a className={`nav-link ${router.pathname === item.href ? 'active' : ''}`}>
-                  <i className={item.icon}></i> {item.text}
-                </a>
+              <Link
+                href={item.href}
+                className={`nav-link ${router.pathname === item.href ? 'active' : ''}`}>
+
+                <i className={item.icon}></i> {item.text}
+
               </Link>
             </li>
           ))}
