@@ -13,6 +13,8 @@
     "bootstrap": "^5.3.3",
     "httpntlm": "^1.8.13",
     "jsdom": "^24.1.0",
+    "msnodesqlv8": "^4.2.1",
+    "mssql": "^7.3.5",
     "next": "14.2.4",
     "node-fetch": "^2.7.0",
     "react": "^18",
