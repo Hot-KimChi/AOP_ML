@@ -1,37 +1,3 @@
-// import sql from 'mssql/msnodesqlv8';
-
-// console.log('Environment variables:', {
-//   DB_SERVER: process.env.DB_SERVER,
-//   DB_NAME: process.env.DB_NAME
-// });
-
-// const config = {
-//   server: process.env.DB_SERVER,
-//   database: process.env.DB_NAME,
-//   driver: 'msnodesqlv8',
-//   options: {
-//     trustedConnection: true
-//   }
-// };
-
-// export default async function handler(req, res) {
-//   try {
-//     console.log('Attempting to connect to database...');
-//     await sql.connect(config);
-//     console.log('Connected to database successfully');
-    
-//     console.log('Executing query...');
-//     const result = await sql.query`SELECT TOP 10 * FROM meas_setting`;
-//     console.log('Query executed successfully');
-    
-//     res.status(200).json(result.recordset);
-//   } catch (err) {
-//     console.error('Error in API route:', err);
-//     res.status(500).json({ error: err.message, stack: err.stack });
-//   } finally {
-//     await sql.close();
-//   }
-// }
 import sql from 'mssql/msnodesqlv8';
 
 const config = {
@@ -65,7 +31,7 @@ export default async function handler(req, res) {
     }
 
     // 동적 SQL을 안전하게 구성합니다
-    const query = `SELECT TOP 100 * FROM [${tableName}]`;
+    const query = `SELECT * FROM [${tableName}]`;
     const result = await sql.query(query);
     
     res.status(200).json(result.recordset);
