@@ -12,13 +12,16 @@ export default function Layout({ children }) {
         <title>AOP Database</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
+      
       <Navbar toggleSidebar={() => setSidebarActive(!sidebarActive)} />
       <div className="container-fluid">
         <div className="row">
+          
           <Sidebar active={sidebarActive} />
           <main className={`col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content ${sidebarActive ? 'active' : ''}`}>
             {children}
           </main>
+        
         </div>
       </div>
     </>
