@@ -17,7 +17,7 @@ const processFile = async (req, res) => {
     }
 
     const filePath = files.file.filepath;
-    const scriptPath = './backend/backend_main.py';  // Python 스크립트의 경로 수정
+    const scriptPath = './backend/app.py';  // Python 스크립트의 경로 수정
 
     // Python 스크립트 실행
     exec(`python ${scriptPath} ${filePath}`, (error, stdout, stderr) => {
