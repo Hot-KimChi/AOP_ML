@@ -1,15 +1,3 @@
-// import Layout from '@/components/Layout';
-
-// export default function MeassetGeneration() {
-//   return (
-//     <Layout>
-//       <h2>MeasSet Generation</h2>
-//       <p>MeasSet Generation content goes here.</p>
-//     </Layout>
-//   );
-// }
-
-
 import Layout from '@/components/Layout';
 import { useState } from 'react';
 
@@ -27,7 +15,7 @@ export default function MeassetGeneration() {
       formData.append('file', file);
 
       try {
-        const response = await fetch('http://localhost:5000/process-file', { // 백엔드 서버 주소로 변경
+        const response = await fetch('http://localhost:5000/api/process-file', { // 백엔드 서버 주소로 변경
           method: 'POST',
           body: formData,
         });
