@@ -1,14 +1,3 @@
-// // import Layout from '@/components/Layout';
-
-// // export default function Home() {
-// //   return (
-// //     <Layout>
-// //       <h1>Welcome to AOP Database</h1>
-// //       <p>Please select an option from the sidebar.</p>
-// //     </Layout>
-// //   );
-// // }
-
 // import Layout from '@/components/Layout';
 // import { useState, useEffect } from 'react';
 
@@ -16,18 +5,46 @@
 //   const [databases, setDatabases] = useState([]);
 //   const [selectedDatabase, setSelectedDatabase] = useState('');
 //   const [user, setUser] = useState(null);
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [error, setError] = useState(null);
 
 //   useEffect(() => {
-//     // 1. 데이터베이스 목록 가져오기
-//     fetchDatabases();
-    
-//     // 2. 윈도우 로그인 정보 가져오기
-//     fetchWindowsUser();
+//     authenticateUser();
 //   }, []);
+
+//   useEffect(() => {
+//     if (isAuthenticated) {
+//       fetchDatabases();
+//     }
+//   }, [isAuthenticated]);
+
+//   const authenticateUser = async () => {
+//     try {
+//       const response = await fetch('http://localhost:5000/api/authenticate', {
+//         method: 'POST',
+//         credentials: 'include'
+//       });
+//       if (response.ok) {
+//         const data = await response.json();
+//         setUser(data.user);
+//         setIsAuthenticated(data.authenticated);
+//       } else {
+//         const errorData = await response.json();
+//         setError(errorData.message);
+//         setIsAuthenticated(false);
+//       }
+//     } catch (error) {
+//       console.error('인증 오류:', error);
+//       setError('인증 중 오류가 발생했습니다.');
+//       setIsAuthenticated(false);
+//     }
+//   };
 
 //   const fetchDatabases = async () => {
 //     try {
-//       const response = await fetch('http://localhost:5000/api/get_databases');
+//       const response = await fetch('http://localhost:5000/api/get_databases', {
+//         credentials: 'include'
+//       });
 //       if (response.ok) {
 //         const data = await response.json();
 //         setDatabases(data.data);
@@ -35,44 +52,36 @@
 //           setSelectedDatabase(data.data[0]);
 //         }
 //       } else {
-//         console.error('Failed to fetch databases');
+//         console.error('데이터베이스 가져오기 실패');
 //       }
 //     } catch (error) {
-//       console.error('Error:', error);
-//     }
-//   };
-
-//   const fetchWindowsUser = async () => {
-//     try {
-//       const response = await fetch('http://localhost:5000/api/get_windows_user');
-//       if (response.ok) {
-//         const data = await response.json();
-//         setUser(data.user);
-//       } else {
-//         console.error('Failed to fetch Windows user');
-//       }
-//     } catch (error) {
-//       console.error('Error:', error);
+//       console.error('오류:', error);
 //     }
 //   };
 
 //   return (
 //     <Layout>
-//       <h1>Welcome to AOP Database</h1>
-//       {user && <p>Logged in as: {user}</p>}
-//       <div>
-//         <label htmlFor="database-select">Select Database: </label>
-//         <select 
-//           id="database-select"
-//           value={selectedDatabase}
-//           onChange={(e) => setSelectedDatabase(e.target.value)}
-//         >
-//           {databases.map((db, index) => (
-//             <option key={index} value={db}>{db}</option>
-//           ))}
-//         </select>
-//       </div>
-//       <p>Please select an option from the sidebar.</p>
+//       <h1>AOP 데이터베이스에 오신 것을 환영합니다</h1>
+//       {isAuthenticated ? (
+//         <>
+//           {user && <p>로그인: {user}</p>}
+//           <div>
+//             <label htmlFor="database-select">데이터베이스 선택: </label>
+//             <select 
+//               id="database-select"
+//               value={selectedDatabase}
+//               onChange={(e) => setSelectedDatabase(e.target.value)}
+//             >
+//               {databases.map((db, index) => (
+//                 <option key={index} value={db}>{db}</option>
+//               ))}
+//             </select>
+//           </div>
+//           <p>사이드바에서 옵션을 선택해주세요.</p>
+//         </>
+//       ) : (
+//         <p>{error || '인증에 실패했습니다. 관리자에게 문의하세요.'}</p>
+//       )}
 //     </Layout>
 //   );
 // }
@@ -139,23 +148,15 @@ export default function Home() {
   };
 
   return (
-    <Layout>
+    <Layout 
+      databases={databases} 
+      selectedDatabase={selectedDatabase} 
+      setSelectedDatabase={setSelectedDatabase}
+    >
       <h1>AOP 데이터베이스에 오신 것을 환영합니다</h1>
       {isAuthenticated ? (
         <>
           {user && <p>로그인: {user}</p>}
-          <div>
-            <label htmlFor="database-select">데이터베이스 선택: </label>
-            <select 
-              id="database-select"
-              value={selectedDatabase}
-              onChange={(e) => setSelectedDatabase(e.target.value)}
-            >
-              {databases.map((db, index) => (
-                <option key={index} value={db}>{db}</option>
-              ))}
-            </select>
-          </div>
           <p>사이드바에서 옵션을 선택해주세요.</p>
         </>
       ) : (

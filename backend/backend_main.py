@@ -294,9 +294,17 @@ def load_config():
     config = configparser.ConfigParser()
     config.read(config_path)
 
-    for section, options in config.items():
-        for key, value in options.items():
-            os.environ[f"{section.upper()}_{key.upper()}"] = value
+    for section in config.sections():
+        for key, value in config[section].items():
+            # 섹션 이름과 키에서 공백 제거 및 대문자 변환
+            env_var_name = (
+                f"{section.replace(' ', '_').upper()}_{key.replace(' ', '_').upper()}"
+            )
+            os.environ[env_var_name] = value
+
+    # 데이터베이스 이름은 쉼표로 구분된 리스트이므로 별도 처리
+    if "database" in config and "name" in config["database"]:
+        os.environ["DATABASE_NAME"] = config["database"]["name"]
 
 
 def handle_exceptions(f):

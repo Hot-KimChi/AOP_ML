@@ -308,6 +308,7 @@
 #         except:
 #             print("Error: func_SQL_value")
 
+
 import pyodbc
 import pandas as pd
 import os
@@ -315,18 +316,18 @@ import os
 
 class SQL:
     def __init__(self, command=1, windows_auth=False):
-        self.server = os.environ.get("DATABASE_SERVER")
+        self.server = os.environ.get("SERVER_ADDRESS_ADDRESS")
         self.database = os.environ.get("DATABASE_NAME")
-        self.username = os.environ.get("DATABASE_USERNAME")
-        self.password = os.environ.get("DATABASE_PASSWORD")
+        # self.username = os.environ.get('DATABASE_USERNAME')
+        # self.password = os.environ.get('DATABASE_PASSWORD')
         self.command = command
         self.windows_auth = windows_auth
 
     def connect(self):
         if self.windows_auth:
             conn_str = f"DRIVER={{SQL Server}};SERVER={self.server};DATABASE={self.database};Trusted_Connection=yes;"
-        else:
-            conn_str = f"DRIVER={{SQL Server}};SERVER={self.server};DATABASE={self.database};UID={self.username};PWD={self.password}"
+        # else:
+        #     conn_str = f'DRIVER={{SQL Server}};SERVER={self.server};DATABASE={self.database};UID={self.username};PWD={self.password}'
 
         return pyodbc.connect(conn_str)
 
