@@ -315,12 +315,11 @@ import os
 
 
 class SQL:
-    def __init__(self, command=1, windows_auth=False):
+    def __init__(self, windows_auth=False):
         self.server = os.environ.get("SERVER_ADDRESS_ADDRESS")
         self.database = os.environ.get("DATABASE_NAME")
         # self.username = os.environ.get('DATABASE_USERNAME')
         # self.password = os.environ.get('DATABASE_PASSWORD')
-        self.command = command
         self.windows_auth = windows_auth
 
     def connect(self):
@@ -330,19 +329,6 @@ class SQL:
         #     conn_str = f'DRIVER={{SQL Server}};SERVER={self.server};DATABASE={self.database};UID={self.username};PWD={self.password}'
 
         return pyodbc.connect(conn_str)
-
-    def sql_get(self):
-        conn = self.connect()
-        cursor = conn.cursor()
-
-        if self.command == 1:
-            query = "SELECT * FROM ProbeInfo"
-        else:
-            query = "SELECT * FROM OtherTable"  # 다른 명령에 대한 쿼리
-
-        df = pd.read_sql(query, conn)
-        conn.close()
-        return df
 
     def sql_execute(self, query, params=None):
         conn = self.connect()

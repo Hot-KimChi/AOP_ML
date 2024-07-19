@@ -338,7 +338,7 @@ def authenticate():
     user = getpass.getuser()
     try:
         # MSSQL 서버에 연결 시도
-        connect = SQL(command=1, windows_auth=True)
+        connect = SQL(windows_auth=True)
         # 연결 성공 시 세션에 인증 정보 저장
         session["authenticated"] = True
         session["user"] = user
