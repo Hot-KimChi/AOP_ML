@@ -1,8 +1,37 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function Navbar({ toggleSidebar, isAuthenticated, user, databases, selectedDatabase, setSelectedDatabase }) {
+export default function Navbar({ toggleSidebar, isAuthenticated, databases, selectedDatabase, setSelectedDatabase }) {
   const [error, setError] = useState(null);
+  const [windowsUsername, setWindowsUsername] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [connectionStatus, setConnectionStatus] = useState('');
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchWindowsUserInfo();
+    }
+  }, [isAuthenticated]);
+
+  const fetchWindowsUserInfo = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/get_windows_user', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setWindowsUsername(data.user);
+        setFullName(data.full_name);
+        setConnectionStatus(data.connection_status);
+      } else {
+        setConnectionStatus(data.connection_status);
+        console.error('Windows 사용자 정보를 가져오는데 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('오류:', error);
+      setConnectionStatus('연결 실패');
+    }
+  };
 
   const handleLogin = async () => {
     try {
@@ -34,7 +63,7 @@ export default function Navbar({ toggleSidebar, isAuthenticated, user, databases
         <div className="d-flex align-items-center ms-auto">
           {isAuthenticated ? (
             <>
-              <span className="text-light me-2" style={{ whiteSpace: 'nowrap' }}>Welcome, {user}</span>
+              <span className="text-light me-2" style={{ whiteSpace: 'nowrap' }}>{connectionStatus}, {fullName || windowsUsername}</span>
               <select 
                 id="databaseSelect" 
                 className="form-select form-select-sm"
