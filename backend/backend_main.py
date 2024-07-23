@@ -17,7 +17,7 @@ CORS(
     app,
     supports_credentials=True,
     resources={
-        r"/api/*": {"origins": ["http://localhost:3000", "http://10.82.216.102:3000"]}
+        r"/api/*": {"origins": ["http://localhost:3000", "http://10.82.216.206:3000"]}
     },
 )
 
