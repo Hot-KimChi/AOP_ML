@@ -95,7 +95,7 @@ function Viewer() {
   useEffect(() => {
     async function fetchTables() {
       try {
-        const response = await fetch('/api/tables');
+        const response = await fetch('/api/get-tables');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
