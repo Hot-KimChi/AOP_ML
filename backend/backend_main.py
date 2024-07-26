@@ -140,6 +140,26 @@ def get_databases():
     return jsonify({"status": "success", "data": databases})
 
 
+# @app.route("/api/process-file", methods=["POST"])
+# @handle_exceptions
+# @require_auth
+# def upload_file():
+#     if "file" not in request.files:
+#         return jsonify({"error": "No file part"}), 400
+
+#     file = request.files["file"]
+#     if file.filename == "":
+#         return jsonify({"error": "No selected file"}), 400
+
+#     if file:
+#         filename = secure_filename(file.filename)
+#         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+#         file.save(file_path)
+
+#         processed_data = process_file(file_path)
+#         return jsonify({"status": "success", "data": processed_data})
+
+
 @app.route("/api/process-file", methods=["POST"])
 @handle_exceptions
 @require_auth
@@ -156,8 +176,13 @@ def upload_file():
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(file_path)
 
-        processed_data = process_file(file_path)
-        return jsonify({"status": "success", "data": processed_data})
+        # MeasSetGen 실행
+        database = request.form.get("database")
+        probe = request.form.get("probe")
+        meas_gen = MeasSetGen(database, probe)
+        result = meas_gen.generate()
+
+        return jsonify({"status": "success", "data": result})
 
 
 @app.route("/api/meas_generation", methods=["POST"])
@@ -199,16 +224,15 @@ def machine_learning():
     return jsonify({"status": "success", "data": result})
 
 
-@app.route("/api/get_probeinfo", methods=["GET"])
+@app.route("/api/get_probes", methods=["GET"])
 @handle_exceptions
 @require_auth
-def get_probeinfo():
-    connect = SQL(command=1)
-    df = connect.sql_get()
-    list_probe = [
-        {"probename": str(row[0]), "probeid": str(row[1])} for row in df.values.tolist()
-    ]
-    return jsonify({"status": "success", "data": list_probe})
+def get_probes():
+    connect = SQL(windows_auth=True)
+    query = "SELECT probeId, probeName FROM probe_geo"
+    df = connect.execute_query(query)
+    probes = [{"probeId": row[0], "probeName": row[1]} for row in df.values.tolist()]
+    return jsonify({"status": "success", "data": probes})
 
 
 def process_file(file_path):
