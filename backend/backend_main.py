@@ -228,7 +228,12 @@ def machine_learning():
 @handle_exceptions
 @require_auth
 def get_probes():
-    connect = SQL(windows_auth=True)
+    database = request.args.get("database")
+    if not database:
+        return jsonify({"error": "No database specified"}), 400
+
+    print(database)
+    connect = SQL(windows_auth=True, database=database)
     query = "SELECT probeId, probeName FROM probe_geo"
     df = connect.execute_query(query)
     probes = [{"probeId": row[0], "probeName": row[1]} for row in df.values.tolist()]

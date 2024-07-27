@@ -1,11 +1,13 @@
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { DatabaseContext } from '@/contexts/DatabaseContext';
 
-export default function Navbar({ toggleSidebar, isAuthenticated, databases, selectedDatabase, setSelectedDatabase }) {
+export default function Navbar({ toggleSidebar, isAuthenticated, databases }) {
   const [error, setError] = useState(null);
   const [windowsUsername, setWindowsUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [connectionStatus, setConnectionStatus] = useState('');
+  const { selectedDatabase, setSelectedDatabase } = useContext(DatabaseContext);
 
   useEffect(() => {
     if (isAuthenticated) {
