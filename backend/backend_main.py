@@ -185,22 +185,6 @@ def upload_file():
         return jsonify({"status": "success", "data": result})
 
 
-@app.route("/api/meas_generation", methods=["POST"])
-@handle_exceptions
-@require_auth
-def meas_generation():
-    data = request.json
-    database = data.get("database")
-    list_probe = data.get("list_probe")
-
-    probe_list = list_probe.split("\n") if isinstance(list_probe, str) else list_probe
-
-    meas_gen = MeasSetGen(database, probe_list)
-    result = meas_gen.generate()
-
-    return jsonify({"status": "success", "data": result})
-
-
 @app.route("/api/verify_report", methods=["POST"])
 @handle_exceptions
 @require_auth
@@ -238,14 +222,6 @@ def get_probes():
     df = connect.execute_query(query)
     probes = [{"probeId": row[0], "probeName": row[1]} for row in df.values.tolist()]
     return jsonify({"status": "success", "data": probes})
-
-
-def process_file(file_path):
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    with open(file_path, "r", encoding="utf-8") as f:
-        data = f.read()
-    processed_data = {"original_content": data, "length": len(data)}
-    return processed_data
 
 
 if __name__ == "__main__":
