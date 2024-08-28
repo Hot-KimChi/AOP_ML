@@ -140,26 +140,6 @@ def get_databases():
     return jsonify({"status": "success", "data": databases})
 
 
-# @app.route("/api/process-file", methods=["POST"])
-# @handle_exceptions
-# @require_auth
-# def upload_file():
-#     if "file" not in request.files:
-#         return jsonify({"error": "No file part"}), 400
-
-#     file = request.files["file"]
-#     if file.filename == "":
-#         return jsonify({"error": "No selected file"}), 400
-
-#     if file:
-#         filename = secure_filename(file.filename)
-#         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-#         file.save(file_path)
-
-#         processed_data = process_file(file_path)
-#         return jsonify({"status": "success", "data": processed_data})
-
-
 @app.route("/api/process-file", methods=["POST"])
 @handle_exceptions
 @require_auth
